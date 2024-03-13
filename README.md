@@ -21,7 +21,7 @@ As a starting point, using this setup, I intend to compare the behavior of LLMs 
 
 ## To Do
 
-- [ ]: Check whether one can lump together the summary and the analyse prompt (maybe even the question prompt?) This would save quiet some tokens and speed up things
-- [ ]: Rewrite to use [LiteLLM](https://github.com/BerriAI/litellm). This should make it relatively easy to replace Chat GPT for alternative and even local LLMs.
-- [ ]: Implement the framed variant of the one shot trust game.
-- [ ]: Run experiment and compare findings.
+- [X] Check whether one can lump together the summary and the analyse prompt (maybe even the question prompt?) This would save quiet some tokens and speed up things
+- [ ] Rewrite to use [LiteLLM](https://github.com/BerriAI/litellm). This should make it relatively easy to replace Chat GPT for alternative and even local LLMs.
+- [ ] Implement the framed variant of the one shot trust game.
+- [ ] Run experiment and compare findings.

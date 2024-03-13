@@ -94,21 +94,21 @@ def run_bot(url):
     options.add_argument("--headless=new")
     dr = webdriver.Chrome(options = options)
     dr.set_window_size(1920, 1400)
-    dr.get(url)
-    text_on_page = dr.find_element(By.TAG_NAME, "body").text
-
-    resp = llm_send_message(
-        llm, conv, 
-        prompts.loc['summarize_first_page', 'prompt'].format(body = text_on_page)
-    )
-
-    logging.info(f"Bot summary of first page: '{resp}'")
+    first_page = True
 
     while True:
-        resp = llm_send_message(
-            llm, conv, 
-            prompts.loc['analyze_page', 'prompt']
-        )
+        dr.get(url)
+        text_on_page = dr.find_element(By.TAG_NAME, "body").text
+        message = prompts.loc['analyze_page', 'prompt'].format(body = text_on_page)
+        if first_page:
+            message = re.sub(
+                'You have now proceeded to the next page\\.', 
+                'You are now on the starting page of the experiment\\.', 
+                message
+            )
+            first_page = False
+
+        resp = llm_send_message(llm, conv, message)
         logging.info(f"Bot analysis of page: '{resp}'")
         if resp['category'] == "next":
             logging.info("Bot has identified a button to click. Clicking")
@@ -123,18 +123,16 @@ def run_bot(url):
             logging.info(
                 f"Bot has identified {len(resp['questions'])} question(s)."
             )
-            for i,txt in enumerate(resp['questions']):
-                resp = llm_send_message(
-                    llm, conv, 
-                    prompts.loc['answer_question', 'prompt'].format(
-                        question_nr = i+1, question_text = txt
-                    )
+            for i in range(len(resp['questions'])):
+                logging.info(
+                    "Bot has answered question " + 
+                    f"{i+1}: '{resp['questions'][i]['text']}' " + 
+                    f"with '{resp['questions'][i]['answer']}'."
                 )
-                logging.info(f"Bot has answered question {i+1}:'{txt}' with '{resp}'.")
-                answer = resp['answer']
-                if type(resp['answer']) == str:
+                answer = resp['questions'][i]['answer']
+                if type(answer) == str:
                     nvalue = int(re.search("\d+", answer).group(0))
-                else: nvalue = resp['answer']
+                else: nvalue = answer
                 # Need to check how this works with multiple questions
                 id = find_control_id_by_class(dr, "form-control")
                 set_id_value(dr, id, nvalue)
@@ -142,14 +140,6 @@ def run_bot(url):
         else:
             logging.warning("Bot is confused. Stopping.")
             break
-
-        dr.get(url)
-        text_on_page = dr.find_element(By.TAG_NAME, "body").text
-        resp = llm_send_message(
-            llm, conv, 
-            prompts.loc['summarize_page', 'prompt'].format(body = text_on_page)
-        )
-        logging.info(f"Bot summary of next page: '{resp}'")
 
     conn = sqlite3.connect(BOT_DB_SQLITE)
     cursor = conn.cursor()
