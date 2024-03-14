@@ -1,8 +1,26 @@
 {{ block title }}Your Choice{{ endblock }}
 {{ block content }}
+    {{ if group.round_number == 1 }}
     <p>
-        You are Participant B.
-        Participant A sent you {{ group.sent_amount }} and you received {{ tripled_amount }}.
+        You have been assigned the role of Participant B. 
+        {{ if C.NUM_ROUNDS > 1 }}
+            This will be your role for the entire game. 
+        {{ endif }}
+        Participant A will be played by another participant.
+    </p>
+    {{ else }}
+    <p>
+        You are in round {{ group.round_number }} of {{ C.NUM_ROUNDS }} rounds.
+    </p>
+    {{ endif }}        
+    <p>
+        {{ if C.NUM_ROUNDS > 1 }}
+            This round, participant
+        {{ else }}
+            Participant
+        {{ endif }}
+        A sent you {{ group.sent_amount }} 
+        and you received {{ tripled_amount }}.
         Now you have {{ tripled_amount }}.
         How much will you send to participant A?
     </p>

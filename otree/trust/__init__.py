@@ -40,10 +40,16 @@ class Group(BaseGroup):
 
 
 class Player(BasePlayer):
-    pass
+    wealth = models.CurrencyField(initial = cu(0))
 
 
 # FUNCTIONS
+
+def creating_session(subsession: Subsession):
+    if subsession.round_number == 1:
+        for p in subsession.get_players():
+            p.participant.wealth = cu(0)
+
 def sent_back_amount_max(group: Group):
     return group.sent_amount * C.MULTIPLIER
 
@@ -53,11 +59,15 @@ def set_payoffs(group: Group):
     p2 = group.get_player_by_id(2)
     p1.payoff = C.ENDOWMENT - group.sent_amount + group.sent_back_amount
     p2.payoff = group.sent_amount * C.MULTIPLIER - group.sent_back_amount
+    p1.participant.wealth += p1.payoff
+    p2.participant.wealth += p2.payoff
 
 
 # PAGES
 class Introduction(Page):
-    pass
+    @staticmethod
+    def is_displayed(player):
+        return player.round_number == 1
 
 
 class Send(Page):
@@ -108,7 +118,11 @@ class Results(Page):
     def vars_for_template(player: Player):
         group = player.group
 
-        return dict(tripled_amount=group.sent_amount * C.MULTIPLIER)
+        return dict(
+            tripled_amount=group.sent_amount * C.MULTIPLIER,
+            p1_wealth=group.get_player_by_id(1).participant.wealth,
+            p2_wealth=group.get_player_by_id(2).participant.wealth
+        )
 
 
 page_sequence = [

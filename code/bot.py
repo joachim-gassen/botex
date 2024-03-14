@@ -8,12 +8,19 @@ import sqlite3
 
 import pandas as pd
 from dotenv import load_dotenv
-from openai import OpenAI
+from litellm import completion
+# from openai import OpenAI
 
 from selenium import webdriver
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+
+logging.getLogger("LiteLLM").setLevel(logging.WARNING)
+
+# Do you want a local llama2 model instead of OpenAI?
+# Does not seem as if llama2 can produce JSON output reliably
+OLLAMA = False
 
 # OpenAI Tier 1 - Currently not used in code
 MAX_REQUESTS_PER_MINUTE=500 
@@ -21,8 +28,8 @@ MAX_TOKENS_PER_MINUTE=10000
 
 load_dotenv('secrets.env')
 BOT_DB_SQLITE = os.environ.get('BOT_DB_SQLITE')
-PAUSE_BETWEEN_OPENAI_REQUESTS = 15
-STD_PAUSE = 5
+PAUSE_BETWEEN_OPENAI_REQUESTS = 0
+STD_PAUSE = 0
 
 def run_bot(url): 
     def find_control_id_by_class(dr, class_name, timeout = 3600):
@@ -42,12 +49,8 @@ def run_bot(url):
 
     def wait_next_page(dr, timeout = 3600):
         WebDriverWait(dr, timeout).until(lambda x: x.find_element(By.CLASS_NAME, 'otree-btn-next'))
-    
-    def llm_initialize():
-        llm = OpenAI(api_key = os.environ.get("OPENAI_API_KEY"), max_retries=10)
-        return llm
-    
-    def llm_send_message(llm, conversation, message, nopause = False):
+        
+    def llm_send_message(conversation, message, nopause = False):
         resp_dict = None
         while resp_dict is None:
             conversation.append(
@@ -56,9 +59,18 @@ def run_bot(url):
                     "content": message
                 }
             )
-            resp =  llm.chat.completions.create(    
-                messages=conversation, model="gpt-4"
-            )
+            if OLLAMA:
+                resp = completion(
+                    model="ollama/llama2", 
+                    messages=conversation, 
+                    api_base="http://localhost:11434"
+                )
+            else:
+                # Useful models: # gpt-4 gpt-4-turbo-preview gpt-3.5-turbo
+                resp =  completion(    
+                    messages=conversation, model="gpt-4",
+                )
+
             resp_str = resp.choices[0].message.content
             conversation.append(
                 {
@@ -69,7 +81,7 @@ def run_bot(url):
             try:
                 resp_dict = json.loads(resp_str)
             except:
-                logging.notice("Bot's response is not a JSON. Trying again.")
+                logging.warn("Bot's response is not a JSON. Trying again.")
                 message = prompts.loc['json_error', 'prompt']
         if not nopause:
             sleep_secs = random.normalvariate(
@@ -83,10 +95,9 @@ def run_bot(url):
     prompts = pd.read_csv("code/conv_prompts.csv")
     prompts.set_index('id', inplace=True)
 
-    llm = llm_initialize()
     conv = []
     resp = llm_send_message(
-        llm, conv, prompts.loc['start', 'prompt'], nopause=True
+        conv, prompts.loc['start', 'prompt'], nopause=True
     )
     logging.info(f"Bot's response to basic task: '{resp}'")
     
@@ -108,7 +119,7 @@ def run_bot(url):
             )
             first_page = False
 
-        resp = llm_send_message(llm, conv, message)
+        resp = llm_send_message(conv, message)
         logging.info(f"Bot analysis of page: '{resp}'")
         if resp['category'] == "next":
             logging.info("Bot has identified a button to click. Clicking")
@@ -117,19 +128,21 @@ def run_bot(url):
             logging.info("Bot has identified a wait page. Waiting")
             wait_next_page(dr)
         elif resp['category'] == "end":
-            logging.info("Bot finished.")
+            logging.info("Bot has identified the end of the experiment.")
             break
         elif resp['category'] == "question":
             logging.info(
                 f"Bot has identified {len(resp['questions'])} question(s)."
             )
             for i in range(len(resp['questions'])):
+                q = resp['questions'][i]
+                if isinstance(q, list):
+                    q = q[0]
                 logging.info(
                     "Bot has answered question " + 
-                    f"{i+1}: '{resp['questions'][i]['text']}' " + 
-                    f"with '{resp['questions'][i]['answer']}'."
+                    f"{i+1}: '{q['text']}' with '{q['answer']}'."
                 )
-                answer = resp['questions'][i]['answer']
+                answer = q['answer']
                 if type(answer) == str:
                     nvalue = int(re.search("\d+", answer).group(0))
                 else: nvalue = answer
@@ -140,7 +153,13 @@ def run_bot(url):
         else:
             logging.warning("Bot is confused. Stopping.")
             break
+    
 
+    message = prompts.loc['end', 'prompt']
+    resp = llm_send_message(conv, message)
+    logging.info(f"Bot's final remarks about experiment: '{resp}'")
+    logging.info("Bot finished.")
+        
     conn = sqlite3.connect(BOT_DB_SQLITE)
     cursor = conn.cursor()
     cursor.execute(

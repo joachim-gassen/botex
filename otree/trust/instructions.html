@@ -13,18 +13,29 @@
         decision.
     </p>
     <p>
-        To start, participant A receives {{ C.ENDOWMENT }};
-        participant B receives
-        nothing.
-        Participant A can send some or all of
+        {{ if C.NUM_ROUNDS == 1 }}
+            This game will be played for only 1 round. 
+            First, participant A receives {{ C.ENDOWMENT }};
+        {{ else }} 
+            This game will be played over {{ C.NUM_ROUNDS }} rounds.
+            Throughout the game, you will remain in the same role.
+            Each round, participant A receives {{ C.ENDOWMENT }};
+        {{ endif }}
+        participant B receives nothing.
+        Participant A can send none, some or all of
         his {{ C.ENDOWMENT }} to participant B.
         Before B receives this amount, it will be multiplied
-        by {{ C.MULTIPLIER }}. Once B receives
-        the tripled amount he can decide to send some or all of it to
-        A.
+        by {{ C.MULTIPLIER }}. Participant B can then decide to send none, 
+        some or all of the multiplied amount back to A.
     </p>
     <p>
-        The objective of the game is to maximize your earnings. 
+        {{ if C.NUM_ROUNDS == 1 }}
+            The objective of the game is to maximize your own amount. 
+        {{ else }}
+            The amounts that both players receive in each round increase their
+            private wealth. The objective of the game is to maximize your 
+            private wealth over the duration of the game. 
+        {{ endif }}
     </p>
 </div>
 </div>
