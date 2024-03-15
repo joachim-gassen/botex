@@ -8,12 +8,6 @@ SESSION_CONFIGS = [
         display_name="Trust Game",
         app_sequence=['trust', 'payment_info'],
         num_demo_participants=2,
-    ),
-    dict(
-        name='ftrust',
-        display_name="Framed Trust Game",
-        app_sequence=['ftrust', 'payment_info'],
-        num_demo_participants=2,
     )
 ]
 

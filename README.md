@@ -25,7 +25,7 @@ As a starting point, using this setup, I intend to compare the behavior of LLMs 
 - [X] Rewrite to use [LiteLLM](https://github.com/BerriAI/litellm). This should make it relatively easy to replace Chat GPT for alternative and even local LLMs.
 - [X] Convert the one shot trust game to multiple rounds (but still allowing only one round)
 - [ ] Improve the general usability of the bot by applying it to a more complex experiment with different form fields (maybe osacc?)
-- [ ] Develop a prompting variant that asks the LLM to summarize the game so far, so that the message history of multiple round games does not get excessively long.
+- [X] Develop a prompting variant that asks the LLM to summarize the game so far, so that the message history of multiple round games does not get excessively long.
 - [ ] Create a framed variant of the trust game (or pick an alternative with a more accounting like framing) 
 - [ ] Run experiment and compare findings.
 - [ ] Write paper
