@@ -38,9 +38,39 @@ class Group(BaseGroup):
         doc="""Amount sent back to the other participant""",
     )
 
-
 class Player(BasePlayer):
     wealth = models.CurrencyField(initial = cu(0))
+    comprehension_check = models.IntegerField(
+        label="What is the role of the multiplier in this game?",
+        blank=False,
+        choices=[
+            [1, 'It increases the private wealth of the sender'],
+            [2, 'It increases the private wealth of the receiver'],
+            [3, 'It increases the amount sent by the sender, ' + 
+             'potentially benefiting both the sender and the receiver'],
+        ],
+    )
+    manipulation_check = models.IntegerField(
+        label="What was your role in this game?",
+        blank=False,
+        choices=[
+            [1, 'Sender'],
+            [2, 'Receiver'],
+        ]
+    )
+    human_check = models.IntegerField(
+        label="Please characterize your personality",
+        blank=False,
+        choices=[
+            [1, 'I am a Human'],
+            [2, 'I am a Bot'],
+        ]
+    )
+    feedback = models.LongStringField(
+        label="Do you have any feedback that you want to share?",
+        blank=True
+    )
+
 
 
 # FUNCTIONS
@@ -124,6 +154,17 @@ class Results(Page):
             p2_wealth=group.get_player_by_id(2).participant.wealth
         )
 
+class Checks(Page):
+    """This page is displayed after the experimental run is complete."""
+    @staticmethod
+    def is_displayed(player):
+        return player.round_number == C.NUM_ROUNDS
+    
+    form_model = 'player'
+    form_fields = ['comprehension_check', 'manipulation_check', 'human_check', 'feedback']
+
+    
+
 
 page_sequence = [
     Introduction,
@@ -132,4 +173,5 @@ page_sequence = [
     SendBack,
     ResultsWaitPage,
     Results,
+    Checks
 ]

@@ -55,6 +55,44 @@ def run_bot(url):
     def wait_next_page(dr, timeout = 3600):
         WebDriverWait(dr, timeout).until(lambda x: x.find_element(By.CLASS_NAME, 'otree-btn-next'))
         
+    def scan_page(dr):
+        dr.get(url)
+        text = dr.find_element(By.TAG_NAME, "body").text
+        
+        wait_page = dr.find_elements(By.CLASS_NAME, 'otree-wait-page__body') != []
+        if wait_page:
+            return {
+                "text": text, "wait_page": wait_page, 
+                "next_button": None, "questions": None
+            }
+        nb = dr.find_elements(By.CLASS_NAME, 'otree-btn-next')
+        if len(nb) > 0: next_button = nb[0] 
+        else: next_button = None
+
+        # Identify all form fields by id
+        question_id = []
+        fe = dr.find_elements(By.CLASS_NAME, 'controls')
+        for i in range(len(fe)): 
+            el = fe[i].find_elements(By.XPATH, ".//*")
+            for j in range(len(el)):
+                id = el[j].get_attribute("id")
+                if id != '': 
+                    question_id.append(id)
+                    break
+        if question_id != []:
+            labels = dr.find_elements(By.CLASS_NAME, 'col-form-label')
+            question_label = [x.text for x in labels]
+            questions = [
+                {"question_id": id, "question_label": label} 
+                for id, label in 
+                zip(question_id, question_label, strict = True)
+            ]
+        else:
+            questions =  None
+        return (
+            text, wait_page, next_button, questions
+        )
+
     def llm_send_message(message, conv_hist, nopause = False):
         if not FULL_HISTORY:
             conversation = [
@@ -81,7 +119,7 @@ def run_bot(url):
             else:
                 # Useful models: # gpt-4 gpt-4-turbo-preview gpt-3.5-turbo
                 resp =  completion(    
-                    messages=conversation, model="gpt-4-turbo-preview",
+                    messages=conversation, model="gpt-4-turbo-preview"
                 )
 
             resp_str = resp.choices[0].message.content
@@ -105,7 +143,6 @@ def run_bot(url):
     message = prompts.loc['start', 'prompt']
     conv = []
     resp = llm_send_message(message, conv)
-
     logging.info(f"Bot's response to basic task: '{resp}'")
     
     options = Options()
@@ -114,68 +151,70 @@ def run_bot(url):
     dr.set_window_size(1920, 1400)
     first_page = True
     summary = None
+    last_page_wait_page = False
     while True:
-        dr.get(url)
-        text_on_page = dr.find_element(By.TAG_NAME, "body").text
+        text, wait_page, next_button, questions = scan_page(dr)
+        if wait_page:
+            last_page_wait_page = True
+            wait_next_page(dr)
+            continue
+
+        if FULL_HISTORY:
+            if questions: analyze_prompt = 'analyze_page_q_full_hist'
+            else: analyze_prompt = 'analyze_page_full_hist'
+        else:
+            if first_page:
+                if questions: analyze_prompt = 'analyze_first_page_q'
+                else: analyze_prompt = 'analyze_first_page_no_q'
+            else:    
+                if questions: analyze_prompt = 'analyze_page_q'
+                else: analyze_prompt = 'analyze_page_no_q'
+        if questions == None:
+            nr_q = 0
+            questions_json = ""
+        else:
+            nr_q = len(questions)
+            questions_json = json.dumps(questions)
+
+        message = prompts.loc[analyze_prompt, 'prompt'].format(
+            body = text, summary = summary, nr_q = nr_q,
+            questions_json = questions_json
+        )
+
         if first_page:
             first_page = False
             if FULL_HISTORY:
-                message = prompts.loc["analyze_page_full_hist", 'prompt'].format(
-                    body = text_on_page
-                )
                 message = re.sub(
                     'You have now proceeded to the next page\\.', 
                     'You are now on the starting page of the experiment\\.', 
                     message
                 )
-            else:
-                message = prompts.loc['first_page', 'prompt'].format(
-                    body = text_on_page
-                )
-        else:
-            if FULL_HISTORY:
-                analyze_prompt = 'analyze_page_full_hist'
-            else:
-                analyze_prompt = 'analyze_page' 
-            message = prompts.loc[analyze_prompt, 'prompt'].format(
-                body = text_on_page, summary = summary
-            )
             
         resp = llm_send_message(message, conv)
         logging.info(f"Bot analysis of page: '{resp}'")
         if not FULL_HISTORY: summary = resp['summary']
-        if resp['category'] == "next":
-            logging.info("Bot has identified a button to click. Clicking")
-            click_next(dr)
-        elif resp['category'] == "wait":
-            logging.info("Bot has identified a wait page. Waiting")
-            wait_next_page(dr)
-        elif resp['category'] == "end":
-            logging.info("Bot has identified the end of the experiment.")
+        if questions is None and next_button is not None:
+            logging.info("Page has no question but next button. Clicking")
+            next_button.click()
+            continue
+        
+        if questions is None and next_button is None:
+            logging.info("Page has no question and no next button. Stopping.")
             break
-        elif resp['category'] == "question":
+
+        logging.info(
+            f"Page has {len(questions)} question(s)."
+        )
+        for q in resp['questions']: 
+            if isinstance(q, list): q = q[0]
             logging.info(
-                f"Bot has identified {len(resp['questions'])} question(s)."
+                "Bot has answered question " + 
+                f"'{q['id']}' with '{q['answer']}'."
             )
-            for i in range(len(resp['questions'])):
-                q = resp['questions'][i]
-                if isinstance(q, list):
-                    q = q[0]
-                logging.info(
-                    "Bot has answered question " + 
-                    f"{i+1}: '{q['text']}' with '{q['answer']}'."
-                )
-                answer = q['answer']
-                if type(answer) == str:
-                    nvalue = int(re.search("\d+", answer).group(0))
-                else: nvalue = answer
-                # Need to check how this works with multiple questions
-                id = find_control_id_by_class(dr, "form-control")
-                set_id_value(dr, id, nvalue)
-            click_next(dr)
-        else:
-            logging.warning("Bot is confused. Stopping.")
-            break
+            answer = q['answer']
+            set_id_value(dr, q['id'], answer)
+
+        next_button.click()
     
 
     message = prompts.loc['end', 'prompt']
