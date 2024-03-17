@@ -18,14 +18,10 @@ from selenium.webdriver.common.by import By
 
 logging.getLogger("LiteLLM").setLevel(logging.WARNING)
 
-# Do you want a local llama2 model instead of OpenAI?
-# Does not seem as if llama2 can produce JSON output reliably
-OLLAMA = False
-
 # Do you want to use the full conversation history in 
 # prompts (causes prompts to use too many tokens
 # for multiround games)
-FULL_HISTORY = False
+full_conv_history = False
 
 # OpenAI Tier 1 - Currently not used in code
 MAX_REQUESTS_PER_MINUTE=500 
@@ -36,22 +32,15 @@ BOT_DB_SQLITE = os.environ.get('BOT_DB_SQLITE')
 PAUSE_BETWEEN_OPENAI_REQUESTS = 0
 STD_PAUSE = 0
 
-def run_bot(url): 
-    def find_control_id_by_class(dr, class_name, timeout = 3600):
-        return WebDriverWait(dr, timeout).until(lambda x: x.find_element(By.CLASS_NAME, class_name)).get_attribute("id")
+def run_bot(
+        url, model = "gpt-4-turbo-preview", full_conv_history = False
+    ): 
+    bot_parms = json.dumps(locals())
+    logging.info(f"Running bot with parameters: {bot_parms}")
 
     def set_id_value(dr, id, value, timeout = 3600):
         WebDriverWait(dr, timeout).until(lambda x: x.find_element(By.ID, id)).send_keys(str(value))
     
-    def wait_for_id(dr, id, timeout = 3600):
-        WebDriverWait(dr, timeout).until(lambda x: x.find_element(By.ID, id))
-
-    def click_next(dr):
-        dr.find_element(By.CLASS_NAME, 'otree-btn-next').click()
-
-    def wait_and_click_next(dr, timeout = 3600):
-        WebDriverWait(dr, timeout).until(lambda x: x.find_element(By.CLASS_NAME, 'otree-btn-next')).click()
-
     def wait_next_page(dr, timeout = 3600):
         WebDriverWait(dr, timeout).until(lambda x: x.find_element(By.CLASS_NAME, 'otree-btn-next'))
         
@@ -93,8 +82,11 @@ def run_bot(url):
             text, wait_page, next_button, questions
         )
 
-    def llm_send_message(message, conv_hist, nopause = False):
-        if not FULL_HISTORY:
+    def llm_send_message(
+            message, conv_hist, check_response = None, 
+            model = model, nopause = False
+        ):
+        if not full_conv_history:
             conversation = [
                 {
                     "role": "system",
@@ -108,24 +100,25 @@ def run_bot(url):
         resp_dict = None
         while resp_dict is None:
             conversation.append({"role": "user", "content": message})
-            if not FULL_HISTORY:
+            if not full_conv_history:
                 conv_hist.append({"role": "user", "content": message})
-            if OLLAMA:
+            if model == "ollama/llama2":
                 resp = completion(
-                    model="ollama/llama2", 
+                    model=model, 
                     messages=conversation, 
                     api_base="http://localhost:11434"
                 )
             else:
-                # Useful models: # gpt-4 gpt-4-turbo-preview gpt-3.5-turbo
                 resp =  completion(    
-                    messages=conversation, model="gpt-4-turbo-preview"
+                    messages=conversation, model=model
                 )
 
             resp_str = resp.choices[0].message.content
             conv_hist.append({"role": "assistant", "content": resp_str})
             try:
                 resp_dict = json.loads(resp_str)
+                if not check_response is None:
+                    resp_dict = check_response(resp_dict)
             except:
                 logging.warn("Bot's response is not a JSON. Trying again.")
                 message = prompts.loc['json_error', 'prompt']
@@ -138,11 +131,55 @@ def run_bot(url):
 
         return resp_dict
 
+    def check_response_start(resp):
+        if "error" in resp:
+            logging.warn(f"Bot's response indicates error: '{resp['error']}'.")
+            return resp
+        if not "understood" in resp:
+            raise RuntimeError("Bot's response does not contain the 'understood' key.")
+        if not str(resp['understood']).lower() == "yes":
+            raise logging.warn("Bot did not understand the message.")
+        return resp
+
+    def check_response_summary(resp):
+        if "error" in resp:
+            logging.warn(f"Bot's response indicates error: '{resp['error']}'.")
+            return resp
+        if not "summary" in resp:
+            raise RuntimeError("Bot's response does not contain the 'summary' key.")
+        return resp
+
+    def check_response_question(resp):
+        if "error" in resp:
+            logging.warn(f"Bot's response indicates error: '{resp['error']}'.")
+            return resp
+        keys = ['questions', 'summary']
+        if not all(k in resp for k in keys):
+            raise RuntimeError("Bot's response does not contain all required keys.")
+        if not isinstance(resp['questions'], list):
+            if isinstance(resp['questions'], dict):
+                resp['questions'] = [resp['questions']]
+            raise RuntimeError("Questions is not a list.")
+        for i,q in enumerate(resp['questions']):
+            if not isinstance(q, dict):
+                raise RuntimeError(f"Question {i} is not a dictionary.")
+            if not all(k in q for k in ['id', 'answer', 'reason']):
+                raise RuntimeError(f"Question {i} does not contain all required keys.")
+        return resp
+            
+    def check_response_end(resp):
+        if "error" in resp:
+            logging.warn(f"Bot's response indicates error: '{resp['error']}'.")
+            return resp
+        if not "remarks" in resp:
+            raise RuntimeError("Bot's response does not contain the 'remarks' key.")
+        return resp
+    
     prompts = pd.read_csv("code/bot_prompts.csv")
     prompts.set_index('id', inplace=True)
     message = prompts.loc['start', 'prompt']
     conv = []
-    resp = llm_send_message(message, conv)
+    resp = llm_send_message(message, conv, check_response_start)
     logging.info(f"Bot's response to basic task: '{resp}'")
     
     options = Options()
@@ -151,17 +188,17 @@ def run_bot(url):
     dr.set_window_size(1920, 1400)
     first_page = True
     summary = None
-    last_page_wait_page = False
     while True:
         text, wait_page, next_button, questions = scan_page(dr)
         if wait_page:
-            last_page_wait_page = True
             wait_next_page(dr)
             continue
 
-        if FULL_HISTORY:
-            if questions: analyze_prompt = 'analyze_page_q_full_hist'
-            else: analyze_prompt = 'analyze_page_full_hist'
+        if full_conv_history:
+            if questions: 
+                analyze_prompt = 'analyze_page_q_full_hist'
+            else: 
+                analyze_prompt = 'analyze_page_full_hist'
         else:
             if first_page:
                 if questions: analyze_prompt = 'analyze_first_page_q'
@@ -172,9 +209,11 @@ def run_bot(url):
         if questions == None:
             nr_q = 0
             questions_json = ""
+            check_response = check_response_summary
         else:
             nr_q = len(questions)
             questions_json = json.dumps(questions)
+            check_response = check_response_question
 
         message = prompts.loc[analyze_prompt, 'prompt'].format(
             body = text, summary = summary, nr_q = nr_q,
@@ -183,16 +222,16 @@ def run_bot(url):
 
         if first_page:
             first_page = False
-            if FULL_HISTORY:
+            if full_conv_history:
                 message = re.sub(
                     'You have now proceeded to the next page\\.', 
                     'You are now on the starting page of the experiment\\.', 
                     message
                 )
             
-        resp = llm_send_message(message, conv)
+        resp = llm_send_message(message, conv, check_response)
         logging.info(f"Bot analysis of page: '{resp}'")
-        if not FULL_HISTORY: summary = resp['summary']
+        if not full_conv_history: summary = resp['summary']
         if questions is None and next_button is not None:
             logging.info("Page has no question but next button. Clicking")
             next_button.click()
@@ -206,7 +245,6 @@ def run_bot(url):
             f"Page has {len(questions)} question(s)."
         )
         for q in resp['questions']: 
-            if isinstance(q, list): q = q[0]
             logging.info(
                 "Bot has answered question " + 
                 f"'{q['id']}' with '{q['answer']}'."
@@ -218,15 +256,17 @@ def run_bot(url):
     
 
     message = prompts.loc['end', 'prompt']
-    resp = llm_send_message(message, conv)
+    resp = llm_send_message(message, conv, check_response_end)
     logging.info(f"Bot's final remarks about experiment: '{resp}'")
     logging.info("Bot finished.")
         
     conn = sqlite3.connect(BOT_DB_SQLITE)
     cursor = conn.cursor()
     cursor.execute(
-        "INSERT INTO conversations (id, conversation) VALUES (?, ?)", 
-        (url[-8:], json.dumps(conv))
+        """
+        INSERT INTO conversations (id, bot_parms, conversation) 
+        VALUES (?, ?, ?)
+        """, (url[-8:], bot_parms, json.dumps(conv))
     )
     conn.commit()
     cursor.close()

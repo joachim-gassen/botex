@@ -19,4 +19,19 @@ conversations = cursor.fetchall()
 cursor.close()
 conn.close()      
 
-conv = json.loads(conversations[16][1])
+conv = json.loads(conversations[0][2])
+questions = []
+for message in conv:
+    if 'role' in message:
+        if message['role'] == 'assistant':
+            try:
+                cont = json.loads(message['content'])
+                if 'questions' in cont:
+                    for q in cont['questions']: questions.append(q)
+            except:
+                logging.info(
+                    f"message :'{message['content']}' failed to load as json"
+                )
+                continue
+
+print(questions)

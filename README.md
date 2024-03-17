@@ -16,7 +16,7 @@ As a starting point, using this setup, I intend to compare the behavior of LLMs 
 2. Set up a virtural environment `python3 -m venv venv`
 3. Activate it `source venv/bin/activate`
 4. Install the necessary packages `pip install -r requirements.txt`
-5. Start a local otree server `cd otree && otree devserver`
+5. Start a local otree server `export OTREE_PRODUCTION=1 && cd otree && otree devserver`
 6. Run `python code/run_otree_session.py`
 
 ## To Do
@@ -25,7 +25,8 @@ As a starting point, using this setup, I intend to compare the behavior of LLMs 
 - [X] Rewrite to use [LiteLLM](https://github.com/BerriAI/litellm). This should make it relatively easy to replace Chat GPT for alternative and even local LLMs.
 - [X] Convert the one shot trust game to multiple rounds (but still allowing only one round)
 - [X] Improve the general usability of the bot by applying it to a more complex experiment with different form fields (maybe osacc?)
-- [X] Develop a prompting variant that asks the LLM to summarize the game so far, so that the message history of multiple round games does not get excessively long.
+- [X] Develop a prompting variant that asks the LLM to summarize the game so far, so that the message history of multiple round games does not get excessively long. 
+- [X] Implement an API for more complete bot response checking
 - [ ] Implement other otree forms than numeric and integer (Select)
 - [ ] Create a framed variant of the trust game (or pick an alternative with a more accounting like framing) 
 - [ ] Run experiment and compare findings.

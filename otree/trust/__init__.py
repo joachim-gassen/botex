@@ -1,29 +1,24 @@
 from otree.api import *
 
-
-
+# This code is an adjusted variant of the oTree example code
 
 doc = """
 This is a standard 2-player trust game where the amount sent by player 1 gets
 tripled. The trust game was first proposed by
-<a href="http://econweb.ucsd.edu/~jandreon/Econ264/papers/Berg%20et%20al%20GEB%201995.pdf" target="_blank">
+<a href="https://doi.org/10.1006/game.1995.1027" target="_blank">
     Berg, Dickhaut, and McCabe (1995)
 </a>.
 """
-
 
 class C(BaseConstants):
     NAME_IN_URL = 'trust'
     PLAYERS_PER_GROUP = 2
     NUM_ROUNDS = 1
-    # Initial amount allocated to each player
     ENDOWMENT = cu(100)
     MULTIPLIER = 3
 
-
 class Subsession(BaseSubsession):
     pass
-
 
 class Group(BaseGroup):
     sent_amount = models.CurrencyField(
@@ -72,8 +67,7 @@ class Player(BasePlayer):
     )
 
 
-
-# FUNCTIONS
+# --- Functions ----------------------------------------------------------------
 
 def creating_session(subsession: Subsession):
     if subsession.round_number == 1:
@@ -82,7 +76,6 @@ def creating_session(subsession: Subsession):
 
 def sent_back_amount_max(group: Group):
     return group.sent_amount * C.MULTIPLIER
-
 
 def set_payoffs(group: Group):
     p1 = group.get_player_by_id(1)
@@ -93,7 +86,8 @@ def set_payoffs(group: Group):
     p2.participant.wealth += p2.payoff
 
 
-# PAGES
+# --- Pages --------------------------------------------------------------------
+    
 class Introduction(Page):
     @staticmethod
     def is_displayed(player):
@@ -113,10 +107,8 @@ class Send(Page):
     def is_displayed(player: Player):
         return player.id_in_group == 1
 
-
 class SendBackWaitPage(WaitPage):
     pass
-
 
 class SendBack(Page):
     """This page is only for P2
@@ -136,10 +128,8 @@ class SendBack(Page):
         tripled_amount = group.sent_amount * C.MULTIPLIER
         return dict(tripled_amount=tripled_amount)
 
-
 class ResultsWaitPage(WaitPage):
     after_all_players_arrive = set_payoffs
-
 
 class Results(Page):
     """This page displays the earnings of each player"""
