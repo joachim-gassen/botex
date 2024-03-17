@@ -60,6 +60,7 @@ def run_bot(
 
         # Identify all form fields by id
         question_id = []
+        question_type = []
         fe = dr.find_elements(By.CLASS_NAME, 'controls')
         for i in range(len(fe)): 
             el = fe[i].find_elements(By.XPATH, ".//*")
@@ -67,21 +68,22 @@ def run_bot(
                 id = el[j].get_attribute("id")
                 if id != '': 
                     question_id.append(id)
+                    question_type.append(el[j].get_attribute("type"))
                     break
         if question_id != []:
             labels = dr.find_elements(By.CLASS_NAME, 'col-form-label')
             question_label = [x.text for x in labels]
             questions = [
-                {"question_id": id, "question_label": label} 
-                for id, label in 
-                zip(question_id, question_label, strict = True)
+                {"question_id": id, "question_type": qtype, "question_label": label} 
+                for id, qtype, label in 
+                zip(question_id, question_type, question_label, strict = True)
             ]
         else:
             questions =  None
         return (
             text, wait_page, next_button, questions
         )
-
+    
     def llm_send_message(
             message, conv_hist, check_response = None, 
             model = model, nopause = False
@@ -115,13 +117,27 @@ def run_bot(
 
             resp_str = resp.choices[0].message.content
             conv_hist.append({"role": "assistant", "content": resp_str})
+            if resp.choices[0].finish_reason == "length":
+                logging.warn("Bot's response is too long. Trying again.")
+                message = prompts.loc['resp_too_long', 'prompt']
+                continue
+
             try:
+                start = resp_str.find('{', 0)
+                end = resp_str.rfind('}', start)
+                resp_str = resp_str[start:end+1]
                 resp_dict = json.loads(resp_str)
                 if not check_response is None:
                     resp_dict = check_response(resp_dict)
             except:
                 logging.warn("Bot's response is not a JSON. Trying again.")
                 message = prompts.loc['json_error', 'prompt']
+                continue
+            
+            if "error" in resp_dict:
+                resp_dict = None
+                message = prompts.loc['confused', 'prompt']
+
         if not nopause:
             sleep_secs = random.normalvariate(
                 PAUSE_BETWEEN_OPENAI_REQUESTS, STD_PAUSE
@@ -250,6 +266,9 @@ def run_bot(
                 f"'{q['id']}' with '{q['answer']}'."
             )
             answer = q['answer']
+            qtype = next(qst['question_type'] for qst in questions if qst['question_id'] == q['id'])
+            if qtype == 'number':
+                answer = int(answer)
             set_id_value(dr, q['id'], answer)
 
         next_button.click()
