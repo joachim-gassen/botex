@@ -11,3 +11,4 @@ end,"Perfect. This concludes the experimental run and our conversation. Do you h
 json_error,"Unfortunately, your response was not in the correct JSON format. Please try again. If you are confused, respond with {error: 'I am confused'}."
 confused,"I am sorry that you are confused. Please focus on the tasks, the required JSON structure and see whether you can answer it now. Try to keep the summary detailed but short enough so that you stay within the token limit.\n\n"
 resp_too_long,"I am sorry but your response exceeded the token limit. Try to keep the summary detailed but short enough so that you stay within the token limit this time.\n\n"
+page_not_changed,"I am sorry but you answer(s) have not been accepted by the system. Most likely this is because they do not comply to the required format or, if they were numeric, are not within the valid numerical range. Please evaluate the page below again and provide your refined answer(s).\n\n"

@@ -1,0 +1,35 @@
+{{ block title }}Your Choice{{ endblock }}
+{{ block content }}
+    {{ if group.round_number == 1 }}
+    <p>
+        You have been assigned the role of a manager of a publicly-listed firm.
+        Please try to impersonate the role of a publicly-listed firm manager 
+        very closely when taking your decisions. 
+        {{ if C.NUM_ROUNDS > 1 }}
+            This will be your role for the entire game. 
+        {{ endif }}
+        The investor will be impersonated by another participant.
+    </p>
+    {{ else }}
+    <p>
+        You are in round {{ group.round_number }} of {{ C.NUM_ROUNDS }} rounds.
+    </p>
+    {{ endif }}        
+    <p>
+        {{ if C.NUM_ROUNDS > 1 }}
+            This round, the investor
+        {{ else }}
+            The investor
+        {{ endif }}
+        has decided to invest {{ group.sent_amount }} into the firm.
+        Given that the firm is very profitable, its returns are now 
+        {{ tripled_amount }}.
+        How much do you want to pay out as a dividend to the investor?
+        Remember that any remaining amount will be paid out to you 
+        as compensation.
+    </p>
+
+    {{ formfields }}
+    <p>{{ next_button }}</p>
+
+{{ endblock }}

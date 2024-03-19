@@ -6,7 +6,13 @@ SESSION_CONFIGS = [
     dict(
         name='trust',
         display_name="Trust Game",
-        app_sequence=['trust', 'payment_info'],
+        app_sequence=['trust'],
+        num_demo_participants=2,
+    ),
+    dict(
+        name='ftrust',
+        display_name="Framed Trust Game",
+        app_sequence=['ftrust'],
         num_demo_participants=2,
     )
 ]
@@ -20,7 +26,10 @@ SESSION_CONFIG_DEFAULTS = dict(
     real_world_currency_per_point=1.00, participation_fee=0.00, doc=""
 )
 
-PARTICIPANT_FIELDS = ['wealth']
+PARTICIPANT_FIELDS = [
+    'wealth', 'comprehension_check', 'manipulation_check', 
+    'human_check', 'feedback'
+]
 SESSION_FIELDS = []
 
 # ISO-639 code

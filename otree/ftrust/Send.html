@@ -1,0 +1,33 @@
+{{ block title }}Your Choice{{ endblock }}
+{{ block content }}
+    {{ if group.round_number == 1 }}
+        <p>
+            You have been assigned the role of the investor.
+            Please try to impersonate the role of a publicly-listed firm investor 
+            very closely when taking your investment decision.
+            {{ if C.NUM_ROUNDS > 1 }}
+                This will be your role for the entire experiment. 
+            {{ endif }}
+            The manager will be impersonated by another participant.
+        </p>
+    {{ else }}
+    <p>
+        You are in round {{ group.round_number }} of {{ C.NUM_ROUNDS }} rounds.
+    </p>
+    {{ endif }}    
+    <p>
+        {{ if C.NUM_ROUNDS > 1 }}
+            Like in every round, you 
+        {{ else }} 
+            You 
+        {{ endif }}
+        have received a private wealth endowment of {{C.ENDOWMENT}}. 
+        How much do you want to invest into the firm?
+    </p>
+
+    {{ formfields }}
+    <p>
+    {{ next_button }}
+    </p>
+
+{{ endblock }}

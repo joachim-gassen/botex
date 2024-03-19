@@ -14,7 +14,7 @@ from bot import run_bot
 
 
 SESSION_CONFIG_NAME = 'trust'
-PLAYERS = 2
+PLAYERS = 4
 
 GET = requests.get
 POST = requests.post

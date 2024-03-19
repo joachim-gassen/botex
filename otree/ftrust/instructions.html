@@ -1,0 +1,48 @@
+
+<div class="card bg-light m-3">
+    <div class="card-body">
+
+    <h3>
+        Instructions
+    </h3>
+    <p>
+        This is an experimental study to learn how investors and managers 
+        interact. You have been randomly selected to act either as an investor
+        or as an manager and anonymously paired with another participant
+        who will be playing the other role. 
+        You will learn whether you are an investor or a manager prior to 
+        making any decision. 
+        Please try to impersonate your role very closely when taking 
+        any decision and think about how you would act if you are a real 
+        investor or a manager of a publicy-listed firm.         
+    </p>
+    <p>
+        {{ if C.NUM_ROUNDS == 1 }}
+            This game will be played for only 1 round. 
+            First, the investor receives a private 
+            wealth of {{ C.ENDOWMENT }} that he can decide to invest into            
+            the firm of the manager.
+        {{ else }} 
+            This experiment will be run over {{ C.NUM_ROUNDS }} rounds.
+            Throughout it, you will remain in your role.
+            Each round, first the investor receives a private 
+            wealth of {{ C.ENDOWMENT }} that he can decide to invest into
+            the firm of the manager or to keep.
+        {{ endif }}
+        The firm is very profitable meaning that the invested amount
+        will be multiplied by {{ C.MULTIPLIER }} to create the firm returns.
+        Next, the manager has to decide how much of the firm returns to
+        return to the investor as a dividend. The remaining amount is paid out
+        to the manager as compensation.
+    </p>
+    <p>
+        {{ if C.NUM_ROUNDS == 1 }}
+            In the experiment, please try to maximize your private payoff. 
+        {{ else }}
+            The dividends and compensation that both players receive in each 
+            round increase their private wealth. In the experiment,
+            please try to maximize your private wealth. 
+        {{ endif }}
+    </p>
+</div>
+</div>

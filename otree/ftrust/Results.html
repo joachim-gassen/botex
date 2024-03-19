@@ -1,0 +1,79 @@
+{{ block title }}Results{{ endblock }}
+{{ block content }}
+    {{ if C.NUM_ROUNDS > 1 }}
+        <p>
+            You are in round {{ group.round_number }} of 
+            {{ C.NUM_ROUNDS }} rounds. 
+        </p>
+    {{ endif }}
+
+    {{ if player.id_in_group == 1 }}
+        <p>
+            {{ if C.NUM_ROUNDS > 1 }}
+                This round, you decided to invest 
+                {{ group.sent_amount }} into the firm.
+            {{ else }}
+                You decided to invest {{ group.sent_amount }} into the firm.
+            {{ endif }}
+            The manager paid you a dividend of  {{ group.sent_back_amount }}. 
+            Your payoff thus is {{ C.ENDOWMENT }} - {{ group.sent_amount }} + 
+            {{ group.sent_back_amount }} = <strong>{{ player.payoff }}</strong>.
+        </p>
+        {{ if C.NUM_ROUNDS == 1 }}
+            <p>
+                As this was the only round of the experiment, your accumulated 
+                total wealth is {{ p1_wealth }}, while the accumulated wealth of 
+                the manager is {{ p2_wealth }}.
+            </p>
+        {{ else }}
+            {{ if group.round_number == C.NUM_ROUNDS }}
+                <p>
+                    This was the last round. Your accumulated total wealth is 
+                    {{ p1_wealth }}, while the accumulated wealth of 
+                    the manager is {{ p2_wealth }}.
+                </p>
+            {{ else }}
+                <p>
+                    Your accumulated wealth over the rounds so far is 
+                    {{ p1_wealth }}, while the accumulated wealth of 
+                    the manager is {{ p2_wealth }}.
+                </p>
+            {{ endif }}
+        {{ endif }}
+    {{ else }}
+        <p>
+            This round, your investor has decided to invest 
+            {{ group.sent_amount }} into the firm.
+            As the firm is very profitable, this investment has lead to
+            a firm return of {{ tripled_amount }}.
+            You chose to pay a dividend of {{ group.sent_back_amount }},
+            to the investor. Thus your private compensation of this round is
+            {{ tripled_amount }} - {{ group.sent_back_amount }} = 
+            <strong>{{ player.payoff }}</strong>.
+        </p>
+        {{ if C.NUM_ROUNDS == 1 }}
+            <p>
+                As this was the only round of the game, your accumulated total 
+                wealth is {{ p2_wealth }}, while the accumulated wealth of 
+                the investor is {{ p1_wealth }}.
+            </p>
+        {{ else }}
+            {{ if group.round_number == C.NUM_ROUNDS }}
+                <p>
+                    This was the last round. Your accumulated total wealth is 
+                    {{ p2_wealth }}, while the accumulated wealth of 
+                    the investor is {{ p1_wealth }}.
+                </p>
+            {{ else }}
+                <p>
+                    Your accumulated wealth over the rounds so far is 
+                    {{ p2_wealth }}, while the accumulated wealth of 
+                    the investor is {{ p1_wealth }}.
+                </p>
+            {{ endif }}
+        {{ endif }}
+    {{ endif }}
+
+    <p>{{ next_button }}</p>
+
+{{ endblock }}

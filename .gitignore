@@ -13,3 +13,7 @@ __pycache__/
 secrets.env
 *.pdf
 .vscode
+.Rproj.user
+*.Rproj
+*.Rhistory
+

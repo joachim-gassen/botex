@@ -11,7 +11,7 @@ tripled. The trust game was first proposed by
 """
 
 class C(BaseConstants):
-    NAME_IN_URL = 'trust'
+    NAME_IN_URL = 'ftrust'
     PLAYERS_PER_GROUP = 2
     NUM_ROUNDS = 10
     ENDOWMENT = cu(100)
@@ -24,13 +24,13 @@ class Group(BaseGroup):
     sent_amount = models.CurrencyField(
         min=0,
         max=C.ENDOWMENT,
-        doc="""Amount received by the other participant""",
+        doc="""Amount to invest into the firm""",
         label="Please enter an amount from 0 to 100:",
     )
     sent_back_amount = models.CurrencyField(
         min=cu(0),
         max=sent_amount*C.MULTIPLIER,
-        doc="""Amount sent back to the other participant""",
+        doc="""Dividend to be paid out to the investor""",
     )
 
 class Player(BasePlayer):
@@ -39,18 +39,18 @@ class Player(BasePlayer):
         label="What is the role of the multiplier in this game?",
         blank=False,
         choices=[
-            [1, 'It increases the private wealth of the sender'],
-            [2, 'It increases the private wealth of the receiver'],
-            [3, 'It increases the amount sent by the sender, ' + 
-            'potentially benefiting both the sender and the receiver'],
+            [1, 'It increases the private wealth of the investor'],
+            [2, 'It increases the private wealth of the manager'],
+            [3, 'It increases the invested amount, ' + 
+            'potentially benefiting both the investor and the manager'],
         ],
     )
     manipulation_check = models.IntegerField(
         label="What was your role in this game?",
         blank=False,
         choices=[
-            [1, 'Sender'],
-            [2, 'Receiver'],
+            [1, 'Investor'],
+            [2, 'Manager'],
         ]
     )
     human_check = models.IntegerField(

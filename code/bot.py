@@ -204,7 +204,9 @@ def run_bot(
     dr.set_window_size(1920, 1400)
     first_page = True
     summary = None
+    text = ""
     while True:
+        old_text = text
         text, wait_page, next_button, questions = scan_page(dr)
         if wait_page:
             wait_next_page(dr)
@@ -244,6 +246,15 @@ def run_bot(
                     'You are now on the starting page of the experiment\\.', 
                     message
                 )
+        
+        if old_text == text:
+            logging.warn("Bot's answers were likely erroneous. Trying again.")
+            if questions == None:
+                logging.warn("""
+                    This should only happen with pages containing questions.
+                    Most likely something is seriously wrong here.
+                """)
+            message = prompts.loc['page_not_changed', 'prompt'] + message
             
         resp = llm_send_message(message, conv, check_response)
         logging.info(f"Bot analysis of page: '{resp}'")

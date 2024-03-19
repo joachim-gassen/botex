@@ -16,7 +16,7 @@ As a starting point, using this setup, I intend to compare the behavior of LLMs 
 2. Set up a virtural environment `python3 -m venv venv`
 3. Activate it `source venv/bin/activate`
 4. Install the necessary packages `pip install -r requirements.txt`
-5. Start a local otree server `export OTREE_PRODUCTION=1 && cd otree && otree devserver`
+5. Start a local otree server `cd otree && export OTREE_PRODUCTION=1 && otree devserver`
 6. Run `python code/run_otree_session.py`
 
 ## To Do
@@ -28,6 +28,6 @@ As a starting point, using this setup, I intend to compare the behavior of LLMs 
 - [X] Develop a prompting variant that asks the LLM to summarize the game so far, so that the message history of multiple round games does not get excessively long. 
 - [X] Implement an API for more complete bot response checking
 - [ ] Implement other otree forms than numeric and integer (Select)
-- [ ] Create a framed variant of the trust game (or pick an alternative with a more accounting like framing) 
+- [X] Create a framed variant of the trust game (or pick an alternative with a more accounting like framing) 
 - [ ] Run experiment and compare findings.
 - [ ] Write paper
