@@ -2,13 +2,13 @@
 
 ## Idea
 
-In this project I intend to study how LLMs perform in classic accounting experiments, relative to their economic or psychological blueprints.
+The purpose of this project is two-fold:
 
-Accounting experiments typically use an accounting framing, often without hypothesizing or testing the framing effect per se. As an example, the budget experiment games in accounting are conceptually relatively close to cheap talk games in economics.
+(1) I introduce a framework that allows to use large language models (LLM) as bots for oTree experiments. Different from [prior work](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4682602), my framework does not require the development of dedicated prompts. Instead, my bots consecutively scrape their respective oTree participant page and infer the
+experimental flow solely from the web page content. This avoids the risk of misalignment between human (web page) and bot (LLM prompt) experimental designs and allows to use my bots to develop and pre-test oTree experiments that are designed primarily for human participants. 
+(2) I use this framework to study the effect of (accounting) framing on experimental findings in classic economic experiments. Accounting experiments typically use an accounting framing, often without hypothesizing or testing the framing effect per se. As an example, the budget experiment games in accounting are conceptually relatively close to cheap talk games in economics.
 
-Building on [recent work](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4682602) I develop a framework that allows LLM agents to participate in [oTree](https://www.otree.org) experiments by consecutively scraping their participant's web page.
-
-As a starting point, using this setup, I intend to compare the behavior of LLMs in a classic neutral investment trust game, to their behavior in a game where the trustor is framed to be an investor and the trustee is characterized as a manager.
+As a starting point, using this setup, I compare the behavior of LLMs in a classic [neutral investment trust game](https://doi.org/10.1006/game.1995.1027), to their behavior in a game where the trustor is framed to be an investor and the trustee is characterized as a manager. Based on a small sample of LLM runs (30 for each experiment), I find that, in the framed experiment, senders send significantly larger amounts to receivers while the share that the receivers return are not significantly different from the neutral experiment.
 
 ## Setup
 
