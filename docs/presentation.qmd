@@ -26,6 +26,9 @@ header-includes:
 - \usepackage{tabu}
 - \usetikzlibrary{arrows,arrows.meta,calc,positioning,matrix}
 - \input{materials/beamer_theme_trr266_16x9.sty}
+- \usepackage{tikz}
+- \usepackage{tikzsymbols}
+- \usetikzlibrary{calc, shapes, arrows.meta, positioning}
 ---
 
 ```{r setup, include=FALSE, cache=F, message=F, warning=F, results="hide"}
@@ -49,9 +52,21 @@ suppressMessages({
 
 options(modelsummary_format_numeric_latex = "plain")
 
-rounds <- read_csv("../data/generated/rounds.csv", show_col_types = FALSE)
-participants <- read_csv("../data/generated/participants.csv", show_col_types = FALSE)
-rounds$pct_returned <- rounds$sent_back_amount/(3*rounds$sent_amount)
+rounds <- read_csv("../data/generated/rounds.csv", show_col_types = FALSE) %>%
+	mutate(
+		experiment = factor(ifelse(
+			experiment == "ftrust",
+			"Investor/Management Framing", "Neutral Framing"
+		), c("Neutral Framing", "Investor/Management Framing")),
+		pct_returned = sent_back_amount/(3*sent_amount)
+	)
+participants <- read_csv("../data/generated/participants.csv", show_col_types = FALSE) %>%
+	mutate(
+		experiment = factor(ifelse(
+			experiment == "ftrust",
+			"Inv/Manag", "Neutral"
+		), c("Neutral", "Inv/Manag"))
+	)
 
 # Needs \usepackage{adjustbox} in preamble
 fit_gt_table_to_slide <- function(x, scale = 1) {
@@ -115,22 +130,108 @@ if (!trr266_fonts_available) {
 ## Traditional oTree Setup
 
 \begin{center}
-\includegraphics[height =0.7\textheight]{"materials/otree.jpeg"}
+\begin{tikzpicture}[
+    block/.style={rectangle, draw, text width=5em, text centered, minimum height=4em},
+    line/.style={draw, -Latex},
+    every node/.append style={
+        execute at end node={\strut},
+    }
+]
+
+% Blocks
+\node[block] (otree) {oTree};
+\node[block, right=2cm of otree] (webpages) {Webpages};
+\node[right=2cm of webpages] (participants) {\Strichmaxerl[4]}  {};
+\node[left=2cm of otree] (researcher){\Strichmaxerl[4]} {};
+
+% Lines
+\draw[line] ($(researcher.east)!0.5!(researcher.north east)$) -- node[above] {Design} ($(otree.west)!0.5!(otree.north west)$);
+\draw[line] ($(otree.west)!0.5!(otree.south west)$) -- node[below] {Data} ($(researcher.east)!0.5!(researcher.south east)$);
+\draw[line] ($(otree.east)!0.5!(otree.north east)$) -- node[above] {HTTP} ($(webpages.west)!0.5!(webpages.north west)$);
+\draw[line] ($(webpages.west)!0.5!(webpages.south west)$) -- node[below] {Response} ($(otree.east)!0.5!(otree.south east)$);
+\draw[line, Latex-Latex] (participants) -- (webpages);
+
+% Labels
+\node[below=0.1cm of participants] {Human Participants};
+\node[below=0.1cm of researcher] {Researcher};
+
+\end{tikzpicture}
 \end{center}
+
 
 ## oTree + Alter Ego
 
 \begin{center}
-\includegraphics[height =0.7\textheight]{"materials/otree_alterego.jpeg"} \\
+\begin{tikzpicture}[
+    block/.style={rectangle, draw, text width=5em, text centered, minimum height=4em},
+    line/.style={draw, -Latex},
+    every node/.append style={
+        execute at end node={\strut},
+    }
+]
+
+% Blocks
+\node[block] (otree) {oTree};
+\node[block, above=	1cm of otree] (llm) {LLM};
+\node[block, right=2cm of otree] (webpages) {Webpages};
+\node[right=2cm of webpages] (participants) {\Strichmaxerl[4]}  {};
+\node[left=2cm of otree] (researcher){\Strichmaxerl[4]} {};
+
+% Lines
+\draw[line] ($(researcher.east)!0.5!(researcher.north east)$) -- node[above] {Design} ($(otree.west)!0.5!(otree.north west)$);
+\draw[line] ($(otree.west)!0.5!(otree.south west)$) -- node[below] {Data} ($(researcher.east)!0.5!(researcher.south east)$);
+\draw[line] ($(otree.east)!0.5!(otree.north east)$) -- node[above] {HTTP} ($(webpages.west)!0.5!(webpages.north west)$);
+\draw[line] ($(webpages.west)!0.5!(webpages.south west)$) -- node[below] {Response} ($(otree.east)!0.5!(otree.south east)$);
+\draw[line, Latex-Latex] (participants) -- (webpages);
+\draw[line] ($(llm.west)!0.35!(llm.north west)$) -| node[pos=0.25,above] {Data} ($(researcher.north)!0.75!(researcher.north west)$);
+\draw[line] ($(researcher.north)!0.75!(researcher.north east)$) |- node[pos=0.75,below] {Design} ($(llm.west)!0.35!(llm.south west)$);
+
+% Labels
+\node[below=0.1cm of participants] {Human Participants};
+\node[below=0.1cm of researcher] {Researcher};
+
+\end{tikzpicture}
 Engel, Grossmann and Ockenfels (2024, SSRN)
 \end{center}
+
 
 ## oTree + BotEx
 
 \begin{center}
-\includegraphics[height =0.7\textheight]{"materials/otree_botex.jpeg"}
-\end{center}
+\begin{tikzpicture}[
+    block/.style={rectangle, draw, text width=5em, text centered, minimum height=4em},
+    line/.style={draw, -Latex},
+    every node/.append style={
+        execute at end node={\strut},
+    }
+]
 
+% Blocks
+\node[block] (otree) {oTree};
+\node[block, right=2cm of otree] (webpages) {Webpages};
+\node[block, above=1cm of webpages] (botex) {BotEx};
+\node[right=2cm of webpages] (participants) {\Strichmaxerl[4]}  {};
+\node[block, right=2cm of botex] (llm) {LLM};
+\node[left=2cm of otree] (researcher){\Strichmaxerl[4]} {};
+
+% Lines
+\draw[line] ($(researcher.east)!0.5!(researcher.north east)$) -- node[above] {Design} ($(otree.west)!0.5!(otree.north west)$);
+\draw[line] ($(otree.west)!0.5!(otree.south west)$) -- node[below] {Data} ($(researcher.east)!0.5!(researcher.south east)$);
+\draw[line] ($(otree.east)!0.5!(otree.north east)$) -- node[above] {HTTP} ($(webpages.west)!0.5!(webpages.north west)$);
+\draw[line] ($(webpages.west)!0.5!(webpages.south west)$) -- node[below] {Response} ($(otree.east)!0.5!(otree.south east)$);
+\draw[line, Latex-Latex] (participants) -- (webpages);
+\draw[line] ($(webpages.north)!0.5!(webpages.north west)$) -- node[left] {Scrape} ($(botex.south)!0.5!(botex.south west)$);
+\draw[line] ($(botex.south)!0.5!(botex.south east)$) -- node[right] {Response} ($(webpages.north)!0.5!(webpages.north east)$);
+\draw[line] ($(llm.west)!0.5!(llm.north west)$) -- node[above] {Response} ($(botex.east)!0.5!(botex.north east)$);
+\draw[line] ($(botex.east)!0.5!(botex.south east)$) -- node[below] {Prompt} ($(llm.west)!0.5!(llm.south west)$);
+
+% Labels
+\node[below=0.1cm of participants] {Human Participants};
+\node[below=0.1cm of researcher] {Researcher};
+
+\end{tikzpicture}
+
+\end{center}
 
 ## A First Example
 
@@ -168,16 +269,16 @@ Nye, Paganelli, and Pan, PLOS One 2013; Cronk and Wasielewski, J of Evolutionary
 ## Descriptive Statistics by Framing
 
 ```{r DescStatsTab}
-datasummary(sent_amount + sent_back_amount + pct_returned ~ experiment*(N + mean + sd + median), data = rounds, )
+datasummary((`Amount sent`=sent_amount) + (`Amount returned`=sent_back_amount) + (`% returned`=pct_returned) ~ experiment*(N + (`Mean`=mean) + (`S.D.` = sd) + (`Median`=median)), data = rounds )
 
 ```
 
 ## Sent Amount by Framing
 
 ```{r SentAmountFig, fig.width=8, fig.height=3.5, fig.align="center", fig.showtext = TRUE}
-color_scale <- RColorBrewer::brewer.pal(3 ,"Set1")
-names(color_scale) <- unique(rounds$experiment)
-color_scale_labs <- c("Investor/Manager", "Neutral")
+color_scale <- RColorBrewer::brewer.pal(3 ,"Set1")[c(2, 1)]
+names(color_scale) <- unique(levels(rounds$experiment))
+color_scale_labs <- c("Neutral", "Investor/Manager")
 
 ggplot(rounds, aes(x = experiment, y = sent_amount, group = experiment, color = experiment)) +
   geom_boxplot() +
@@ -220,11 +321,16 @@ ggplot(rounds, aes(x = as.factor(round), y = sent_amount, group = experiment, co
 modelsummary(
 	lm(sent_amount ~ round*experiment, data = rounds),
 	stars = c(`***` = 0.01, `**` = 0.05, `*` = 0.1),
-	gof_omit = "BIC|AIC|F|RMSE|Log|^R2$"
+	gof_omit = "BIC|AIC|F|RMSE|Log|^R2$",
+	coef_rename = c(
+		"round" = "Round",
+		"experimentInvestor/Management Framing" = "Investor/Management",
+		"round:experimentInvestor/Management Framing" = "Round \u00d7 Investor/Management"
+	)
 )
 ```
 
-## Some verbal response
+## Some Verbal Response
 
 ```{r ReasoningFig, fig.width=8, fig.height=3.5, fig.align="center", fig.showtext = TRUE}
 vr <- rounds %>%
@@ -245,7 +351,7 @@ ggplot(vr, aes(label = word, size = count, color = experiment)) +
 
 
 
-## Manipulation checks ;-)
+## Manipulation Checks ;-)
 
 ```{r ManCheckTab}
 df <- participants %>%
@@ -267,7 +373,7 @@ datasummary(
 It works (at least for a very simple albeit repeated game):
 
 - Context framing as investor/manager setting increases willingness of the sender to send money, and leaves strategy of the receiver unaffected
-- Costs: ~30 US-$ for 60 participants, duration: app. 4 hours (fully scriptable)
+- Costs: ~30 US-$ for 60 participants, duration: ~4 hours (fully scriptable)
 
 Next steps
 
