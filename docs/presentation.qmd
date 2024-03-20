@@ -1,0 +1,278 @@
+---
+title: "BotEx: Using LLMs as Experimental Participants in oTree"
+subtitle: "" # we use this for the venue
+author: Joachim Gassen
+institute: Humboldt-Universität zu Berlin
+date: today
+date-format: "MMMM D, YYYY"
+format: 
+  beamer: 
+    latex_engine: xelatex # pdflatex creates rastered fonts
+    slide_level: 3
+    
+classoption: "aspectratio=169"
+
+header-includes:
+- \usepackage{booktabs} 
+- \usepackage{tabularx}
+- \usepackage{multirow,makecell}
+- \usepackage{array}
+- \renewcommand\tabularxcolumn[1]{m{#1}}
+- \usepackage{makecell}
+- \usepackage{colortbl}
+- \usepackage{adjustbox}
+- \usepackage{tikz}
+- \usepackage{siunitx}
+- \usepackage{tabu}
+- \usetikzlibrary{arrows,arrows.meta,calc,positioning,matrix}
+- \input{materials/beamer_theme_trr266_16x9.sty}
+---
+
+```{r setup, include=FALSE, cache=F, message=F, warning=F, results="hide"}
+knitr::opts_chunk$set(
+  cache = FALSE, echo = FALSE, message = FALSE, warning = FALSE
+)
+
+suppressMessages({
+  library(tidyverse)
+  library(ggbeeswarm)
+  library(kableExtra)
+  library(modelsummary)
+  library(showtext)
+	library(ggwordcloud)
+	library(tidytext)
+	
+  devtools::source_url(
+    "https://raw.githubusercontent.com/trr266/treat/main/code/R/theme_trr.R"
+  )
+})
+
+options(modelsummary_format_numeric_latex = "plain")
+
+rounds <- read_csv("../data/generated/rounds.csv", show_col_types = FALSE)
+participants <- read_csv("../data/generated/participants.csv", show_col_types = FALSE)
+rounds$pct_returned <- rounds$sent_back_amount/(3*rounds$sent_amount)
+
+# Needs \usepackage{adjustbox} in preamble
+fit_gt_table_to_slide <- function(x, scale = 1) {
+	if (scale == 1) repstr <- "\\\\resizebox{\\\\columnwidth}{!}{\\\\begin{tabular}"
+	else repstr <- paste0("\\\\resizebox{", scale, "\\\\columnwidth}{!}{\\\\begin{tabular}")
+  x <- sub("\\\\begin\\{longtable\\}", repstr, x)
+  x <- sub("\\\\end\\{longtable\\}", "\\\\end{tabular}}", x)
+  x
+}
+
+fit_gt_table_to_slide_long <- function(x, scale = 1) {
+	if (scale == 1) repstr <- "\\\\resizebox*{!}{\\\\textheight}{\\\\begin{tabular}"
+	else repstr <- paste0("\\\\resizebox*{!}{", scale, "\\\\textheight}{\\\\begin{tabular}")
+  x <- sub("\\\\begin\\{longtable\\}", repstr, x)
+  x <- sub("\\\\end\\{longtable\\}", "\\\\end{tabular}}", x)
+  x
+}
+
+center_table <- function(x) {
+	x[1] <- paste0("\\begin{center}", x[1], "\\end{center}")
+	x
+}
+```
+
+```{r InstallTRRFonts}
+trr266_fonts_available <- all(c("Cambria", "Calibri Light") %in% font_families())
+
+if (!trr266_fonts_available) {
+  # On Mac with MS Office installation you need to add the Office
+  # Fonts to the font path. The following depends on your 
+  # installation but _should_ work in most cases
+  
+  office_font_path <- "/Applications/Microsoft Word.app/Contents/Resources/DFonts"
+  if (Sys.info()["sysname"] == "Darwin") {
+    if (dir.exists(office_font_path)) font_paths(office_font_path)
+    else stop("MS Office font path not found")
+  }
+  
+  rv <- tryCatch({
+    font_add(family = "Cambria", regular = "Cambria.ttc")
+    font_add(family = "Calibri Light", regular = "calibril.ttf")
+  }, error = function(e) {
+    message(sprintf("Failed to install TRR 266 fonts: %s", e))
+    invisible(font_families())        
+  })
+  
+  trr266_fonts_available <- all(c("Cambria", "Calibri Light") %in% rv)
+  if (trr266_fonts_available) message("Successfully installed TRR 266 fonts") 
+}
+```
+
+## Motivation
+
+1. Designing experiments is hard and small differences in experimental materials can have significant impact on experimental findings. Wouldn't it be great to have a "cheap" way to pretest experimental designs without bothering humans?
+
+2. Understanding how LLMs act in behavioral experiments - on their own and interacting with humans - is an emergent and rapidly evolving research field. Providing an infrastructure to run such experiments should be beneficial for the profession.
+
+3. Applied experimental work often uses context framing in their experimental designs without explicitly hypothesizing and assessing its effect on findings. LLM based experiments might inform priors in that regard.
+
+
+## Traditional oTree Setup
+
+\begin{center}
+\includegraphics[height =0.7\textheight]{"materials/otree.jpeg"}
+\end{center}
+
+## oTree + Alter Ego
+
+\begin{center}
+\includegraphics[height =0.7\textheight]{"materials/otree_alterego.jpeg"} \\
+Engel, Grossmann and Ockenfels (2024, SSRN)
+\end{center}
+
+## oTree + BotEx
+
+\begin{center}
+\includegraphics[height =0.7\textheight]{"materials/otree_botex.jpeg"}
+\end{center}
+
+
+## A First Example
+
+- As a first sniff test, I study whether an investor/manager framing in a classic multi-round investment trust game (Berg, Dickhaut and McCabe, Games and Econ Behav 1995) affects the observed outcome.
+
+- Prior work has shown that the investment trust game is subject to context framing effects (e.g., Al-Ubaydli, Houser,
+Nye, Paganelli, and Pan, PLOS One 2013; Cronk and Wasielewski, J of Evolutionary Psychology 2008)
+
+- Can similar framing effects also be observed for LLMs?
+
+
+## The Neutral Frame
+
+\begin{center}
+\includegraphics[height =0.85\textheight]{"materials/otree_inst_neutral.jpeg"}
+\end{center}
+
+
+## The Investor/Manager Frame
+
+\begin{center}
+\includegraphics[height =0.85\textheight]{"materials/otree_inst_framed.jpeg"}
+\end{center}
+
+
+## Sample Composition
+
+|                             |   Sender | Receiver |
+|:----------------------------|---------:|---------:|
+| Neutral Framing             |       15 |       15 |
+| Investor/Management Framing |       15 |       15 |
+| Total                       |       30 |       30 |
+
+
+## Descriptive Statistics by Framing
+
+```{r DescStatsTab}
+datasummary(sent_amount + sent_back_amount + pct_returned ~ experiment*(N + mean + sd + median), data = rounds, )
+
+```
+
+## Sent Amount by Framing
+
+```{r SentAmountFig, fig.width=8, fig.height=3.5, fig.align="center", fig.showtext = TRUE}
+color_scale <- RColorBrewer::brewer.pal(3 ,"Set1")
+names(color_scale) <- unique(rounds$experiment)
+color_scale_labs <- c("Investor/Manager", "Neutral")
+
+ggplot(rounds, aes(x = experiment, y = sent_amount, group = experiment, color = experiment)) +
+  geom_boxplot() +
+	geom_beeswarm(size = 0.25) +
+  labs(x = "", y = "") +
+	scale_x_discrete(labels = NULL, breaks = NULL) +
+	scale_color_manual("", values = color_scale, labels = color_scale_labs) +
+	theme_minimal() +
+	theme(
+		panel.grid.minor = element_blank()
+	)
+
+```
+
+## Sent Amount by Round
+
+```{r SentAmountRoundFig, fig.width=8, fig.height=3.5, fig.align="center", fig.showtext = TRUE}
+ggplot(rounds, aes(x = as.factor(round), y = sent_amount, group = experiment, color = experiment)) +
+	geom_beeswarm(size = 0.25, corral = "wrap") +
+	stat_summary(
+		aes(fill = experiment), color = NA, 
+		geom = "ribbon", fun = "mean", alpha=0.1,
+		fun.min = function(x) mean(x) - 1.96 / (length(x) - 1) * sd(x), 
+		fun.max = function(x) mean(x) + 1.96 / (length(x) - 1) * sd(x),
+		show.legend = FALSE
+	) + 
+	labs(x = "Round", y = "", color = "") +
+	scale_color_manual("", values = color_scale, labels = color_scale_labs) +
+	scale_fill_manual("", values = color_scale, labels = color_scale_labs) +
+	theme_minimal() +
+	theme(
+		panel.grid.major.x  = element_blank(),
+		panel.grid.minor = element_blank()
+	)
+```
+
+## Regression Results
+
+```{r RegressionTab}
+modelsummary(
+	lm(sent_amount ~ round*experiment, data = rounds),
+	stars = c(`***` = 0.01, `**` = 0.05, `*` = 0.1),
+	gof_omit = "BIC|AIC|F|RMSE|Log|^R2$"
+)
+```
+
+## Some verbal response
+
+```{r ReasoningFig, fig.width=8, fig.height=3.5, fig.align="center", fig.showtext = TRUE}
+vr <- rounds %>%
+	mutate(full_reason = paste(sent_reason, sent_back_reason)) %>%
+	unnest_tokens(word, full_reason) %>%
+	anti_join(stop_words, by = "word") %>% 
+	group_by(experiment, word) %>%
+	filter(n() > 50) %>%
+	summarise(count = n())
+
+ggplot(vr, aes(label = word, size = count, color = experiment)) +
+	geom_text_wordcloud() +
+	scale_color_manual("", values = color_scale, labels = color_scale_labs) +
+	facet_wrap(~experiment) +
+	theme_minimal()
+
+```
+
+
+
+## Manipulation checks ;-)
+
+```{r ManCheckTab}
+df <- participants %>%
+	mutate(
+		comprehension_check = factor(ifelse(comprehension_check == 3, "Yes", "No"), c("Yes", "No")),
+		manipulation_check =  factor(ifelse(manipulation_check == role_in_group, "Yes", "No"), c("Yes", "No")),
+		human_check = factor(ifelse(human_check == 1, "Human", "Bot"), c("Human", "Bot"))
+	)
+datasummary(
+	(`Answers comprehension question correctly` = comprehension_check) + 
+		(`Remembers role` = manipulation_check) + 
+		(`Characterizes as ...` = human_check) ~ experiment*N, 
+	data = df)
+
+```
+
+## Summary and Next Steps 
+
+It works (at least for a very simple albeit repeated game):
+
+- Context framing as investor/manager setting increases willingness of the sender to send money, and leaves strategy of the receiver unaffected
+- Costs: ~30 US-$ for 60 participants, duration: app. 4 hours (fully scriptable)
+
+Next steps
+
+- Make framework portable 
+- Other games?
+- Identify seminal accounting study to compare to its "neutral" alternative 
+- Alternatively: replicate Liberman, Samuels and Ross (2014) study on "Community" vs. "Wallstreet" framing for prisoner's dilmma  (but: likelihood that results are in LLM training material...)
+- Compare findings with results for human participants 

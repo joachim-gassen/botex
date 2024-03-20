@@ -1,7 +1,9 @@
 import os
-import logging
 import json
 import sqlite3
+
+import logging
+logging.basicConfig(level=logging.WARNING)
 
 import pandas as pd
 from dotenv import load_dotenv
@@ -9,7 +11,7 @@ from dotenv import load_dotenv
 load_dotenv('secrets.env')
 
 BOT_DB_SQLITE = os.environ.get('BOT_DB_SQLITE')
-OTREE_DATA = 'data/external/all_apps_wide_2024-03-18.csv'
+OTREE_DATA = 'data/external/all_apps_wide_2024-03-19.csv'
 
 conn = sqlite3.connect(BOT_DB_SQLITE)
 cursor = conn.cursor()
@@ -27,7 +29,9 @@ otree_raw = pd.read_csv(OTREE_DATA, index_col= False)
 
 def extract_participant_data(otree_raw, exp):
     wide = otree_raw.loc[
-        otree_raw[f'{exp}.10.player.feedback'].notna()
+        (otree_raw['participant._current_app_name'] == exp) &
+        (otree_raw['participant._index_in_pages'] == 80) 
+        # Adjust this above to the last page of the experiment
     ].reset_index()
     if wide.shape[0] == 0: return None
     long = pd.melt(
@@ -117,7 +121,11 @@ def extract_rationales(participant_code):
     for message in conv:
         if message['role'] == 'assistant':
                 try:
-                    cont = json.loads(message['content'])
+                    resp_str = message['content']
+                    start = resp_str.find('{', 0)
+                    end = resp_str.rfind('}', start)
+                    resp_str = resp_str[start:end+1]
+                    cont = json.loads(resp_str)
                     if 'questions' in cont:
                         for q in cont['questions']: 
                             if q['id'] == "id_sent_amount" or q['id'] == "id_sent_back_amount": 

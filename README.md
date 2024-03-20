@@ -1,14 +1,14 @@
-# LLM models as Experimental Agents: The Role of Accounting Framing
+# BotEx: Using LLMs as Experimental Participants in oTree
 
 ## Idea
 
 The purpose of this project is two-fold:
 
-(1) I introduce a framework that allows to use large language models (LLM) as bots for oTree experiments. Different from [prior work](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4682602), my framework does not require the development of dedicated prompts. Instead, my bots consecutively scrape their respective oTree participant page and infer the
-experimental flow solely from the web page content. This avoids the risk of misalignment between human (web page) and bot (LLM prompt) experimental designs and allows to use my bots to develop and pre-test oTree experiments that are designed primarily for human participants. 
-(2) I use this framework to study the effect of (accounting) framing on experimental findings in classic economic experiments. Accounting experiments typically use an accounting framing, often without hypothesizing or testing the framing effect per se. As an example, the budget experiment games in accounting are conceptually relatively close to cheap talk games in economics.
+1. I introduce the framework BotEx that allows to use large language models (LLM) as bots for oTree experiments. Different from [prior work](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4682602), my framework does not require the development of dedicated prompts. Instead, its bots consecutively scrape their respective oTree participant page and infer the
+experimental flow solely from the web page content. This avoids the risk of misalignment between human (web page) and bot (LLM prompt) experimental designs and, besides facilitating the study of LLM "behavior", allows to use bots to develop and pre-test oTree experiments that are designed (primarily) for human participants. 
+2. I use this framework to study the effect of context framing on experimental findings in classic economic experiments. Accounting experiments typically use an accounting framing, often without hypothesizing or testing the framing effect per se. Using BotEx to test for the effect of a certain contextual framing can inform the researcher about how likely it is to affect the findings in a setting with human participants.
 
-As a starting point, using this setup, I compare the behavior of LLMs in a classic [neutral investment trust game](https://doi.org/10.1006/game.1995.1027), to their behavior in a game where the trustor is framed to be an investor and the trustee is characterized as a manager. Based on a small sample of LLM runs (30 for each experiment), I find that, in the framed experiment, senders send significantly larger amounts to receivers while the share that the receivers return are not significantly different from the neutral experiment.
+As a starting point, using this setup, I compare the response behavior of LLMs in a classic [neutral investment trust game](https://doi.org/10.1006/game.1995.1027), to their behavior in a game where the trustor is framed to be an investor and the trustee is characterized as a manager. Based on a small sample of LLM runs (30 for each experiment), I find that, in the framed experiment, sending LLMs send significantly larger amounts to receiving LLMs while the share that the receiving LLMs return are not significantly different from the neutral experiment.
 
 ## Setup
 
@@ -29,5 +29,5 @@ As a starting point, using this setup, I compare the behavior of LLMs in a class
 - [X] Implement an API for more complete bot response checking
 - [ ] Implement other otree forms than numeric and integer (Select)
 - [X] Create a framed variant of the trust game (or pick an alternative with a more accounting like framing) 
-- [ ] Run experiment and compare findings.
-- [ ] Write paper
+- [X] Run experiment and compare findings.
+- [ ] Showcase and decide on next steps

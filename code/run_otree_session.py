@@ -14,7 +14,7 @@ from bot import run_bot
 
 
 SESSION_CONFIG_NAME = 'trust'
-PLAYERS = 4
+PLAYERS = 2
 
 GET = requests.get
 POST = requests.post
@@ -88,7 +88,7 @@ bots_urls = [urls[i] for i in sample(range(PLAYERS), nbots)]
 human_urls = list(set(urls) - set(bots_urls))
 
 rows = zip(
-    SESSION_CONFIG_NAME*PLAYERS, [session_id]*PLAYERS, 
+    [SESSION_CONFIG_NAME]*PLAYERS, [session_id]*PLAYERS, 
     part_codes, [x in human_urls for x in urls], urls,
     [datetime.now(timezone.utc)]*PLAYERS
 )
