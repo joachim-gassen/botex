@@ -1,15 +1,12 @@
-import os
 import re
 import logging
 import json
-import random
-import time
+from datetime import datetime, timezone
 import sqlite3
+import csv
+from importlib.resources import files
 
-import pandas as pd
-from dotenv import load_dotenv
 from litellm import completion
-# from openai import OpenAI
 
 from selenium import webdriver
 from selenium.webdriver.support.wait import WebDriverWait
@@ -18,31 +15,49 @@ from selenium.webdriver.common.by import By
 
 logging.getLogger("LiteLLM").setLevel(logging.WARNING)
 
-# Do you want to use the full conversation history in 
-# prompts (causes prompts to use too many tokens
-# for multiround games)
-full_conv_history = False
-
-# OpenAI Tier 1 - Currently not used in code
-MAX_REQUESTS_PER_MINUTE=500 
-MAX_TOKENS_PER_MINUTE=10000
-
-load_dotenv('secrets.env')
-BOT_DB_SQLITE = os.environ.get('BOT_DB_SQLITE')
-PAUSE_BETWEEN_OPENAI_REQUESTS = 0
-STD_PAUSE = 0
-
 def run_bot(
-        url, model = "gpt-4-turbo-preview", full_conv_history = False
+        botex_db, session_id, url, full_conv_history = False,
+        model = "gpt-4-turbo-preview", openai_api_key = None,
+        api_base = "http://localhost:11434"
     ): 
+    """
+    Run a bot on an oTree session. Normally, this function should not be called
+    directly, but through the run_bots_on_session function.
+
+    Parameters:
+    botex_db (str): The name of the SQLite database file to store BotEx data.
+    session_id (str): The ID of the oTree session.
+    url (str): The participant URL of the bot instance.
+    full_conv_history (bool): Whether to keep the full conversation history.
+        This will increase token use and only work with very short experiments.
+        Default is False.
+    model (str): The model to use for the bot. Default is "gpt-4-turbo-preview"
+        from OpenAI. You will need an OpenAI key and be prepared to pay to 
+        use this model.
+    openai_api_key (str): The API key for the OpenAI service.
+    api_base (str): The base URL for the LiteLLM service. Default is
+        "http://localhost:11434", assuming that you are running an Ollama 
+        service. Currently, models other than OpenAI GPT-4 are untested and
+        very likely to fail.
+
+    Returns: None (conversation is stored in BotEx database)
+    """        
     bot_parms = json.dumps(locals())
     logging.info(f"Running bot with parameters: {bot_parms}")
 
-    def set_id_value(dr, id, value, timeout = 3600):
-        WebDriverWait(dr, timeout).until(lambda x: x.find_element(By.ID, id)).send_keys(str(value))
+    def set_id_value(dr, id, type, value, timeout = 3600):
+        if type != "radio":
+            WebDriverWait(dr, timeout).until(lambda x: x.find_element(By.ID, id)).send_keys(str(value))
+        else:
+            rb = dr.find_element(By.ID, id)
+            resp = rb.find_elements(By.CLASS_NAME, "form-check")
+            for r in resp:
+                if r.text == value:
+                    r.find_element(By.CLASS_NAME, "form-check-input").click()
+                    break
     
     def wait_next_page(dr, timeout = 3600):
-        WebDriverWait(dr, timeout).until(lambda x: x.find_element(By.CLASS_NAME, 'otree-btn-next'))
+        WebDriverWait(dr, timeout).until(lambda x: x.find_element(By.CLASS_NAME, 'otree-form'))
         
     def scan_page(dr):
         dr.get(url)
@@ -68,7 +83,15 @@ def run_bot(
                 id = el[j].get_attribute("id")
                 if id != '': 
                     question_id.append(id)
-                    question_type.append(el[j].get_attribute("type"))
+                    type = el[j].get_attribute("type")
+                    if type == 'text':
+                        if el[j].get_attribute("inputmode") == 'decimal':
+                            type = "float"
+                    if type is None:
+                        # this is the case when question is a radio button
+                        # and potentially also for other non-standard types
+                        type = "radio"
+                    question_type.append(type)
                     break
         if question_id != []:
             labels = dr.find_elements(By.CLASS_NAME, 'col-form-label')
@@ -92,7 +115,7 @@ def run_bot(
             conversation = [
                 {
                     "role": "system",
-                    "content": prompts.loc['system', 'prompt']
+                    "content": prompts['system']
                 }
             ]
             if conv_hist == []:
@@ -108,18 +131,19 @@ def run_bot(
                 resp = completion(
                     model=model, 
                     messages=conversation, 
-                    api_base="http://localhost:11434"
+                    api_base=api_base
                 )
             else:
                 resp =  completion(    
-                    messages=conversation, model=model
+                    messages=conversation, model=model,
+                    api_key=openai_api_key
                 )
 
             resp_str = resp.choices[0].message.content
             conv_hist.append({"role": "assistant", "content": resp_str})
             if resp.choices[0].finish_reason == "length":
                 logging.warn("Bot's response is too long. Trying again.")
-                message = prompts.loc['resp_too_long', 'prompt']
+                message = prompts['resp_too_long']
                 continue
 
             try:
@@ -131,19 +155,12 @@ def run_bot(
                     resp_dict = check_response(resp_dict)
             except:
                 logging.warn("Bot's response is not a JSON. Trying again.")
-                message = prompts.loc['json_error', 'prompt']
+                message = prompts['json_error']
                 continue
             
             if "error" in resp_dict:
                 resp_dict = None
-                message = prompts.loc['confused', 'prompt']
-
-        if not nopause:
-            sleep_secs = random.normalvariate(
-                PAUSE_BETWEEN_OPENAI_REQUESTS, STD_PAUSE
-            )
-            logging.info(f"Sleeping for {sleep_secs} seconds.")
-            time.sleep(sleep_secs)
+                message = prompts['confused']
 
         return resp_dict
 
@@ -191,12 +208,16 @@ def run_bot(
             raise RuntimeError("Bot's response does not contain the 'remarks' key.")
         return resp
     
-    prompts = pd.read_csv("code/bot_prompts.csv")
-    prompts.set_index('id', inplace=True)
-    message = prompts.loc['start', 'prompt']
+    with open(files('botex').joinpath('bot_prompts.csv'), 'r') as f:
+        rv = csv.reader(f)
+        next(rv)
+        prompts = dict()
+        for row in rv: prompts[row[0]] = row[1]
+
+    message = prompts['start']
     conv = []
     resp = llm_send_message(message, conv, check_response_start)
-    logging.info(f"Bot's response to basic task: '{resp}'")
+    logging.info(f"Bot's response to start message: '{resp}'")
     
     options = Options()
     options.add_argument("--headless=new")
@@ -216,7 +237,7 @@ def run_bot(
             if questions: 
                 analyze_prompt = 'analyze_page_q_full_hist'
             else: 
-                analyze_prompt = 'analyze_page_full_hist'
+                analyze_prompt = 'analyze_page_no_q_full_hist'
         else:
             if first_page:
                 if questions: analyze_prompt = 'analyze_first_page_q'
@@ -233,7 +254,7 @@ def run_bot(
             questions_json = json.dumps(questions)
             check_response = check_response_question
 
-        message = prompts.loc[analyze_prompt, 'prompt'].format(
+        message = prompts[analyze_prompt].format(
             body = text, summary = summary, nr_q = nr_q,
             questions_json = questions_json
         )
@@ -254,7 +275,7 @@ def run_bot(
                     This should only happen with pages containing questions.
                     Most likely something is seriously wrong here.
                 """)
-            message = prompts.loc['page_not_changed', 'prompt'] + message
+            message = prompts['page_not_changed'] + message
             
         resp = llm_send_message(message, conv, check_response)
         logging.info(f"Bot analysis of page: '{resp}'")
@@ -278,25 +299,40 @@ def run_bot(
             )
             answer = q['answer']
             qtype = next(qst['question_type'] for qst in questions if qst['question_id'] == q['id'])
-            if qtype == 'number':
-                answer = int(answer)
-            set_id_value(dr, q['id'], answer)
+            if qtype == 'number' and isinstance(answer, str):
+                    int_const_pattern = '[-+]?[0-9]+'
+                    rx = re.compile(int_const_pattern, re.VERBOSE)
+                    ints = rx.findall(answer)
+                    answer = ints[0]
+            if qtype == 'float' and isinstance(answer, str):
+                numeric_const_pattern = '[-+]? (?: (?: \d* \. \d+ ) | (?: \d+ \.? ) )(?: [Ee] [+-]? \d+ ) ?'
+                rx = re.compile(numeric_const_pattern, re.VERBOSE)
+                floats = rx.findall(answer)
+                answer = floats[0]
+            set_id_value(dr, q['id'], qtype, answer)
 
         next_button.click()
     
-
-    message = prompts.loc['end', 'prompt']
+    message = prompts['end']
     resp = llm_send_message(message, conv, check_response_end)
     logging.info(f"Bot's final remarks about experiment: '{resp}'")
     logging.info("Bot finished.")
         
-    conn = sqlite3.connect(BOT_DB_SQLITE)
+    conn = sqlite3.connect(botex_db)
     cursor = conn.cursor()
     cursor.execute(
         """
         INSERT INTO conversations (id, bot_parms, conversation) 
         VALUES (?, ?, ?)
         """, (url[-8:], bot_parms, json.dumps(conv))
+    )
+    conn.commit()
+    cursor.execute(
+        """
+        UPDATE participants SET time_out = ? 
+        WHERE session_id = ? and url = ?
+        """, 
+        (datetime.now(timezone.utc), session_id, url)
     )
     conn.commit()
     cursor.close()

@@ -1,0 +1,18 @@
+{{ block title }}Thank you{{ endblock }}
+{{ block content }}
+    {{if player.id_in_group == 1}}
+    <p>
+        The other participant choose option {{choice}}.
+    </p>
+    {{ endif }}
+    <p>
+        Your payoff is {{payoff}}.
+    </p>
+    <p>
+        You have successfully completed the experiment.
+        Thank you for your participation.
+        You can now close this browser tab.
+    </p>
+
+{{ endblock }}
+

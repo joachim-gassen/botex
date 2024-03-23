@@ -1,0 +1,50 @@
+{{ block title }}Your Choice{{ endblock }}
+{{ block content }}
+    <p>
+        This is a short experiment in decision making. 
+        In this experiment, you will be matched with another participant. 
+        Neither of you will ever know the identity of the other. 
+        The money that you earn will be paid to you privately and in cash.
+    </p>
+    <p>
+        Two possible monetary payments are available to you and your 
+        counterpart in the experiment. The payments depend on the option 
+        chosen by you. We showed the two payment options to your counterpart. 
+        The only information you will have is the message your 
+        counterpart sends to you.
+    </p>
+    <p>
+        Two possible messages could be sent:
+    </p>
+    <ul>
+        <li>
+            Message 1: “Option A will earn you more money than option B.”
+        </li>
+        <li>
+            Message 2: “Option B will earn you more money than option A.”
+        </li>
+    </ul>
+    <p>
+        Your counterpart decided to send you Message {{message}}.
+    </p>
+    <p>
+        We now ask you to choose either option A or option B. 
+        Your choice will determine the payments in the experiment. 
+        You will never know what sums were actually offered in the 
+        option not chosen (that is, if the message sent by your 
+        counterpart was true or not). Moreover, you will never know 
+        the sums your counterpart could be paid with the other option.
+        We will pay the two of you according to the choice you make.    
+    </p>
+    <p>
+        We now ask you to choose one of the following two possible 
+        messages, which you will send to your counterpart:
+    </p>
+    <p>
+        {{ formfields }}
+    </p>
+        {{ next_button }}
+    </p>
+{{ endblock }}
+
+

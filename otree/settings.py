@@ -14,6 +14,12 @@ SESSION_CONFIGS = [
         display_name="Framed Trust Game",
         app_sequence=['ftrust'],
         num_demo_participants=2,
+    ),
+    dict(
+        name='deception',
+        display_name="Deception Game",
+        app_sequence=['deception'],
+        num_demo_participants=2,
     )
 ]
 
@@ -27,7 +33,8 @@ SESSION_CONFIG_DEFAULTS = dict(
 )
 
 PARTICIPANT_FIELDS = [
-    'wealth', 'comprehension_check', 'manipulation_check', 
+    'wealth', 'comprehension_check', 'comprehension_check1', 
+    'comprehension_check2', 'manipulation_check', 
     'human_check', 'feedback'
 ]
 SESSION_FIELDS = []

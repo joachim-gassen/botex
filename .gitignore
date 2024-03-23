@@ -16,4 +16,7 @@ secrets.env
 .Rproj.user
 *.Rproj
 *.Rhistory
+build
+*.egg-info
+tests/botex.db
 
