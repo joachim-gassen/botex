@@ -2,7 +2,7 @@
 
 ## Idea
 
-This in-development Python Package allows you to use large language models (LLMs) as bots in [oTree](https://www.otree.org) Experiments. As it relies on the[litellm](https://litellm.vercel.app) infrastructure, in principle, multiple commercially licensed an open source LLM models could be used as bots. Currently, however, only Openai's Chat GPT-4 model has been tried and tested to perform well.
+This in-development Python package allows you to use large language models (LLMs) as bots in [oTree](https://www.otree.org) experiments. As it relies on the [litellm](https://litellm.vercel.app) infrastructure, in principle, various commercial and open source LLM models could be used as bots. Currently, however, only Openai's Chat GPT-4 model has been tried and tested to perform well.
 
 While BotEx has been inspired by [recent work](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4682602), it uses a different approach. Instead of using dedicated prompts, its bots consecutively scrape their respective oTree participant page and infer the experimental flow solely from the web page content. This avoids the risk of misalignment between human (web page) and bot (LLM prompt) experimental designs and, besides facilitating the study of LLM "behavior", allows to use bots to develop and pre-test oTree experiments that are designed (primarily) for human participants.
 
@@ -25,20 +25,20 @@ As the package is not publicly available yet, the installation process is as fol
 
 Assuming that pytest succeeded, you should be able to run LLM bots by
 
-1. Setting up a plain vanilla oTree experiment (no raw HTML forms),
-2. Starting your oTree server, and
-3. Running something like
+1. setting up a plain vanillapp oTree experiment (no raw HTML forms),
+2. starting your oTree server, and
+3. running something like
 
 ```{python}
 # Enabling logging is a good idea if you want to see what is going on
 import logging
-logging.setLevel(logging.INFO)
+logging.basicConfig(level=logging.INFO)
 
 import botex
 
 sdict = botex.init_otree_session(
         config_name = [config name of your otree Exp], 
-        npart = [number of bots that should be in session], 
+        npart = [number of participants that should be in session], 
         nhumans = [If you want to have humans to play along], 
         botex_db = [path to a sqlite file that will host the bot conversations],
         otree_server_url = [url of your server, e.g., http://localhost:8000],
@@ -53,7 +53,7 @@ botex.run_bots_on_session(
     )
 ```
 
-After that, your oTree instance should have data for you and extensive information on the bot conversation should be available in the botex sqlite3 file that you provided. Have fun exploring.
+After that, your oTree instance should have data for you and extensive information on the bot conversation will be available in the botex sqlite3 file that you provided. Have fun exploring.
 
 ## To Do
 
