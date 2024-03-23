@@ -22,6 +22,10 @@ class Group(BaseGroup):
         label="What is your favorite number?",
         blank=False
     )
+    boolean_field = models.BooleanField(
+        label="Do you like ice cream?",
+        blank=False
+    )
     choice_integer_field = models.IntegerField(
         label="Which statement do you most agree with?",
         blank=False,
@@ -73,7 +77,10 @@ class Questions1(Page):
     Some Questions fpr Player 1
     """
     form_model = 'group'
-    form_fields = ['string_field', 'integer_field', 'choice_integer_field']
+    form_fields = [
+        'string_field', 'integer_field', 'boolean_field',
+        'choice_integer_field'
+    ]
 
     @staticmethod
     def is_displayed(player: Player):

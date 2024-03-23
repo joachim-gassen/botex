@@ -1,11 +1,8 @@
-import subprocess
 import os
 import dotenv
 import time
-import pytest
 
-import psutil
-import botex
+import pytest
 
 from tests.utils import *
 

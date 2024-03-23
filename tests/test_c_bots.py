@@ -1,4 +1,6 @@
 import pytest
+import json
+from numbers import Number
 import botex
 
 from tests.utils import *
@@ -34,7 +36,7 @@ def test_session_is_recorded_in_botex_db():
 
 @pytest.mark.dependency(
     name="run_bots", scope='session',
-    depends=["botex_session", "openai_key"]
+    depends=["participants_db", "openai_key"]
 )
 def test_can_survey_be_completed_by_bots():
     otree_proc = start_otree()
@@ -60,3 +62,55 @@ def test_can_conversation_data_be_obtained():
     assert isinstance(conv, list)
     assert len(conv) == 2
 
+@pytest.mark.dependency(
+    name="conversations_complete", scope='session',
+    depends=["conversations_db"]
+)
+def test_is_conversation_complete():
+    convs = botex.read_conversations_from_botex_db(botex_db="tests/botex.db")
+    questions = []
+    for c in convs:
+        assert isinstance(c['id'], str)
+        assert isinstance(c['bot_parms'], str) 
+        assert isinstance(c['conversation'], str)
+        bot_parms = json.loads(c['bot_parms'])
+        assert isinstance(bot_parms, dict)
+        conv = json.loads(c['conversation'])
+        assert isinstance(conv, list)
+        for m in conv:
+            assert isinstance(m, dict)
+            assert isinstance(m['role'], str)
+            assert isinstance(m['content'], str)
+            if m['role'] == 'assistant':
+                try:
+                    r = json.loads(m['content'])
+                except:
+                    break
+                if 'questions' in r:
+                    qs = r['questions']
+                    assert isinstance(qs, list)
+                    for q in qs: questions.append(q)    
+    ids = set()
+    for q in questions:
+        assert isinstance(q, dict)
+        assert isinstance(q['id'], str)
+        assert isinstance(q['reason'], str)
+        assert q['answer'] is not None
+        ids = ids.union({q['id']})
+        if q['id'] == "id_integer_field": 
+            assert isinstance(q['answer'], int)
+        elif q['id'] == "id_float_field":
+            assert isinstance(q['answer'], Number)
+        elif q['id'] == "id_boolean_field":
+            assert isinstance(q['answer'], str) or isinstance(q['answer'], bool)
+
+        elif q['id'] in [
+            "id_string_field", "id_feedback",
+            "id_choice_integer_field"
+        ]:
+            assert isinstance(q['answer'], str)
+    assert ids == set(
+        {"id_integer_field", "id_float_field", "id_boolean_field", 
+        "id_string_field", "id_choice_integer_field", "id_feedback",
+        "id_radio_field"}
+    )

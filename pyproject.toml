@@ -23,17 +23,12 @@ dependencies = [
     "requests", "selenium", "litellm"
 ]
 
-
 [project.urls]
 Homepage = "https://github.com/joachim-gassen/BotEx"
 Issues = "https://github.com/joachim-gassen/BotEx/issues"
 
-[tool.setuptools]
-include-package-data = true
-
 [tool.setuptools.packages.find]
 where = ["src"]
-
 
 [tool.pytest.ini_options]
 filterwarnings = ["ignore:::litellm:", "ignore:::pydantic:"]

@@ -2,7 +2,6 @@ import subprocess
 import os
 import dotenv
 import time
-import sqlite3
 
 import psutil
 import botex
@@ -14,6 +13,12 @@ def delete_botex_db(botex_db = "tests/botex.db"):
         os.remove(botex_db)
     except OSError:
         pass
+
+def delete_otree_db():
+    try:
+        os.remove("tests/otree/db.sqlite3")
+    except OSError:
+        pass    
 
 def start_otree():
     dotenv.load_dotenv("secrets.env")

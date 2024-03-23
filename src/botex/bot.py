@@ -269,9 +269,9 @@ def run_bot(
                 )
         
         if old_text == text:
-            logging.warn("Bot's answers were likely erroneous. Trying again.")
+            logging.warning("Bot's answers were likely erroneous. Trying again.")
             if questions == None:
-                logging.warn("""
+                logging.warning("""
                     This should only happen with pages containing questions.
                     Most likely something is seriously wrong here.
                 """)
@@ -300,15 +300,17 @@ def run_bot(
             answer = q['answer']
             qtype = next(qst['question_type'] for qst in questions if qst['question_id'] == q['id'])
             if qtype == 'number' and isinstance(answer, str):
-                    int_const_pattern = '[-+]?[0-9]+'
+                    int_const_pattern = r'[-+]?[0-9]+'
                     rx = re.compile(int_const_pattern, re.VERBOSE)
                     ints = rx.findall(answer)
                     answer = ints[0]
             if qtype == 'float' and isinstance(answer, str):
-                numeric_const_pattern = '[-+]? (?: (?: \d* \. \d+ ) | (?: \d+ \.? ) )(?: [Ee] [+-]? \d+ ) ?'
+                numeric_const_pattern = r'[-+]? (?: (?: \d* \. \d+ ) | (?: \d+ \.? ) )(?: [Ee] [+-]? \d+ ) ?'
                 rx = re.compile(numeric_const_pattern, re.VERBOSE)
                 floats = rx.findall(answer)
                 answer = floats[0]
+            if qtype == 'radio' and isinstance(answer, bool):
+                answer = 'Yes' if answer else 'No'
             set_id_value(dr, q['id'], qtype, answer)
 
         next_button.click()
