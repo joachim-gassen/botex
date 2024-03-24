@@ -1,13 +1,12 @@
-# BotEx: Using LLMs as Experimental Participants in oTree
+# botex: Using LLMs as Experimental Participants in oTree
 
 ## Idea
 
 This in-development Python package allows you to use large language models (LLMs) as bots in [oTree](https://www.otree.org) experiments. As it relies on the [litellm](https://litellm.vercel.app) infrastructure, in principle, various commercial and open source LLM models could be used as bots. Currently, however, only OpenAI's Chat GPT-4 model has been tried and tested to perform well.
 
-While BotEx has been inspired by [recent work](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4682602), it uses a different approach. Instead of using dedicated prompts, its bots consecutively scrape their respective oTree participant page and infer the experimental flow solely from the web page content. This avoids the risk of misalignment between human (web page) and bot (LLM prompt) experimental designs and, besides facilitating the study of LLM "behavior", allows to use bots to develop and pre-test oTree experiments that are designed (primarily) for human participants.
+While botex has been inspired by [recent work](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4682602), it uses a different approach. Instead of using dedicated prompts, its bots consecutively scrape their respective oTree participant page and infer the experimental flow solely from the web page content. This avoids the risk of misalignment between human (web page) and bot (LLM prompt) experimental designs and, besides facilitating the study of LLM "behavior", allows to use bots to develop and pre-test oTree experiments that are designed (primarily) for human participants.
 
-The downside of this approach is that the scraping has to rely on some level of standardization. Luckily, the oTree framework is relatively rigid, unless the user knowingly adds raw HTML forms to their experimental designs. Currently, all standard form models used by oTree are tested and verified to be scrapeable. In the future, we plan to
-implement also customized HTML forms but likely this will require some standardization by the user implementing the experimental design.
+The downside of this approach is that the scraping has to rely on some level of standardization. Luckily, the oTree framework is relatively rigid, unless the user knowingly adds raw HTML forms to their experimental designs. Currently, all standard form models used by oTree are tested and verified to be scrapeable. In the future, we plan to implement also customized HTML forms but likely this will require some standardization by the user implementing the experimental design.
 
 ## Installation
 
@@ -68,13 +67,13 @@ Rationale: 'Providing feedback based on the clarity and relevance of the questio
 
 You see that it also contains some questions and answers. They are also accessible in `test/questions_and_answers.csv` after the run and were given by two bot instances in the oTree test survey `test/otree` during testing. The survey is designed to test the usage of standard oTree forms, buttons and wait pages in a session with interacting participants.
 
-The cost of running the test on OpenAI using the "gpt-4-turbo-preview" model are roughly 0.10 US-$.
+The costs of running the test on OpenAI using the "gpt-4-turbo-preview" model are roughly 0.10 US-$.
 
 ## Workflow
 
 Assuming that pytest succeeded, you should be able to run LLM bots by
 
-1. setting up a plain vanillapp oTree experiment (no raw HTML forms),
+1. setting up a plain vanilla oTree app (no raw HTML forms),
 2. starting your oTree server, and
 3. running something like
 
