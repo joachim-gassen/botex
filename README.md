@@ -2,7 +2,7 @@
 
 ## Idea
 
-This in-development Python package allows you to use large language models (LLMs) as bots in [oTree](https://www.otree.org) experiments. As it relies on the [litellm](https://litellm.vercel.app) infrastructure, in principle, various commercial and open source LLM models could be used as bots. Currently, however, only Openai's Chat GPT-4 model has been tried and tested to perform well.
+This in-development Python package allows you to use large language models (LLMs) as bots in [oTree](https://www.otree.org) experiments. As it relies on the [litellm](https://litellm.vercel.app) infrastructure, in principle, various commercial and open source LLM models could be used as bots. Currently, however, only OpenAI's Chat GPT-4 model has been tried and tested to perform well.
 
 While BotEx has been inspired by [recent work](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4682602), it uses a different approach. Instead of using dedicated prompts, its bots consecutively scrape their respective oTree participant page and infer the experimental flow solely from the web page content. This avoids the risk of misalignment between human (web page) and bot (LLM prompt) experimental designs and, besides facilitating the study of LLM "behavior", allows to use bots to develop and pre-test oTree experiments that are designed (primarily) for human participants.
 
@@ -20,6 +20,55 @@ As the package is not publicly available yet, the installation process is as fol
 5. Install the BotEx package locally and editable `pip install -e .`
 6. Test whether everything works `.venv/bin/pytest`
 
+If it works you should see a test output similar to this one:
+
+```
+=========================== test session starts ===========================
+platform darwin -- Python 3.12.2, pytest-8.1.1, pluggy-1.4.0
+rootdir: /Users/joachim/github/BotEx
+configfile: pyproject.toml
+plugins: anyio-4.3.0, dependency-0.6.0
+collected 11 items                                                        
+
+tests/test_a_botex_db.py .                                          [  9%]
+tests/test_b_otree.py .....                                         [ 54%]
+tests/test_c_bots.py .....                                          [100%]
+
+------------------------------ Bots answers -------------------------------
+Question: What is your favorite color?'
+Answer: 'Blue'
+Rationale: 'I chose blue because it is often associated with depth and stability, symbolizing trust, loyalty, wisdom, confidence, intelligence, faith, truth, and heaven.'.
+
+Question: What is your favorite number?'
+Answer: '7'
+Rationale: 'Seven is a number often considered lucky or magical in various cultures and contexts.'.
+
+Question: Do you like ice cream?'
+Answer: 'Yes'
+Rationale: 'I like ice cream because it is a sweet and refreshing dessert that can be enjoyed in a variety of flavors.'.
+
+Question: Which statement do you most agree with?'
+Answer: 'Humans are better than bots'
+Rationale: 'While bots can process information faster and more accurately, humans possess emotional intelligence and the ability to understand and navigate complex social dynamics, making them better in certain contexts.'.
+
+Question: What do you enjoy doing most?'
+Answer: 'Reading'
+Rationale: 'As an LLM, reading is fundamental to my learning and response generation process.'.
+
+Question: How many people live on the earth currently (in billions)?'
+Answer: '7.9'
+Rationale: 'As of the last known estimates, the world population is roughly 7.9 billion.'.
+
+Question: Do you have any feedback that you want to share?'
+Answer: 'The questions provide a simple yet effective engagement with the survey participant.'
+Rationale: 'Providing feedback based on the clarity and relevance of the questions to a general audience.'.
+
+====================== 11 passed in 85.46s (0:01:25) ======================
+```
+
+You see that it also contains some questions and answers. They are also accessible in `test/questions_and_answers.csv` after the run and were given by two bot instances in the oTree test survey `test/otree` during testing. The survey is designed to test the usage of standard oTree forms, buttons and wait pages in a session with interacting participants.
+
+The cost of running the test on OpenAI using the "gpt-4-turbo-preview" model are roughly 0.10 US-$.
 
 ## Workflow
 
@@ -66,5 +115,5 @@ After that, your oTree instance should have data for you and extensive informati
 - [X] Implement other otree forms than numeric and integer (Select)
 - [X] Create a framed variant of the trust game (or pick an alternative with a more accounting like framing) 
 - [X] Run experiment and compare findings.
-- [ ] Refactor into package and separate project respositories
+- [ ] Refactor into package and separate project repositories
 - [ ] Showcase and decide on next steps

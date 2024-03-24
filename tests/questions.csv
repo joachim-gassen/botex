@@ -1,0 +1,8 @@
+id,question
+id_string_field,What is your favorite color?
+id_integer_field,What is your favorite number?
+id_boolean_field,Do you like ice cream?
+id_choice_integer_field,Which statement do you most agree with?
+id_radio_field,What do you enjoy doing most?
+id_float_field,How many people live on the earth currently (in billions)?
+id_feedback,Do you have any feedback that you want to share?

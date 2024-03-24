@@ -154,7 +154,7 @@ def run_bot(
                 if not check_response is None:
                     resp_dict = check_response(resp_dict)
             except:
-                logging.warn("Bot's response is not a JSON. Trying again.")
+                logging.warning("Bot's response is not a JSON. Trying again.")
                 message = prompts['json_error']
                 continue
             
@@ -334,7 +334,7 @@ def run_bot(
         UPDATE participants SET time_out = ? 
         WHERE session_id = ? and url = ?
         """, 
-        (datetime.now(timezone.utc), session_id, url)
+        (datetime.now(timezone.utc).isoformat(), session_id, url)
     )
     conn.commit()
     cursor.close()

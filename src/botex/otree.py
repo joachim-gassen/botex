@@ -118,7 +118,7 @@ def init_otree_session(
     rows = zip(
         [config_name]*npart, [session_id]*npart, 
         part_codes, [x in human_urls for x in urls], urls,
-        [datetime.now(timezone.utc)]*npart
+        [datetime.now(timezone.utc).isoformat()]*npart
     )
 
     conn = setup_botex_db(botex_db)

@@ -1,6 +1,8 @@
-import pytest
+import csv
 import json
 from numbers import Number
+
+import pytest
 import botex
 
 from tests.utils import *
@@ -66,8 +68,20 @@ def test_can_conversation_data_be_obtained():
     name="conversations_complete", scope='session',
     depends=["conversations_db"]
 )
+        
 def test_is_conversation_complete():
+    def add_answer_and_reason(qtext, q):
+        for i,qst in enumerate(qtext):
+            if qst['id'] == q['id']:
+                qtext[i]['answer'] = q['answer']
+                qtext[i]['reason'] = q['reason']
+                break
+    
     convs = botex.read_conversations_from_botex_db(botex_db="tests/botex.db")
+    with open("tests/questions.csv") as f:
+        qtexts = list(csv.DictReader(f))
+        qids = set([q['id'] for q in qtexts])
+    
     questions = []
     for c in convs:
         assert isinstance(c['id'], str)
@@ -103,14 +117,16 @@ def test_is_conversation_complete():
             assert isinstance(q['answer'], Number)
         elif q['id'] == "id_boolean_field":
             assert isinstance(q['answer'], str) or isinstance(q['answer'], bool)
-
         elif q['id'] in [
             "id_string_field", "id_feedback",
             "id_choice_integer_field"
         ]:
             assert isinstance(q['answer'], str)
-    assert ids == set(
-        {"id_integer_field", "id_float_field", "id_boolean_field", 
-        "id_string_field", "id_choice_integer_field", "id_feedback",
-        "id_radio_field"}
-    )
+        add_answer_and_reason(qtexts, q)
+        
+    assert ids == qids
+    with open("tests/questions_and_answers.csv", 'w') as f:
+        writer = csv.DictWriter(f, fieldnames=qtexts[0].keys())
+        writer.writeheader()
+        writer.writerows(qtexts)
+

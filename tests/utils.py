@@ -2,6 +2,7 @@ import subprocess
 import os
 import dotenv
 import time
+import csv
 
 import psutil
 import botex
@@ -53,5 +54,20 @@ def init_otree_test_session():
         otree_server_url="http://localhost:8000"
     )
     return botex_session    
+
+def create_answer_message():
+    if not os.path.exists("tests/questions_and_answers.csv"):
+        return ""
+    with open("tests/questions_and_answers.csv") as f:
+        quest_answers = list(csv.DictReader(f))
+    am = ""
+    for qa in quest_answers:
+        am += (
+            f"Question: {qa['question']}'\n" +  
+            f"Answer: '{qa['answer']}'\n" + 
+            f"Rationale: '{qa['reason']}'.\n\n"
+        )
+    return am[:-1]
+
 
 

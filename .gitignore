@@ -1,4 +1,5 @@
 venv
+.venv
 staticfiles
 ./db.sqlite3
 .idea
@@ -19,4 +20,6 @@ secrets.env
 build
 *.egg-info
 tests/botex.db
-
+tests/otree/db.sqlite3
+tests/questions_and_answers.csv
+.coverage
