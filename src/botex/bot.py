@@ -315,6 +315,8 @@ def run_bot(
 
         next_button.click()
     
+    dr.close()
+    dr.quit()
     message = prompts['end']
     resp = llm_send_message(message, conv, check_response_end)
     logging.info(f"Bot's final remarks about experiment: '{resp}'")
