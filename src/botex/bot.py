@@ -12,6 +12,7 @@ from selenium import webdriver
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 
 logging.getLogger("LiteLLM").setLevel(logging.WARNING)
 
@@ -45,6 +46,23 @@ def run_bot(
     bot_parms = json.dumps(locals())
     logging.info(f"Running bot with parameters: {bot_parms}")
 
+    def click_on_element_by_id(dr, id, timeout = 3600):
+        chart = WebDriverWait(dr, timeout).until(
+            EC.visibility_of_element_located((By.ID, id))
+        )
+        dr.execute_script("arguments[0].scrollIntoView(true)", chart)
+        element = WebDriverWait(dr, timeout).until(
+            EC.element_to_be_clickable((By.ID, id))
+        )
+        dr.execute_script("arguments[0].click()", element)
+
+    def click_on_element(dr, element, timeout = 3600):
+        dr.execute_script("arguments[0].scrollIntoView(true)", element)
+        element = WebDriverWait(dr, timeout).until(
+            EC.element_to_be_clickable(element)
+        )
+        dr.execute_script("arguments[0].click()", element)
+
     def set_id_value(dr, id, type, value, timeout = 3600):
         if type != "radio":
             WebDriverWait(dr, timeout).until(lambda x: x.find_element(By.ID, id)).send_keys(str(value))
@@ -53,7 +71,9 @@ def run_bot(
             resp = rb.find_elements(By.CLASS_NAME, "form-check")
             for r in resp:
                 if r.text == value:
-                    r.find_element(By.CLASS_NAME, "form-check-input").click()
+                    click_on_element(
+                        dr, r.find_element(By.CLASS_NAME, "form-check-input")
+                    )
                     break
     
     def wait_next_page(dr, timeout = 3600):
@@ -282,7 +302,7 @@ def run_bot(
         if not full_conv_history: summary = resp['summary']
         if questions is None and next_button is not None:
             logging.info("Page has no question but next button. Clicking")
-            next_button.click()
+            click_on_element(dr, next_button)
             continue
         
         if questions is None and next_button is None:
@@ -313,7 +333,7 @@ def run_bot(
                 answer = 'Yes' if answer else 'No'
             set_id_value(dr, q['id'], qtype, answer)
 
-        next_button.click()
+        click_on_element(dr, next_button)
     
     dr.close()
     dr.quit()
