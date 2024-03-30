@@ -241,6 +241,9 @@ def run_bot(
     
     options = Options()
     options.add_argument("--headless=new")
+    # Needed to work on codespaces but might be a security risk on
+    # untrusted web pages
+    options.add_argument("--no-sandbox")
     dr = webdriver.Chrome(options = options)
     dr.set_window_size(1920, 1400)
     first_page = True
