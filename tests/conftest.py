@@ -8,6 +8,8 @@ def pytest_configure(config):
     delete_otree_db()
     try:
         os.remove("tests/questions_and_answers.csv")
+        os.remove("tests/botex_participants.csv")
+        os.remove("tests/botex_response.csv")
     except OSError:
         pass
 

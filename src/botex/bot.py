@@ -318,7 +318,13 @@ def run_bot(
                 f"'{q['id']}' with '{q['answer']}'."
             )
             answer = q['answer']
-            qtype = next(qst['question_type'] for qst in questions if qst['question_id'] == q['id'])
+            try:
+                qtype = next(qst['question_type'] for qst in questions if qst['question_id'] == q['id'])
+            except:
+                logging.warning(f"Question '{q['id']}' not found in questions.")
+                qtype = None
+                break
+
             if qtype == 'number' and isinstance(answer, str):
                     int_const_pattern = r'[-+]?[0-9]+'
                     rx = re.compile(int_const_pattern, re.VERBOSE)
@@ -333,7 +339,7 @@ def run_bot(
                 answer = 'Yes' if answer else 'No'
             set_id_value(dr, q['id'], qtype, answer)
 
-        click_on_element(dr, next_button)
+        if qtype is not None: click_on_element(dr, next_button)
     
     dr.close()
     dr.quit()
