@@ -65,6 +65,16 @@ def test_can_conversation_data_be_obtained():
     assert len(conv) == 2
 
 @pytest.mark.dependency(
+    name="conversations_db_open_ai_key_purged", scope='session',
+    depends=["conversations_db"]
+)
+def test_is_open_ai_key_purged_from_db():
+    conv = botex.read_conversations_from_botex_db(botex_db="tests/botex.db")
+    bot_parms = json.loads(conv[0]['bot_parms'])
+    assert bot_parms['openai_api_key'] is None or bot_parms['openai_api_key'] == "******"
+    assert len(conv) == 2
+
+@pytest.mark.dependency(
     name="conversations_complete", scope='session',
     depends=["conversations_db"]
 )

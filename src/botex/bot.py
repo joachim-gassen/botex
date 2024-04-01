@@ -42,8 +42,11 @@ def run_bot(
         very likely to fail.
 
     Returns: None (conversation is stored in BotEx database)
-    """        
-    bot_parms = json.dumps(locals())
+    """
+    bot_parms = locals()
+    if bot_parms['openai_api_key'] is not None: 
+        bot_parms["openai_api_key"] = "******"       
+    bot_parms = json.dumps(bot_parms)
     logging.info(f"Running bot with parameters: {bot_parms}")
 
     def click_on_element_by_id(dr, id, timeout = 3600):
@@ -162,7 +165,7 @@ def run_bot(
             resp_str = resp.choices[0].message.content
             conv_hist.append({"role": "assistant", "content": resp_str})
             if resp.choices[0].finish_reason == "length":
-                logging.warn("Bot's response is too long. Trying again.")
+                logging.warning("Bot's response is too long. Trying again.")
                 message = prompts['resp_too_long']
                 continue
 
@@ -186,17 +189,17 @@ def run_bot(
 
     def check_response_start(resp):
         if "error" in resp:
-            logging.warn(f"Bot's response indicates error: '{resp['error']}'.")
+            logging.warning(f"Bot's response indicates error: '{resp['error']}'.")
             return resp
         if not "understood" in resp:
             raise RuntimeError("Bot's response does not contain the 'understood' key.")
         if not str(resp['understood']).lower() == "yes":
-            raise logging.warn("Bot did not understand the message.")
+            raise logging.warning("Bot did not understand the message.")
         return resp
 
     def check_response_summary(resp):
         if "error" in resp:
-            logging.warn(f"Bot's response indicates error: '{resp['error']}'.")
+            logging.warning(f"Bot's response indicates error: '{resp['error']}'.")
             return resp
         if not "summary" in resp:
             raise RuntimeError("Bot's response does not contain the 'summary' key.")
@@ -204,7 +207,7 @@ def run_bot(
 
     def check_response_question(resp):
         if "error" in resp:
-            logging.warn(f"Bot's response indicates error: '{resp['error']}'.")
+            logging.warning(f"Bot's response indicates error: '{resp['error']}'.")
             return resp
         keys = ['questions', 'summary']
         if not all(k in resp for k in keys):
@@ -222,7 +225,7 @@ def run_bot(
             
     def check_response_end(resp):
         if "error" in resp:
-            logging.warn(f"Bot's response indicates error: '{resp['error']}'.")
+            logging.warning(f"Bot's response indicates error: '{resp['error']}'.")
             return resp
         if not "remarks" in resp:
             raise RuntimeError("Bot's response does not contain the 'remarks' key.")
