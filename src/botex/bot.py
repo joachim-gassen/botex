@@ -1,6 +1,7 @@
 import re
 import logging
 import json
+import time
 from datetime import datetime, timezone
 import sqlite3
 import csv
@@ -247,8 +248,20 @@ def run_bot(
     # Needed to work on codespaces but might be a security risk on
     # untrusted web pages
     options.add_argument("--no-sandbox")
-    dr = webdriver.Chrome(options = options)
-    dr.set_window_size(1920, 1400)
+    attempts = 0
+    while attempts < 5:
+        try:
+            dr = webdriver.Chrome(options = options)
+            dr.set_window_size(1920, 1400)
+            break
+        except:
+            attempts += 1
+            logging.warning("Could not start Chrome. Trying again.")
+            time.sleep(1)
+    if attempts == 5:
+        logging.error("Could not start Chrome after 5 attempts. Stopping.")
+        return    
+        
     first_page = True
     summary = None
     text = ""
@@ -290,7 +303,7 @@ def run_bot(
             if full_conv_history:
                 message = re.sub(
                     'You have now proceeded to the next page\\.', 
-                    'You are now on the starting page of the experiment\\.', 
+                    'You are now on the starting page of the survey/experiment\\.', 
                     message
                 )
         
@@ -349,7 +362,7 @@ def run_bot(
     
     dr.close()
     dr.quit()
-    message = prompts['end']
+    message = prompts['end'].format(summary = summary)
     resp = llm_send_message(message, conv, check_response_end)
     logging.info(f"Bot's final remarks about experiment: '{resp}'")
     logging.info("Bot finished.")
