@@ -129,7 +129,10 @@ def init_otree_session(
         requests.post, 'sessions', session_config_name=config_name, 
         num_participants=npart, room_name=room_name
     )['code']
-    part_data = call_api(requests.get, 'sessions', session_id)['participants']
+    part_data = sorted(
+        call_api(requests.get, 'sessions', session_id)['participants'],
+        key=lambda d: d['id_in_session']
+    )
     part_codes = [pd['code'] for pd in part_data]
 
     base_url = otree_server_url + '/InitializeParticipant/'
