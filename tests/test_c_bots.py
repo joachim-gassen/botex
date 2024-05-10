@@ -31,7 +31,7 @@ def test_session_is_recorded_in_botex_db():
     assert p1["session_id"] == botex_session["session_id"]
     assert p1["is_human"] == 0
     assert isinstance(p1["url"], str)
-    assert isinstance(p1["time_in"], str)
+    assert p1["time_in"] == None
     assert p1["time_out"] == None
     stop_otree(otree_proc)
     delete_botex_db()

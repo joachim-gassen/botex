@@ -232,6 +232,20 @@ def run_bot(
             raise RuntimeError("Bot's response does not contain the 'remarks' key.")
         return resp
     
+    conn = sqlite3.connect(botex_db)
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        UPDATE participants SET time_in = ?
+        WHERE session_id = ? and url = ?
+        """, 
+        (datetime.now(timezone.utc).isoformat(), session_id, url)
+    )
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+
     with open(files('botex').joinpath('bot_prompts.csv'), 'r') as f:
         rv = csv.reader(f)
         next(rv)
