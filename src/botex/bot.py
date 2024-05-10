@@ -81,6 +81,9 @@ def run_bot(
                     break
     
     def wait_next_page(dr, timeout = 3600):
+        # it seems that oTree can deadlock on wait pages if hit hard. 
+        # Maybe it would be good to have shorter timeout here and
+        # instead use a bunch of reload attempts.
         WebDriverWait(dr, timeout).until(lambda x: x.find_element(By.CLASS_NAME, 'otree-form'))
         
     def scan_page(dr):

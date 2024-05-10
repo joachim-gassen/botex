@@ -161,7 +161,7 @@ def init_otree_session(
     }
 
 
-def get_bot_urls(session_id, botex_db = None):
+def get_bot_urls(session_id, botex_db = None, already_started = False):
     """
     Get the URLs for the bot participants in an oTree session.
 
@@ -180,11 +180,14 @@ def get_bot_urls(session_id, botex_db = None):
     cursor = conn.cursor()
     cursor.execute(
         """
-        SELECT url,time_in FROM participants 
+        SELECT url,time_in,time_out FROM participants 
         WHERE session_id = ? AND is_human = 0
         """, (session_id,)
     )
-    urls = [row[0] for row in cursor.fetchall() if row[1] is None]
+    if already_started:
+        urls = [row[0] for row in cursor.fetchall() if row[2] is None]
+    else:
+        urls = [row[0] for row in cursor.fetchall() if row[1] is None]
     cursor.close()
     conn.close()
     return urls
@@ -196,6 +199,7 @@ def run_bots_on_session(
         full_conv_history = False,
         openai_api_key = None,
         api_base = "http://localhost:11434",
+        already_started = False,
         wait = True
     ):
     """
@@ -220,6 +224,9 @@ def run_bots_on_session(
         "http://localhost:11434", assuming that you are running an Ollama 
         service. Currently, models other than OpenAI GPT-4 are untested and
         very likely to fail.
+    already_started (bool): If True, the function will also run bots that have
+        already started but not yet finished. This is useful if bots did not 
+        startup properly because of network issues. Default is False.
     wait (bool): If True (the default), the function will wait for the bots to 
         finish.
 
@@ -228,7 +235,8 @@ def run_bots_on_session(
 
     if botex_db is None: botex_db = environ.get('BOTEX_DB')
     if openai_api_key is None: openai_api_key = environ.get('OPENAI_API_KEY')
-    if bot_urls is None: bot_urls = get_bot_urls(session_id, botex_db)
+    if bot_urls is None: 
+        bot_urls = get_bot_urls(session_id, botex_db, already_started)
     threads = [ 
         Thread(
             target = run_bot, 
