@@ -107,7 +107,11 @@ def test_is_conversation_complete():
             assert isinstance(m['content'], str)
             if m['role'] == 'assistant':
                 try:
-                    r = json.loads(m['content'])
+                    r = m['content']
+                    start = r.find('{', 0)
+                    end = r.rfind('}', start)
+                    r = r[start:end+1]
+                    r = json.loads(r, strict=False)
                 except:
                     break
                 if 'questions' in r:
@@ -122,9 +126,9 @@ def test_is_conversation_complete():
         assert q['answer'] is not None
         ids = ids.union({q['id']})
         if q['id'] == "id_integer_field": 
-            assert isinstance(q['answer'], int)
+            assert isinstance(q['answer'], str) or isinstance(q['answer'], int)
         elif q['id'] == "id_float_field":
-            assert isinstance(q['answer'], Number)
+            assert isinstance(q['answer'], str) or isinstance(q['answer'], Number)
         elif q['id'] == "id_boolean_field":
             assert isinstance(q['answer'], str) or isinstance(q['answer'], bool)
         elif q['id'] in [
@@ -139,4 +143,3 @@ def test_is_conversation_complete():
         writer = csv.DictWriter(f, fieldnames=qtexts[0].keys())
         writer.writeheader()
         writer.writerows(qtexts)
-

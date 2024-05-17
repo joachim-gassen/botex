@@ -177,7 +177,7 @@ def run_bot(
                 start = resp_str.find('{', 0)
                 end = resp_str.rfind('}', start)
                 resp_str = resp_str[start:end+1]
-                resp_dict = json.loads(resp_str)
+                resp_dict = json.loads(resp_str, strict = False)
                 if not check_response is None:
                     resp_dict = check_response(resp_dict)
             except:
