@@ -19,7 +19,7 @@ logging.getLogger("LiteLLM").setLevel(logging.WARNING)
 
 def run_bot(
         botex_db, session_id, url, full_conv_history = False,
-        model = "gpt-4-turbo-preview", openai_api_key = None,
+        model = "gpt-4o", openai_api_key = None,
         api_base = "http://localhost:11434"
     ): 
     """
