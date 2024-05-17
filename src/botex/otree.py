@@ -195,7 +195,7 @@ def get_bot_urls(session_id, botex_db = None, already_started = False):
 def run_bots_on_session(
         session_id, bot_urls = None, 
         botex_db = None, 
-        model = "gpt-4-turbo-preview",
+        model = "gpt-4o",
         full_conv_history = False,
         openai_api_key = None,
         api_base = "http://localhost:11434",
