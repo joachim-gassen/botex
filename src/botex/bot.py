@@ -163,7 +163,8 @@ def run_bot(
             else:
                 resp =  completion(    
                     messages=conversation, model=model,
-                    api_key=openai_api_key
+                    api_key=openai_api_key,
+                    response_format = {"type": "json_object"}
                 )
 
             resp_str = resp.choices[0].message.content
