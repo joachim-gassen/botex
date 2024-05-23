@@ -39,8 +39,12 @@ def test_can_otree_session_be_initialized():
     botex_session = init_otree_test_session()
     stop_otree(otree_proc)
     delete_botex_db()
-    assert len(botex_session) == 3
+    assert len(botex_session) == 5
     assert isinstance(botex_session["session_id"], str)
+    assert isinstance(botex_session["participant_code"], list)
+    assert len(botex_session["participant_code"]) == 2
+    assert isinstance(botex_session["is_human"], list)
+    assert botex_session["is_human"] == [False, False]
     assert isinstance(botex_session["human_urls"], list)
     assert len(botex_session["human_urls"]) == 0
     assert isinstance(botex_session["bot_urls"], list)

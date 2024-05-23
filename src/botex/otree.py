@@ -88,8 +88,10 @@ def init_otree_session(
         OTREE_REST_KEY.
 
     Returns:
-    dict with the keys 'session_id', 'bot_urls', and 'human_urls'
-    containing the session ID and the URLs for the human and bot participants.
+    dict with the keys 'session_id', 'participant_code', 'is_human', 
+    'bot_urls', and 'human_urls'
+    containing the session ID, participant codes, human indicators,
+    and the URLs for the human and bot participants.
     """
 
     def call_api(method, *path_parts, **params) -> dict:
@@ -156,6 +158,8 @@ def init_otree_session(
     cursor.close()
     return {
         'session_id': session_id, 
+        'participant_code': part_codes,
+        'is_human': is_human,
         'bot_urls': list(compress(urls, [not x for x in is_human])), 
         'human_urls': list(compress(urls, is_human))
     }
