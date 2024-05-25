@@ -1,6 +1,7 @@
 import csv
 import json
 import sqlite3
+import logging
 from os import environ
 
 
@@ -97,7 +98,7 @@ def export_response_data(csv_file, botex_db = None):
             start = resp_str.find('{', 0)
             end = resp_str.rfind('}', start)
             resp_str = resp_str[start:end+1]
-            cont = json.loads(resp_str)
+            cont = json.loads(resp_str, strict = False)
             if 'questions' in cont: return cont['questions']
         except:
             logging.info(
@@ -106,7 +107,7 @@ def export_response_data(csv_file, botex_db = None):
             return None
             
     def parse_history(h):
-        c = json.loads(h)
+        c = json.loads(h, strict = False)
         answers = []
         pot_a = None
         for m in c:

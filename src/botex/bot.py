@@ -182,7 +182,9 @@ def run_bot(
                 if not check_response is None:
                     resp_dict = check_response(resp_dict)
             except:
-                logging.warning("Bot's response is not a JSON. Trying again.")
+                logging.exception('')
+                logging.warning("Bot's response is not a valid JSON. Trying again.")
+                resp_dict = None
                 message = prompts['json_error']
                 continue
             
@@ -196,8 +198,8 @@ def run_bot(
         if "error" in resp:
             logging.warning(f"Bot's response indicates error: '{resp['error']}'.")
             return resp
-        if not "understood" in resp:
-            raise RuntimeError("Bot's response does not contain the 'understood' key.")
+        if set(resp) != set(["understood"]):
+            raise RuntimeError("Bot's response does not have the required set of keys.")
         if not str(resp['understood']).lower() == "yes":
             raise logging.warning("Bot did not understand the message.")
         return resp
@@ -206,8 +208,8 @@ def run_bot(
         if "error" in resp:
             logging.warning(f"Bot's response indicates error: '{resp['error']}'.")
             return resp
-        if not "summary" in resp:
-            raise RuntimeError("Bot's response does not contain the 'summary' key.")
+        if set(resp) != set(["summary"]):
+            raise RuntimeError("Bot's response does not have the required set of keys.")
         return resp
 
     def check_response_question(resp):
@@ -215,25 +217,25 @@ def run_bot(
             logging.warning(f"Bot's response indicates error: '{resp['error']}'.")
             return resp
         keys = ['questions', 'summary']
-        if not all(k in resp for k in keys):
-            raise RuntimeError("Bot's response does not contain all required keys.")
+        if set(resp) != set(keys):
+            raise RuntimeError("Bot's response does not have the required set of keys.")
         if not isinstance(resp['questions'], list):
             if isinstance(resp['questions'], dict):
                 resp['questions'] = [resp['questions']]
-            raise RuntimeError("Questions is not a list.")
+            else: raise RuntimeError("Questions is not a list.")
         for i,q in enumerate(resp['questions']):
             if not isinstance(q, dict):
                 raise RuntimeError(f"Question {i} is not a dictionary.")
-            if not all(k in q for k in ['id', 'answer', 'reason']):
-                raise RuntimeError(f"Question {i} does not contain all required keys.")
+            if set(q) != set(['id', 'answer', 'reason']):
+                raise RuntimeError(f"Question {i} does not have the required set of keys.")
         return resp
             
     def check_response_end(resp):
         if "error" in resp:
             logging.warning(f"Bot's response indicates error: '{resp['error']}'.")
             return resp
-        if not "remarks" in resp:
-            raise RuntimeError("Bot's response does not contain the 'remarks' key.")
+        if set(resp) != set(["remarks"]) in resp:
+            raise RuntimeError("Bot's response does not have the required set of keys.")
         return resp
     
     conn = sqlite3.connect(botex_db)
