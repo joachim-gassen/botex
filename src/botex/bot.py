@@ -14,6 +14,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
 
 logging.getLogger("LiteLLM").setLevel(logging.WARNING)
 
@@ -80,11 +81,22 @@ def run_bot(
                     )
                     break
     
-    def wait_next_page(dr, timeout = 3600):
-        # it seems that oTree can deadlock on wait pages if hit hard. 
-        # Maybe it would be good to have shorter timeout here and
-        # instead use a bunch of reload attempts.
-        WebDriverWait(dr, timeout).until(lambda x: x.find_element(By.CLASS_NAME, 'otree-form'))
+    def wait_next_page(dr, timeout = 10):
+        attempts = 0
+        while attempts < 600:
+            try:
+                WebDriverWait(dr, timeout).until(
+                    lambda x: x.find_element(By.CLASS_NAME, 'otree-form')
+                )
+                break # Exit the loop if successful
+            except TimeoutException:
+                attempts += 1
+                continue # Retry if a timeout occurs
+        
+        if attempts == 600:
+            logging.error("Timeout on wait page after 600 attempts.")
+            raise Exception("Timeout on wait page after 600 attempts.")
+
         
     def scan_page(dr):
         dr.get(url)
