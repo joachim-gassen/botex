@@ -8,7 +8,7 @@ While botex has been inspired by [recent work](https://papers.ssrn.com/sol3/pape
 
 The downside of this approach is that the scraping has to rely on some level of standardization. Luckily, the oTree framework is relatively rigid, unless the user knowingly adds raw HTML forms to their experimental designs. Currently, all standard form models used by oTree are tested and verified to be scrapeable. In the future, we plan to implement also customized HTML forms but likely this will require some standardization by the user implementing the experimental design.
 
-## Installation
+## Installation (Remote LLM)
 
 As the package is not publicly available yet, the installation process is as follows: 
 
@@ -69,7 +69,23 @@ You see that it also contains some questions and answers. They are also accessib
 
 The costs of running the test on OpenAI using the "gpt-4-turbo-preview" model are roughly 0.10 US-$.
 
-## Workflow
+## Installation (Local LLM)
+
+The Local LLM installation mostly follows the same step for a remote LLM but with added steps to setup the local LLM.
+
+1. Copy `_secret.env` to `secret.env` and edit. You do not need to have an OpenAI API Key.
+2. Set up a virtural environment `python3 -m venv .venv`
+3. Activate it `source .venv/bin/activate`
+4. Install the necessary packages `pip install -r requirements.txt`
+5. Install the BotEx package locally and editable `pip install -e .`
+6. Clong llama cpp from [here](https://github.com/ggerganov/llama.cpp){target="_blank"} and follow the instructions to build it.
+7. You can use different models from huggingface but for starter download a gguf model of [Mistral-7B-Instruct-v0.3.Q4_K_M.gguf](https://huggingface.co/MaziyarPanahi/Mistral-7B-Instruct-v0.3-GGUF){target="_blank"}. I would recommend the [Q4_K_M version](https://huggingface.co/MaziyarPanahi/Mistral-7B-Instruct-v0.3-GGUF/resolve/main/Mistral-7B-Instruct-v0.3.Q4_K_M.gguf){target="_blank"}.
+8. Finally, you need to download the original `tokenizer_config.json` from the original model creators. For this you will have to create an account with huggingface, and accept the terms by miteralai for this gated model. You can find it [here](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.3){target="_blank"}, when you go the files and versions tab you will find a link to download the `tokenizer_config.json` please put it in the same directory as your downloaded model.
+9. Finally, you should open edit the `config.json` file to refelect the path to the compiled llama cpp and the path to the downloaded model and tokenizer. Other settings can be left as is.
+10. Test whether everything works `.venv/bin/pytest` - This is still in development. 
+
+
+## Workflow (Remote LLM)
 
 Assuming that pytest succeeded, you should be able to run LLM bots by
 
@@ -103,6 +119,32 @@ botex.run_bots_on_session(
 
 After that, your oTree instance should have data for you and extensive information on the bot conversation will be available in the botex sqlite3 file that you provided. Have fun exploring.
 
+## Workflow (Local LLM)
+
+If you are all setup with the installation you can run the local LLM with the following code:
+
+```{python}
+# Enabling logging is a good idea if you want to see what is going on
+import logging
+import yaml
+
+import botex
+
+logging.basicConfig(level=logging.INFO)
+cfg = yaml.safe_load(open("config.yaml", "r"))
+
+bot_manager = botex.LLMOTreeBotsManager(cfg["llm_cfg"], cfg["bot_cfg"])
+botex_session = bot_manager.init_otree_session(
+    config_name="botex_test", num_participants=2
+)
+bot_manager.run_bots_on_session(
+    session_id=botex_session["session_id"],
+    bot_urls=botex_session["bot_urls"],
+)
+```
+
+
+
 ## To Do
 
 - [X] Check whether one can lump together the summary and the analyse prompt (maybe even the question prompt?) This would save quite some tokens and speed up things
@@ -114,5 +156,7 @@ After that, your oTree instance should have data for you and extensive informati
 - [X] Implement other otree forms than numeric and integer (Select)
 - [X] Create a framed variant of the trust game (or pick an alternative with a more accounting like framing) 
 - [X] Run experiment and compare findings.
+- [ ] Implement full testing for the local LLM
+- [ ] Add back the remote LLM functionality into the local branch
 - [ ] Refactor into package and separate project repositories
 - [ ] Showcase and decide on next steps
