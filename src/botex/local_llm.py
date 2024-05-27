@@ -189,9 +189,6 @@ class LocalLLM:
             )
         self.format_prompt_to_template(full_prompt)  # type: ignore
 
-        with open("dev_prompt.txt", "w") as f:
-            f.write(self.prompt)
-
     def format_prompt_to_template(self, messages: ChatHistory) -> None:
         """
         Formats a chat history into a prompt template suitable for model processing, handling tokenization and templating.
