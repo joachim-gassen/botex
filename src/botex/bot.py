@@ -16,13 +16,15 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
+from .local_llm import LocalLLM
+
 logging.getLogger("LiteLLM").setLevel(logging.WARNING)
 
 def run_bot(
-        botex_db, session_id, url, full_conv_history = False,
+        botex_db, session_id, url, lock, full_conv_history = False,
         model = "gpt-4o", openai_api_key = None,
-        api_base = "http://localhost:11434"
-    ): 
+        local_llm: LocalLLM | None = None
+    ):
     """
     Run a bot on an oTree session. Normally, this function should not be called
     directly, but through the run_bots_on_session function.
@@ -31,6 +33,7 @@ def run_bot(
     botex_db (str): The name of the SQLite database file to store BotEx data.
     session_id (str): The ID of the oTree session.
     url (str): The participant URL of the bot instance.
+    lock (threading.Lock): A lock to prevent concurrent access to the local model.
     full_conv_history (bool): Whether to keep the full conversation history.
         This will increase token use and only work with very short experiments.
         Default is False.
@@ -38,14 +41,15 @@ def run_bot(
         from OpenAI. You will need an OpenAI key and be prepared to pay to 
         use this model.
     openai_api_key (str): The API key for the OpenAI service.
-    api_base (str): The base URL for the LiteLLM service. Default is
-        "http://localhost:11434", assuming that you are running an Ollama 
-        service. Currently, models other than OpenAI GPT-4 are untested and
-        very likely to fail.
+    local_llm (LocalLLM): A LocalLLM object to use for the bot. If this is not
+        None, the bot will use the local model instead of the OpenAI model.
 
     Returns: None (conversation is stored in BotEx database)
     """
     bot_parms = locals()
+    bot_parms.pop('lock')
+    bot_parms.pop('local_llm')
+    bot_parms['local_llm'] = vars(local_llm) if local_llm else None
     if bot_parms['openai_api_key'] is not None: 
         bot_parms["openai_api_key"] = "******"       
     bot_parms = json.dumps(bot_parms)
@@ -166,12 +170,11 @@ def run_bot(
             conversation.append({"role": "user", "content": message})
             if not full_conv_history:
                 conv_hist.append({"role": "user", "content": message})
-            if model == "ollama/llama2":
-                resp = completion(
-                    model=model, 
-                    messages=conversation, 
-                    api_base=api_base
-                )
+            if model == "local":
+                assert local_llm, "Model is local but local_llm is not set."
+                assert conversation, "Conversation is empty."
+                with lock:
+                    resp = local_llm.completion(conversation)
             else:
                 resp =  completion(    
                     messages=conversation, model=model,
