@@ -1,0 +1,69 @@
+llm_cfg:
+    system_prompt: 'I need you to fully assume a role of a participant in an online survey and/or experiment, please stay in character and use first person in your answer. Each prompt contains a summary of the survey/experiment including your answers so far, scarped text data from a webpage continuing the survey/experiment, and detailed tasks for you on how to analyze this text data. The scrapped text will be given inside of a tripple colon, i.e. ::: The scraped text :::. In each prompt, I will provide you with detailed information on the respective format. Your answers must be given as JSON ONLY. No text outside of the JSON answer is allowed at any time. Below is an example of how this conversation should look like.'
+    system_prompt_few_shot_examples:
+        - role: user
+          content: What is square root of 16?
+        - role: assistant
+          content: '{"square root of 16": 4}'
+        - role: user
+          content: What is the capital of France?
+        - role: assistant
+          content: '{"capital of France": "Paris"}'
+        - role: user
+          content: adlkjlkjö dflkj fqlj lk jaljqwkj kljaljdfw
+        - role: assistant
+          content: '{"error": "I am confused"}'
+        - role: user
+          content: '{"question 1": "What is the capital of France?", "question 2": "What is the square root of 16?"}'
+        - role: assistant
+          content: '{"question 1": "Paris", "question 2": 4}'
+    path_to_compiled_llama_cpp_main_file: /path_to_compiled_llama_cpp_main_file/llama.cpp/main
+    model: local
+    local_model_cfg:
+        model_path: /path_to_model_you_downloaded/Mistral-7B-Instruct-v0.3.Q4_K_M.gguf
+        has_system_role: False
+        number_of_layers_to_offload_to_gpu: 85
+
+        context_length: 32768
+        temperature: 0
+        max_num_of_tokens_to_generate: 10000
+        top_p: 0.9
+        top_k: 40
+bot_cfg:
+    botex_db: botex.db
+    full_conv_history: False
+    otree_server_url: http://localhost:8000
+    prompts:
+        start: 'Hi there! In this conversation. I want you to participate in an online survey and/or experiment, potentially involving other human or artificial participants. I will provide you with a series of web page body text excerpts that will sequentially guide you through the experiment. The texts will contain instructions on how the experiment will be conducted. These instructions will be followed by additional pages that might contain additional instructions, comprehension checks, repeated information from prior pages and, most importantly, present you with questions and/or tasks which I want you to answer. All answers must be given as JSON code ONLY and I will provide you with detailed information on the respective format. As all texts are scraped from the body parts of web pages, they might contain also additional information or text bits that do not really belong to the experiment. Do you understand your task? Please answer, {"understood": "yes"} if you understand. If you are confused, respond with {"error": "I am confused"}. Your answers must be given as JSON ONLY. No text outside of the JSON answer is allowed at any time.'
+
+        analyze_page_no_q_full_hist: 'Perfect. You have now proceeded to the next page. This is the body text of the web page: :::{body}::: I need you to summarize the content of the page and indicate what you learn from it about the survey/experiment that you are participating in. Please note that, while you can use JSON to structure the summary content, the value to the "summary" key itself must be provided as a string. If you are confused, respond with {{"error": "I am confused"}}. Your answers must be given as JSON ONLY. No text outside of the JSON answer is allowed at any time.'
+
+        analyze_page_q_full_hist: 'Perfect. You have now proceeded to the next page. This is the body text of the web page: :::{body}::: I need you to first summarize the content of the page and indicate what you learn from it about the survey/experiment that you are participating in. Provide the summary with the key "summary". Second, this page contains {nr_q} questions that I want you to answer in the variable "questions". So, your JSON answer will contain the keys "summary", and "questions". I need you to answer all questions. The following JSON string contains the questions: "{questions_json}". Each question is characterized by an ID ("question_id"), question type ("question_type"), a label ("question_label") and answer options ("answer_options"). You might find more context about the questions in the body text quoted above. Please strictly adhere to the answer options given above. For each identified question, you must provide three keys: "id" gives the question ID, "answer" contains your response, and "reason" contains your reasoning for the response. The above implies that each question must be answered with a JSON object with three keys. If there are more than one question, the value for the "questions" key becomes an array of objects. Taken together, a correct answer to a text with two questions would have the form {{"summary": "Your summary", "questions": [{{"id": "ID of first question", "answer": "Your answer", "reason": "Your reasoning"}}, {{"id": "ID of second question", "answer": "Your answer", "reason": "Your reasoning"}}]}} Please provide your answer ONLY as JSON and if you are confused, respond with {{"error": "I am confused"}}. No text outside of the JSON answer is allowed at any time. If the question type is "number", please only provide an integer number and do not leave it blank. If the question type is select-one please provide the full answer option and not just a number.'
+
+        analyze_first_page_no_q: 'Perfect. This is the body text of the entry page of your survey or experiment: :::{body}::: I need you to summarize the content of the page and indicate what you learn from it about the survey/experiment that you are participating in. Please summarise all information from the the web page. Try to be very precise and detailed. Please note that, while you can use JSON to structure the summary content, the value to the "summary" key itself must be provided as a string. If you are confused, respond with {{"error": "I am confused"}}. No text outside of the JSON answer is allowed at any time.'
+
+        analyze_page_no_q: 'Perfect. This is your summary of the survey/experiment so far: :::{summary}:::You have now proceeded to the next page. This is the body text of the web page: :::{body}::: I need you to summarize the information from this page and to incorporate this summary into the summary provided above. Taken together, the new summary should summarize everything you know about the experiment. Please note that, while you can use JSON to structure the summary content, the value to the "summary" key itself must be provided as a string. If you are confused, respond with {{"error": "I am confused"}}. No text outside of the JSON answer is allowed at any time.'
+
+        analyze_first_page_q: 'Perfect. This is the body text of the entry page of your survey or experiment: :::{body}::: I need you to do two things. First, this page contains {nr_q} questions and I need you to answer all questions in the variable "questions". Second, I need you to summarize the content of the page including all questions, and your answers. Provide the summary as the variable "summary". More on this below. So, your JSON answer will contain the keys "questions", and "summary". I need you to answer all questions. The following JSON string contains the questions: "{questions_json}". Each question is characterized by an ID ("question_id"), question type ("question_type"), a label ("question_label") and answer options ("answer_options"). You might find more context about the questions in the body text quoted above. Please strictly adhere to the answer options given above. For each identified question, you must provide three keys: "id" gives the question ID, "answer" contains your response, and "reason" contains your reasoning for the response. The above implies that each question must be answered with an object of these three keys and, "questions" becomes an array of objects if there is more than one question. Taken together, a correct answer to a text with two questions would have the form {{"summary": "Your summary", "questions": [{{"id": "ID of first question", "answer": "Your answer", "reason": "Your reasoning"}}, {{"id": "ID of second question", "answer": "Your answer", "reason": "Your reasoning"}}]}} Please provide your answer ONLY as JSON and if you are confused, respond with {{"error": "I am confused"}}. No text outside of the JSON answer is allowed at any time. If the question type is "number", please only provide an integer number and do not leave it blank. If the question type is select-one please provide the full answer option and not just a number.'
+
+        analyze_page_q: 'Perfect. This is your summary of the survey/experiment so far: :::{summary}:::You have now proceeded to the next page. This is the body text of the web page: :::{body}::: I need you to do two things. First, this page contains {nr_q} questions and I need you to answer all questions in the "questions" array. Second, I need you to summarize the content of the page including the old summary given above, all questions, and your answers. Provide the summary with a "summary" key. More on this below. So, your JSON answer will contain the keys "questions", and "summary". The following JSON string contains the questions: "{questions_json}". Each question is characterized by an ID ("question_id"), question type ("question_type"), and a label ("question_label"). You might find more context about the questions in the body text quoted above. Please strictly adhere to the answer options given above. For each identified question, you must provide three keys: "id" gives the question ID, "answer" contains your response, and "reason" contains your reasoning for the response. The above implies that each question must be answered with an object of these three keys and, "questions" becomes an array of objects if there is more than one question. Taken together, a correct answer to a text with two questions would have the form {{"summary": "Your summary", "questions": [{{"id": "ID of first question", "answer": "Your answer", "reason": "Your reasoning"}}, {{"id": "ID of second question", "answer": "Your answer", "reason": "Your reasoning"}}]}} Please provide your answer ONLY as JSON. Please note that, while you can use JSON to structure the summary content, the "summary" variable itself must be provided as a string.  If you are confused, respond with {{"error": "I am confused"}}. No text outside of the JSON answer is allowed at any time. If the question type is "number", please only provide an integer number and do not leave it blank. If the question type is select-one please provide the full answer option and not just a number.'
+
+        end: 'This concludes the survey/experiment and our conversation. This is your summary of the completed survey/experiment :::{summary}:::. Do you have any final remarks about the survey/experiment and how you played it, or about its implementation in this conversation that you want to share? Then please provide your answer as JSON, using the variable "remarks". If you have no final remarks, respond with {{remarks: "none"}}. If you are confused, respond with {{"error": "I am confused"}}.'
+
+        json_error: 'Unfortunately, your response was not in the correct JSON format. Please try again.  Please note that, while you can use JSON to structure the summary content, the "summary" variable itself must be provided as a string. If you are confused, respond with {{"error": "I am confused"}}. No text outside of the JSON answer is allowed at any time.'
+
+        confused: "I am sorry that you are confused. Please focus on the tasks, the required JSON structure and see whether you can answer it now. Try to keep the summary detailed but short enough so that you stay within the token limit.\n\n"
+
+        resp_too_long: "I am sorry but your response exceeded the token limit. Try to keep the summary detailed but short enough so that you stay within the token limit this time.\n\n"
+
+        page_not_changed: "I am sorry but you answer(s) have not been accepted by the system. Most likely this is because you did not answer all questions, your answers did not comply to the required format or, if they were numeric, are not within the valid numerical range. Please evaluate the page below again and provide your refined answer(s).\n\n"
+
+        not_understood: 'I am sorry that you did not understand the task. Try to focus on the task and keep the JSON structure in mind. If you are still confused or do not understand, please respond with {"error": "I am confused"}.\n\n'
+
+        no_summary: 'I am sorry but your response did not include a summary. Please provide the requested summary in the JSON format.\n\n'
+
+        no_questions: 'I am sorry but your response did not include the questions key as requested. Please provide the requested questions item in the JSON format.\n\n'
+
+        questions_not_list: 'I am sorry but your response did not include the questions key as a list as requested. Please provide the requested questions item in the JSON format.\n\n'
+
+        missing_keys_in_question: 'Your response was not valid because some question[s] were missing key[s]. Specifically, these were: {missing_question_keys}. Please review your answers and provide it again with all the necessary information.'

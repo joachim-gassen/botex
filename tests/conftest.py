@@ -1,20 +1,25 @@
-from utils import *
+import pytest
+import yaml
+import dotenv
+import botex
 
-def pytest_configure(config):
-    """
-    Delete any stale databases before running tests.
-    """
-    delete_botex_db()
-    delete_otree_db()
-    try:
-        os.remove("tests/questions_and_answers.csv")
-        os.remove("tests/botex_participants.csv")
-        os.remove("tests/botex_response.csv")
-    except OSError:
-        pass
+from tests.utils import *
+
+# Load configuration and environment variables
+cfg = yaml.safe_load(open("config.yaml", "r"))
+dotenv.load_dotenv("secrets.env")
+
+
+# Define a fixture for bot_manager
+@pytest.fixture(scope="session")
+def bot_manager():
+    # Create the bot manager object
+    manager = botex.LLMOTreeBotsManager(cfg["llm_cfg"], cfg["bot_cfg"])
+    return manager
+
 
 def pytest_terminal_summary(terminalreporter, exitstatus, config):
     if exitstatus == 0:
         terminalreporter.ensure_newline()
-        terminalreporter.section('Bots answers', sep='-', blue=True, bold=True)
+        terminalreporter.section("Bots answers", sep="-", blue=True, bold=True)
         terminalreporter.line(create_answer_message())
