@@ -119,6 +119,7 @@ def run_bot(
         # Identify all form fields by id
         question_id = []
         question_type = []
+        answer_options = []
         fe = dr.find_elements(By.CLASS_NAME, 'controls')
         for i in range(len(fe)): 
             el = fe[i].find_elements(By.XPATH, ".//*")
@@ -135,17 +136,37 @@ def run_bot(
                         # and potentially also for other non-standard types
                         type = "radio"
                     question_type.append(type)
+                    if type == "radio":
+                        # get the answer options
+                        options = el[j].find_elements(By.CLASS_NAME, "form-check")
+                        answer_options.append([o.text for o in options])
+                    elif el[j].get_attribute("class") == "form-select":
+                        # get the answer options
+                        options = el[j].find_elements(By.TAG_NAME, "option")
+                        answer_options.append([o.text for o in options[1:]])
+                    else:
+                        answer_options.append(
+                            "This is a free form question and does not have answer options."
+                        )
                     break
         if question_id != []:
-            labels = dr.find_elements(By.CLASS_NAME, 'col-form-label')
+            labels = dr.find_elements(By.CLASS_NAME, "col-form-label")
             question_label = [x.text for x in labels]
-            questions = [
-                {"question_id": id, "question_type": qtype, "question_label": label} 
-                for id, qtype, label in 
-                zip(question_id, question_type, question_label, strict = True)
-            ]
+            questions = []
+            for id, qtype, label, answer_options in zip(
+                question_id, question_type, question_label, answer_options, strict=True
+            ):
+                questions.append(
+                    {
+                        "question_id": id,
+                        "question_type": qtype,
+                        "question_label": label
+                    }
+                )
+                if answer_options:
+                    questions[-1]["answer_options"] = answer_options
         else:
-            questions =  None
+            questions = None
         return (
             text, wait_page, next_button, questions
         )
