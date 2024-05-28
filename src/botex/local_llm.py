@@ -187,9 +187,9 @@ class LocalLLM:
             full_prompt = ChatHistory(
                 full_prompt[:1] + self.system_prompt_few_shot_examples + full_prompt[1:]
             )
-        self.format_prompt_to_template(full_prompt)  # type: ignore
+        return self.format_prompt_to_template(full_prompt)  # type: ignore
 
-    def format_prompt_to_template(self, messages: ChatHistory) -> None:
+    def format_prompt_to_template(self, messages: ChatHistory) -> str:
         """
         Formats a chat history into a prompt template suitable for model processing, handling tokenization and templating.
 
@@ -221,13 +221,13 @@ class LocalLLM:
 
         if "chat_template" not in token_config:
             logging.warning(
-                "No chat template found in the tokenizer config. Using default template from llama 3 8b instruct. This might severely affect the model's performance. Also keep in mind there is no system role in the default template."
+                "No chat template found in the tokenizer config. Using default template from Mistral 7b v3 instruct. This might severely affect the model's performance. Also keep in mind there is no system role in the default template."
             )
             token_config["chat_template"] = default_chat_template
 
         template = Template(token_config["chat_template"])
 
-        self.prompt = template.render(
+        return template.render(
             messages=messages, add_generation_prompt=True, **token_config
         )
 
@@ -247,7 +247,7 @@ class LocalLLM:
                 messages.pop(i)
         return messages
 
-    def llm_setup(self) -> List[str]:
+    def llm_setup(self, prompt) -> List[str]:
         """
         Sets up the command line arguments for running the local language model based on the current state and model configuration.
 
@@ -275,7 +275,7 @@ class LocalLLM:
             "--top-k",
             str(self.top_k),
             "-p",
-            self.prompt,  # type: ignore
+            prompt,  # type: ignore
         ]
 
     def completion(self, messages) -> MirrorLiteLLMResponse:
@@ -287,8 +287,8 @@ class LocalLLM:
         :return: A tuple containing the generated completion and the finish reason.
         :raises Exception: If there is an error during the execution of the model command.
         """
-        self.prepare_prompt(messages)
-        cmd = self.llm_setup()
+        prompt = self.prepare_prompt(messages)
+        cmd = self.llm_setup(prompt)
 
         result = subprocess.run(cmd, capture_output=True, text=True)
 
