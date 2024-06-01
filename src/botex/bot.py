@@ -119,7 +119,7 @@ def run_bot(
         # Identify all form fields by id
         question_id = []
         question_type = []
-        answer_options = []
+        answer_choices = []
         fe = dr.find_elements(By.CLASS_NAME, 'controls')
         for i in range(len(fe)): 
             el = fe[i].find_elements(By.XPATH, ".//*")
@@ -139,22 +139,20 @@ def run_bot(
                     if type == "radio":
                         # get the answer options
                         options = el[j].find_elements(By.CLASS_NAME, "form-check")
-                        answer_options.append([o.text for o in options])
+                        answer_choices.append([o.text for o in options])
                     elif el[j].get_attribute("class") == "form-select":
                         # get the answer options
                         options = el[j].find_elements(By.TAG_NAME, "option")
-                        answer_options.append([o.text for o in options[1:]])
+                        answer_choices.append([o.text for o in options[1:]])
                     else:
-                        answer_options.append(
-                            "This is a free form question and does not have answer options."
-                        )
+                        answer_choices.append(None)
                     break
         if question_id != []:
             labels = dr.find_elements(By.CLASS_NAME, "col-form-label")
             question_label = [x.text for x in labels]
             questions = []
-            for id, qtype, label, answer_options in zip(
-                question_id, question_type, question_label, answer_options, strict=True
+            for id, qtype, label, answer_choices in zip(
+                question_id, question_type, question_label, answer_choices, strict=True
             ):
                 questions.append(
                     {
@@ -163,8 +161,8 @@ def run_bot(
                         "question_label": label
                     }
                 )
-                if answer_options:
-                    questions[-1]["answer_options"] = answer_options
+                if answer_choices:
+                    questions[-1]["answer_choices"] = answer_choices
         else:
             questions = None
         return (
