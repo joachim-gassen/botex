@@ -146,7 +146,7 @@ class LocalLLM:
         system_prompt_few_shot_examples: ChatHistory | None = None,
         has_system_role: bool = False,
         ngl: int = 1,
-        c: int = 4096,
+        c: int = 32768,
         temp: float = 0,
         n: int = 10000,
         top_p: float = 0.9,
@@ -202,10 +202,6 @@ class LocalLLM:
             raise FileNotFoundError(
                 "No tokenizer found in the model path. Please ensure the model path is correct and that it has a tokenizer_config.json file."
             )
-        if "tokenizer.json" not in files:
-            raise FileNotFoundError(
-                "No tokenizer found in the model path. Please ensure the model path is correct and that it has a tokenizer.json file."
-            )
         with open(model_folder + "/tokenizer_config.json", "r") as f:
             token_config = json.load(f)
         self.start_token = token_config["bos_token"]
@@ -216,16 +212,17 @@ class LocalLLM:
         {{ bos_token }}{% for message in messages %}{% if (message['role'] == 'user') != (loop.index0 % 2 == 0) %}{{ raise_exception('Conversation roles must alternate user/assistant/user/assistant/...') }}{% endif %}{% if message['role'] == 'user' %}{{ '[INST] ' + message['content'] + ' [/INST]' }}{% elif message['role'] == 'assistant' %}{{ message['content'] + eos_token}}{% else %}{{ raise_exception('Only user and assistant roles are supported!') }}{% endif %}{% endfor %}
         """
 
-        if not self.has_system_role:
-            messages = self.push_system_message_to_user(messages)
-
         if "chat_template" not in token_config:
             logging.warning(
                 "No chat template found in the tokenizer config. Using default template from Mistral 7b v3 instruct. This might severely affect the model's performance. Also keep in mind there is no system role in the default template."
             )
             token_config["chat_template"] = default_chat_template
+            self.has_system_role = False
 
         template = Template(token_config["chat_template"])
+
+        if not self.has_system_role:
+            messages = self.push_system_message_to_user(messages)
 
         return template.render(
             messages=messages, add_generation_prompt=True, **token_config
@@ -270,6 +267,10 @@ class LocalLLM:
             str(self.n),
             "--reverse_prompt",
             "\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
+            "--reverse_prompt",
+            "\t\t\t\t\t\t\t\t\t\t\t\t\t\t",
+            "--reverse_prompt",
+            " \n  \n  \n  \n  \n  \n  \n  \n  ",
             "--top-p",
             str(self.top_p),
             "--top-k",
