@@ -52,8 +52,8 @@ def test_can_survey_be_completed_by_local_bots():
         botex_db="tests/botex.db",
         model="local",
         local_model_cfg={
-            "path_to_compiled_llama_cpp_main_file": "/mnt/file_ssd_2tb/fikir/projects/chat_backend/new_llama_cpp/llama.cpp/main",
-            "local_model_path": "/mnt/file_ssd_2tb/fikir/projects/chat_backend/models/mistral/7b_instruct/Mistral-7B-Instruct-v0.3.Q4_K_M.gguf",
+            "path_to_compiled_llama_cpp_main_file": path_to_compiled_llama_cpp_main_file,
+            "local_model_path": local_model_path,
             "ngl": 85
         }
     )
