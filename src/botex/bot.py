@@ -105,6 +105,10 @@ def run_bot(
     def scan_page(dr):
         dr.get(url)
         text = dr.find_element(By.TAG_NAME, "body").text
+        debug_text = dr.find_elements(By.CLASS_NAME, "debug-info")
+        if debug_text:
+            text = text.replace(debug_text[0].text, "")
+
         
         wait_page = dr.find_elements(By.CLASS_NAME, 'otree-wait-page__body') != []
         if wait_page:
@@ -473,7 +477,7 @@ def run_bot(
             check_response = check_response_question
 
         message = prompts[analyze_prompt].format(
-            body = text, summary = summary, nr_q = nr_q,
+            body = text.strip(), summary = summary, nr_q = nr_q,
             questions_json = questions_json
         )
 
