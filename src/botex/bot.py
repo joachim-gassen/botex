@@ -187,30 +187,40 @@ def run_bot(
         resp_dict = None
         attempts = 0
         max_attempts = 5
+        conversation.append({"role": "user", "content": message})
+        if not full_conv_history:
+            conv_hist.append({"role": "user", "content": message})
         while resp_dict is None:
             if attempts > max_attempts:
                 logging.error("The llm did not return a valid response after %s number of attempts." % max_attempts)
                 raise Exception("Maximum number of attempts reached.")
             attempts += 1
-            conversation.append({"role": "user", "content": message})
-            if not full_conv_history:
-                conv_hist.append({"role": "user", "content": message})
+            try:
+                correction_message = conversation + [{"role": "assistant", "content": resp_str}, {"role": "user", "content": message}]
+            except:
+                correction_message = None
             if model == "local":
                 assert local_llm, "Model is local but local_llm is not set."
                 assert conversation, "Conversation is empty."
                 with lock:
-                    resp = local_llm.completion(conversation)
+                    if correction_message:
+                        resp = local_llm.completion(correction_message)
+                    else:
+                        resp = local_llm.completion(conversation)
             else:
-                resp =  completion(    
-                    messages=conversation, model=model,
-                    api_key=openai_api_key,
-                    response_format = {"type": "json_object"}
+                if correction_message:
+                    resp = completion(
+                        message = correction_message, model = model,
+                        openai_api_key = openai_api_key,
+                        nopause = nopause
+                    )
+                else:
+                    resp =  completion(
+                        messages=conversation, model=model,api_key=openai_api_key,
+                        response_format = {"type": "json_object"}
                 )
 
             resp_str = resp.choices[0].message.content
-            conv_hist.append({"role": "assistant", "content": resp_str})
-            if model == "local":
-                conversation.append({"role": "assistant", "content": resp_str})
             if resp.choices[0].finish_reason == "length":
                 logging.warning("Bot's response is too long. Trying again.")
                 message = prompts['resp_too_long']
@@ -246,6 +256,8 @@ def run_bot(
                     resp_dict = None
                     continue
 
+        conv_hist.append({"role": "assistant", "content": resp_str})
+        conversation.append({"role": "assistant", "content": resp_str})
         return resp_dict
 
     def check_response_start(resp):
@@ -328,9 +340,9 @@ def run_bot(
             if missing_answer_keys:
                 errors['missing_answer_keys'].append({'question_id': answer['id'], 'missing_answer_keys': missing_answer_keys})
             # is not empty, and can be parsed to the correct type
-            if not answer['answer']:
+            if answer['answer'] == "" or answer['answer'] is None:
                 errors['missing_answer'].append(answer['id'])
-            if not answer['reason']:
+            if answer['reason'] == "" or answer['reason'] is None:
                 errors['missing_reason'].append(answer['id'])
             
             
