@@ -3,15 +3,19 @@ import json
 from numbers import Number
 import os 
 import pytest
-import subprocess
 
 import botex
 
 from tests.utils import start_otree, stop_otree, init_otree_test_session, delete_botex_db
 
-path_to_compiled_llama_cpp_main_file = "/mnt/file_ssd_2tb/fikir/projects/chat_backend/new_llama_cpp/llama.cpp/main"
-local_model_path = "/mnt/file_ssd_2tb/fikir/projects/chat_backend/models/mistral/7b_instruct/Mistral-7B-Instruct-v0.3.Q4_K_M.gguf"
-number_of_layers_to_offload_to_gpu = 85
+with open("secrets.env") as f:
+    for line in f:
+        if "path_to_compiled_llama_cpp_main_file" in line:
+            path_to_compiled_llama_cpp_main_file = line.split("=")[1].strip()
+        if "local_model_path" in line:
+            local_model_path = line.split("=")[1].strip()
+        if "number_of_layers_to_offload_to_gpu" in line:
+            number_of_layers_to_offload_to_gpu = int(line.split("=")[1].strip())
 
 
 @pytest.mark.dependency(name="llama_cpp_main_file", scope='session')
@@ -26,7 +30,7 @@ def test_local_model_path_exists():
 @pytest.mark.dependency(name="num_layers_to_offload_to_gpu", scope='session')
 def test_number_of_layers_to_offload_to_gpu():
     assert isinstance(number_of_layers_to_offload_to_gpu, int)
-    # TODO: a more specific test to see if there is a gpu to offload too
+    # TODO: a more specific test to see if there is a gpu to offload to
 
 
 @pytest.mark.dependency(name="instantiate_local_llm", scope='session', depends=["llama_cpp_main_file", "local_model_path", "num_layers_to_offload_to_gpu"])
@@ -70,7 +74,7 @@ def test_can_conversation_data_be_obtained():
     assert len(conv) == 2
 
 @pytest.mark.dependency(
-    name="conversations_complete_local", scope='session',
+    name="conversations_complete", scope='session',
     depends=["conversations_db_local_bots"]
 )
         
