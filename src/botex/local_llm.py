@@ -167,7 +167,7 @@ class LocalLLM:
         self,
         chat_history: ChatHistory,
         question: Union[HumanMessage, str] | None = None,
-    ) -> None:
+    ) -> str:
         """
         Prepares a full prompt from a given question and chat history by applying formatting to fit the model's template.
 
@@ -300,7 +300,8 @@ class LocalLLM:
             )
 
         match = re.search(
-            r"sample time =\s*\d+,\d+\s*ms\s*/\s*(\d+)\s*runs", result.stderr
+            r"sample time =\s*\d+[.,]?\d*\s*ms\s*/\s*(\d+)\s*runs",
+            result.stderr
         )
         assert match is not None, "Could not find completion tokens in the output."
         completion_tokens = int(match.group(1))
