@@ -236,8 +236,7 @@ def run_bot(
                 end = resp_str.rfind('}', start)
                 resp_str = resp_str[start:end+1]
                 resp_dict = json.loads(resp_str, strict = False)
-            except:
-                logging.exception('')
+            except (AssertionError, json.JSONDecodeError):
                 logging.warning("Bot's response is not a valid JSON. Trying again.")
                 resp_dict = None
                 message = prompts['json_error']
