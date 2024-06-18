@@ -83,7 +83,7 @@ def run_bot(
     
     def wait_next_page(dr, timeout = 10):
         attempts = 0
-        while attempts < 600:
+        while attempts < 360:
             try:
                 WebDriverWait(dr, timeout).until(
                     lambda x: x.find_element(By.CLASS_NAME, 'otree-form')
@@ -93,9 +93,9 @@ def run_bot(
                 attempts += 1
                 continue # Retry if a timeout occurs
         
-        if attempts == 600:
-            logging.error("Timeout on wait page after 600 attempts.")
-            raise Exception("Timeout on wait page after 600 attempts.")
+        if attempts == 360:
+            logging.error("Timeout on wait page after 360 attempts.")
+            raise Exception("Timeout on wait page after 360 attempts.")
 
         
     def scan_page(dr):
@@ -289,17 +289,29 @@ def run_bot(
         except:
             attempts += 1
             logging.warning("Could not start Chrome. Trying again.")
+            if attempts == 5:
+                logging.error("Could not start Chrome after 5 attempts. Stopping.")
+                raise   
             time.sleep(1)
-    if attempts == 5:
-        logging.error("Could not start Chrome after 5 attempts. Stopping.")
-        return    
         
     first_page = True
     summary = None
     text = ""
     while True:
         old_text = text
-        text, wait_page, next_button, questions = scan_page(dr)
+        attempts = 0
+        while attempts < 5:
+            try:
+                text, wait_page, next_button, questions = scan_page(dr)
+                break
+            except:
+                attempts += 1
+                logging.warning("Failed to scrape my oTree URL. Trying again.")
+                if attempts == 5:
+                    logging.error("Could not scrape oTree URL after 5 attempts. Stopping.")
+                    raise   
+                time.sleep(1)
+       
         if wait_page:
             wait_next_page(dr)
             continue
