@@ -247,13 +247,16 @@ def run_bot(
                 else:
                     success, error_msgs, error_logs = check_response(resp_dict)
                 if not success:
-                    logging.warning(f"Detected an issue: {''.join(error_logs)}. Adjusting response.")
+                    logging.warning(f"Detected an issue: {' '.join(error_logs)}. Adjusting response.")
                     message = ''
-                    for error_msg in error_msgs:
+                    for i, error_msg in enumerate(error_msgs):
                         if ':' in error_msg:
-                            error, ids = error_msg.split(": ")
+                            error, ids = error_msg.split(": ", 1)
                             f_dict = {error: ids}
-                            message += prompts[error].format(**f_dict) + ' '
+                            if i == 0:
+                                message += prompts[error].format(**f_dict) + ' '
+                            else:
+                                message += 'Additionally, ' + prompts[error].format(**f_dict) + ' '
                         else:
                             message += prompts[error_msg] + ' '
                     resp_dict = None
@@ -322,15 +325,14 @@ def run_bot(
                 check_result["error"].append("questions_not_list")
 
 
-        q_ids = [q['question_id'] for q in questions] 
-        answer_ids = [q['id'] for q in resp['questions']]
+        q_ids = [q['question_id'] for q in questions]
+        answer_ids = [q['id'] for q in resp['questions'] if q.get('id')]
         unanswered_q_ids = set(q_ids) - set(answer_ids)
         if unanswered_q_ids:
             check_result["error_log"].append(f"unanswered_questions: {' '.join(unanswered_q_ids)}")
             check_result["error"].append(f"unanswered_questions: {' '.join(unanswered_q_ids)}")
 
         errors = {
-            "missing_answer_keys": [],
             "missing_answer": [],
             "missing_reason": [],
             "answer_not_number": [],
@@ -338,14 +340,14 @@ def run_bot(
             "select_answer_number": [],
             "select_answer_unknown": []
         }
-        for answer in resp['questions']:
+        for i, answer in enumerate(resp['questions']):
             missing_answer_keys = set(["id", "answer", "reason"]) - set(answer)
             if missing_answer_keys:
-                errors['missing_answer_keys'].append({'question_id': answer['id'], 'missing_answer_keys': missing_answer_keys})
-            # is not empty, and can be parsed to the correct type
-            if answer['answer'] == "" or answer['answer'] is None:
+                if "id" in missing_answer_keys:
+                    continue
+            if not answer.get('answer'):
                 errors['missing_answer'].append(answer['id'])
-            if answer['reason'] == "" or answer['reason'] is None:
+            if not answer.get('reason'):
                 errors['missing_reason'].append(answer['id'])
             
             

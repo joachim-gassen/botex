@@ -6,6 +6,7 @@ import re
 import subprocess
 from typing import List, Union, Iterable
 
+from .gguf_parser import GGUFParser
 
 class Message(dict):
     """
@@ -146,7 +147,6 @@ class LocalLLM:
         system_prompt_few_shot_examples: ChatHistory | None = None,
         has_system_role: bool = False,
         ngl: int = 1,
-        c: int = 32768,
         temp: float = 0,
         n: int = 10000,
         top_p: float = 0.9,
@@ -155,13 +155,16 @@ class LocalLLM:
         self.system_prompt_few_shot_examples = system_prompt_few_shot_examples
         self.main_path = path_to_compiled_llama_cpp_main_file
         self.model_path = local_model_path
+        parsed_gguf = GGUFParser(self.model_path)
+        self.metadata = parsed_gguf.get_metadata()
         self.has_system_role = has_system_role
         self.ngl = ngl
-        self.c = c
+        self.c = self.metadata.get("context_length", 32768)
         self.temp = temp
         self.n = n
         self.top_p = top_p
         self.top_k = top_k
+
 
     def prepare_prompt(
         self,
@@ -196,36 +199,25 @@ class LocalLLM:
         :param messages: The chat history instance to format.
         :raises FileNotFoundError: If essential tokenizer configuration files are missing.
         """
-        model_folder = "/".join(self.model_path.split("/")[:-1])
-        files = os.listdir(model_folder)
-        if "tokenizer_config.json" not in files:
-            raise FileNotFoundError(
-                "No tokenizer found in the model path. Please ensure the model path is correct and that it has a tokenizer_config.json file."
-            )
-        with open(model_folder + "/tokenizer_config.json", "r") as f:
-            token_config = json.load(f)
-        self.start_token = token_config["bos_token"]
-        self.end_token = token_config["eos_token"]
-
         # using Mistral 7b v3 instruct template as default
         default_chat_template = """
         {{ bos_token }}{% for message in messages %}{% if (message['role'] == 'user') != (loop.index0 % 2 == 0) %}{{ raise_exception('Conversation roles must alternate user/assistant/user/assistant/...') }}{% endif %}{% if message['role'] == 'user' %}{{ '[INST] ' + message['content'] + ' [/INST]' }}{% elif message['role'] == 'assistant' %}{{ message['content'] + eos_token}}{% else %}{{ raise_exception('Only user and assistant roles are supported!') }}{% endif %}{% endfor %}
         """
 
-        if "chat_template" not in token_config:
+        if not self.metadata.get("chat_template"):
             logging.warning(
-                "No chat template found in the tokenizer config. Using default template from Mistral 7b v3 instruct. This might severely affect the model's performance. Also keep in mind there is no system role in the default template."
+                "No chat template found in the metadata of the model. Using default template from Mistral 7b v3 instruct. This might severely affect the model's performance. Also keep in mind there is no system role in the default template."
             )
-            token_config["chat_template"] = default_chat_template
+            self.metadata['chat_template'] = default_chat_template
             self.has_system_role = False
 
-        template = Template(token_config["chat_template"])
+        template = Template(self.metadata['chat_template']) # type: ignore
 
         if not self.has_system_role:
             messages = self.push_system_message_to_user(messages)
 
         return template.render(
-            messages=messages, add_generation_prompt=True, **token_config
+            messages=messages, add_generation_prompt=True, **self.metadata
         )
 
     @staticmethod
@@ -309,13 +301,8 @@ class LocalLLM:
 
         completion = result.stdout.strip()
 
-        completion = completion.replace(self.start_token, "").replace(
-            self.end_token, ""
-        )
-
-        # hacky
-        if "Llama-3" in self.model_path:
-            completion = completion.replace("<|eot_id|>", "")
+        completion = completion.replace(self.metadata['bos_token'], "", 1)
+        completion = completion.replace(self.metadata['eos_token'], "", 1)
 
         # hacky
         if "Phi-3" in self.model_path:

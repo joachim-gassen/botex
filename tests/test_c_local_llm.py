@@ -58,7 +58,7 @@ def test_can_survey_be_completed_by_local_bots():
         local_model_cfg={
             "path_to_compiled_llama_cpp_main_file": path_to_compiled_llama_cpp_main_file,
             "local_model_path": local_model_path,
-            "ngl": 85
+            "ngl": number_of_layers_to_offload_to_gpu
         }
     )
     stop_otree(otree_proc)
