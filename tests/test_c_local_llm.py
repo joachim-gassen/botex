@@ -16,6 +16,10 @@ with open("secrets.env") as f:
             local_model_path = line.split("=")[1].strip()
         if "number_of_layers_to_offload_to_gpu" in line:
             number_of_layers_to_offload_to_gpu = int(line.split("=")[1].strip())
+        if "has_system_role" in line:
+            has_system_role = line.split("=")[1].strip()
+        else:
+            has_system_role = False
 
 
 @pytest.mark.dependency(name="llama_cpp_main_file", scope='session')
@@ -58,7 +62,8 @@ def test_can_survey_be_completed_by_local_bots():
         local_model_cfg={
             "path_to_compiled_llama_server_executable": path_to_compiled_llama_server_executable,
             "local_model_path": local_model_path,
-            "ngl": number_of_layers_to_offload_to_gpu
+            "ngl": number_of_layers_to_offload_to_gpu,
+            "has_system_role": has_system_role
         }
     )
     stop_otree(otree_proc)
