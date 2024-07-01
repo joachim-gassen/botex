@@ -10,8 +10,8 @@ from tests.utils import start_otree, stop_otree, init_otree_test_session, delete
 
 with open("secrets.env") as f:
     for line in f:
-        if "path_to_compiled_llama_cpp_main_file" in line:
-            path_to_compiled_llama_cpp_main_file = line.split("=")[1].strip()
+        if "path_to_compiled_llama_server_executable" in line:
+            path_to_compiled_llama_server_executable = line.split("=")[1].strip()
         if "local_model_path" in line:
             local_model_path = line.split("=")[1].strip()
         if "number_of_layers_to_offload_to_gpu" in line:
@@ -20,7 +20,7 @@ with open("secrets.env") as f:
 
 @pytest.mark.dependency(name="llama_cpp_main_file", scope='session')
 def test_llama_cpp_main_file_exists():
-    assert os.path.exists(path_to_compiled_llama_cpp_main_file)
+    assert os.path.exists(path_to_compiled_llama_server_executable)
 
 @pytest.mark.dependency(name="local_model_path", scope='session')
 def test_local_model_path_exists():
@@ -35,7 +35,7 @@ def test_number_of_layers_to_offload_to_gpu():
 
 @pytest.mark.dependency(name="instantiate_local_llm", scope='session', depends=["llama_cpp_main_file", "local_model_path", "num_layers_to_offload_to_gpu"])
 def test_instantiate_local_llm():
-    local_llm = botex.LocalLLM(path_to_compiled_llama_cpp_main_file,local_model_path,
+    local_llm = botex.LocalLLM(path_to_compiled_llama_server_executable,local_model_path,
     ngl=number_of_layers_to_offload_to_gpu
     )
     assert local_llm
@@ -56,7 +56,7 @@ def test_can_survey_be_completed_by_local_bots():
         botex_db="tests/botex.db",
         model="local",
         local_model_cfg={
-            "path_to_compiled_llama_cpp_main_file": path_to_compiled_llama_cpp_main_file,
+            "path_to_compiled_llama_server_executable": path_to_compiled_llama_server_executable,
             "local_model_path": local_model_path,
             "ngl": number_of_layers_to_offload_to_gpu
         }

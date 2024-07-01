@@ -230,7 +230,7 @@ def run_bots_on_session(
         startup properly because of network issues. Default is False.
     wait (bool): If True (the default), the function will wait for the bots to 
         finish.
-    local_model_cfg (dict): Configuration for the local model. If model is "local", as a bare minimum it should contain, the "path_to_compiled_llama_cpp_main_file", and "local_model_path" keys.
+    local_model_cfg (dict): Configuration for the local model. If model is "local", as a bare minimum it should contain, the "path_to_compiled_llama_server_executable", and "local_model_path" keys.
 
     Returns: None (bot conversation logs are stored in database)
     """
@@ -242,6 +242,7 @@ def run_bots_on_session(
     lock = Lock()
     if model == "local":
         local_llm = LocalLLM(**local_model_cfg)
+        llm_server = local_llm.start_server()
     else:
         local_llm = None 
     threads = [
@@ -256,6 +257,10 @@ def run_bots_on_session(
     for t in threads: t.start()
     if wait: 
         for t in threads: t.join()
+    
+    if local_llm:
+        assert llm_server, "Local LLM server not started, but should have been."
+        local_llm.stop_server(llm_server)
 
 
 if __name__ == '__main__':
