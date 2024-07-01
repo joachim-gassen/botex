@@ -338,9 +338,10 @@ def run_bot(
             "answer_not_number": [],
             "answer_not_float": [],
             "select_answer_number": [],
-            "select_answer_unknown": []
+            "select_answer_unknown": [],
+            "answer_id_not_found_in_q_id_list": []
         }
-        for i, answer in enumerate(resp['questions']):
+        for answer in resp['questions']:
             missing_answer_keys = set(["id", "answer", "reason"]) - set(answer)
             if missing_answer_keys:
                 if "id" in missing_answer_keys:
@@ -353,6 +354,9 @@ def run_bot(
             
             if answer['id'] in q_ids:
                 qtype = questions[q_ids.index(answer['id'])]['question_type']
+            else:
+                errors['answer_id_not_found_in_q_id_list'].append(answer['id'])
+                continue
             if qtype == 'number' and isinstance(answer['answer'], str):
                 try:
                     int_const_pattern = r'[-+]?[0-9]+'
