@@ -23,7 +23,7 @@ logging.getLogger("LiteLLM").setLevel(logging.WARNING)
 def run_bot(
         botex_db, session_id, url, full_conv_history = False,
         model = "gpt-4o", openai_api_key = None,
-        local_llm: LocalLLM | None = None
+        local_llm: LocalLLM | None = None, user_prompts: dict | None = None
     ):
     """
     Run a bot on an oTree session. Normally, this function should not be called
@@ -42,6 +42,7 @@ def run_bot(
     openai_api_key (str): The API key for the OpenAI service.
     local_llm (LocalLLM): A LocalLLM object to use for the bot. If this is not
         None, the bot will use the local model instead of the OpenAI model.
+    user_prompts (dict): A dictionary of user prompts to override the default prompts that the bot uses. The keys should be one or more of the following: ['start', 'analyze_first_page_no_q', 'analyze_first_page_q', 'analyze_page_no_q', 'analyze_page_q', 'analyze_page_no_q_full_hist', 'analyze_page_q_full_hist', 'page_not_changed', 'system', 'resp_too_long', 'json_error', 'end'.] If a key is not present in the dictionary, the default prompt will be used. If a key that is not in the default prompts is present in the dictionary, then the bot will exit with a warning and not running to make sure that the user is aware of the issue.
 
     Returns: None (conversation is stored in BotEx database)
     """
@@ -471,6 +472,15 @@ def run_bot(
         next(rv)
         prompts = dict()
         for row in rv: prompts[row[0]] = row[1]
+    
+
+    if user_prompts:
+        for key in user_prompts:
+            if key not in prompts.keys():
+                logging.error(f"The bot is exiting because the user prompt that you provided has a key: '{key}' that is not expected by the bot. Please make sure that any default prompts that you want to override are given with the exact same key as the default prompt.")
+                return
+            else:
+                prompts[key] = user_prompts[key]
 
     message = prompts['start']
     conv = []

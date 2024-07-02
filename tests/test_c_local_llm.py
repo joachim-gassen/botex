@@ -16,6 +16,9 @@ with open("secrets.env") as f:
         key, value = line.strip().split("=")
         cfg[key] = value
 
+user_prompts = {
+    "system": "You are participating in an online survey and/or experiment. Please fully assume this role and answer everything from the first person point of view. Each prompt contains a summary of the survey/experiment including your answers so far, scraped text data from a webpage continuing the survey/experiment, and detailed tasks for you on how to analyze this text data. The materials might contain information on how participants are being compensated or paid for their participation. If this is the case, please act as if this compensation also applies to you and make sure to include this information in the summary. Answers must be given as JSON code ONLY. No text outside of the JSON answer is allowed at any time. In each prompt, I will provide you with detailed information on the respective format."
+}
 
 @pytest.mark.dependency(name="llama_server_executable", scope='session')
 def test_llama_server_executable_exists():

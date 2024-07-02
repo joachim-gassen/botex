@@ -205,7 +205,8 @@ def run_bots_on_session(
         openai_api_key = None,
         already_started = False,
         wait = True,
-        local_model_cfg={}
+        local_model_cfg={},
+        user_prompts: dict | None = None
     ):
     """
     Run BotEx bots on an oTree session.
@@ -231,6 +232,7 @@ def run_bots_on_session(
     wait (bool): If True (the default), the function will wait for the bots to 
         finish.
     local_model_cfg (dict): Configuration for the local model. If model is "local", as a bare minimum it should contain, the "path_to_compiled_llama_server_executable", and "local_model_path" keys.
+    user_prompts (dict): A dictionary of user prompts to override the default prompts that the bot uses. The keys should be one or more of the following: ['start', 'analyze_first_page_no_q', 'analyze_first_page_q', 'analyze_page_no_q', 'analyze_page_q', 'analyze_page_no_q_full_hist', 'analyze_page_q_full_hist', 'page_not_changed', 'system', 'resp_too_long', 'json_error', 'end'.] If a key is not present in the dictionary, the default prompt will be used. If a key that is not in the default prompts is present in the dictionary, then the bot will exit with a warning and not running to make sure that the user is aware of the issue.
 
     Returns: None (bot conversation logs are stored in database)
     """
