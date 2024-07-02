@@ -21,7 +21,7 @@ from .local_llm import LocalLLM
 logging.getLogger("LiteLLM").setLevel(logging.WARNING)
 
 def run_bot(
-        botex_db, session_id, url, lock, full_conv_history = False,
+        botex_db, session_id, url, full_conv_history = False,
         model = "gpt-4o", openai_api_key = None,
         local_llm: LocalLLM | None = None
     ):
@@ -33,7 +33,6 @@ def run_bot(
     botex_db (str): The name of the SQLite database file to store BotEx data.
     session_id (str): The ID of the oTree session.
     url (str): The participant URL of the bot instance.
-    lock (threading.Lock): A lock to prevent concurrent access to the local model.
     full_conv_history (bool): Whether to keep the full conversation history.
         This will increase token use and only work with very short experiments.
         Default is False.
@@ -47,7 +46,6 @@ def run_bot(
     Returns: None (conversation is stored in BotEx database)
     """
     bot_parms = locals()
-    bot_parms.pop('lock')
     bot_parms.pop('local_llm')
     bot_parms['local_llm'] = vars(local_llm) if local_llm else None
     if bot_parms['openai_api_key'] is not None: 
@@ -206,11 +204,10 @@ def run_bot(
             if model == "local":
                 assert local_llm, "Model is local but local_llm is not set."
                 assert conversation, "Conversation is empty."
-                with lock:
-                    if correction_message:
-                        resp = local_llm.completion(correction_message)
-                    else:
-                        resp = local_llm.completion(conversation)
+                if correction_message:
+                    resp = local_llm.completion(correction_message)
+                else:
+                    resp = local_llm.completion(conversation)
             else:
                 if correction_message:
                     resp = completion(

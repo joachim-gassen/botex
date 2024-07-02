@@ -9,22 +9,17 @@ import botex
 from tests.utils import start_otree, stop_otree, init_otree_test_session, delete_botex_db
 
 with open("secrets.env") as f:
+    cfg = {}
     for line in f:
-        if "path_to_compiled_llama_server_executable" in line:
-            path_to_compiled_llama_server_executable = line.split("=")[1].strip()
-        if "local_model_path" in line:
-            local_model_path = line.split("=")[1].strip()
-        if "number_of_layers_to_offload_to_gpu" in line:
-            number_of_layers_to_offload_to_gpu = int(line.split("=")[1].strip())
-        if "has_system_role" in line:
-            has_system_role = line.split("=")[1].strip()
-        else:
-            has_system_role = False
+        if not line.strip() or line.startswith("#"):
+            continue
+        key, value = line.strip().split("=")
+        cfg[key] = value
 
 
-@pytest.mark.dependency(name="llama_cpp_main_file", scope='session')
-def test_llama_cpp_main_file_exists():
-    assert os.path.exists(path_to_compiled_llama_server_executable)
+@pytest.mark.dependency(name="llama_server_executable", scope='session')
+def test_llama_server_executable_exists():
+    assert os.path.exists(cfg["path_to_compiled_llama_server_executable"])
 
 @pytest.mark.dependency(name="local_model_path", scope='session')
 def test_local_model_path_exists():
@@ -37,15 +32,17 @@ def test_number_of_layers_to_offload_to_gpu():
     # TODO: a more specific test to see if there is a gpu to offload to
 
 
-@pytest.mark.dependency(name="instantiate_local_llm", scope='session', depends=["llama_cpp_main_file", "local_model_path", "num_layers_to_offload_to_gpu"])
-def test_instantiate_local_llm():
-    local_llm = botex.LocalLLM(path_to_compiled_llama_server_executable,local_model_path,
-    ngl=number_of_layers_to_offload_to_gpu
-    )
-    assert local_llm
-
-
-@pytest.mark.dependency(name="run_local_bots", scope='session', depends=["instantiate_local_llm", "botex_session", "botex_db"])
+@pytest.mark.dependency(
+        name="run_local_bots",
+        scope='session',
+        depends=[
+            "llama_server_executable",
+            "local_model_path",
+            "num_layers_to_offload_to_gpu",
+            "botex_session",
+            "botex_db"
+        ]
+)
 def test_can_survey_be_completed_by_local_bots():
     delete_botex_db()
     otree_proc = start_otree()
@@ -59,12 +56,8 @@ def test_can_survey_be_completed_by_local_bots():
         bot_urls=botex_session["bot_urls"],
         botex_db="tests/botex.db",
         model="local",
-        local_model_cfg={
-            "path_to_compiled_llama_server_executable": path_to_compiled_llama_server_executable,
-            "local_model_path": local_model_path,
-            "ngl": number_of_layers_to_offload_to_gpu,
-            "has_system_role": has_system_role
-        }
+        local_model_cfg=cfg,
+        user_prompts=user_prompts
     )
     stop_otree(otree_proc)
     assert True

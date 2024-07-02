@@ -152,6 +152,8 @@ class LocalLLM:
         n: int = 10000,
         top_p: float = 0.9,
         top_k: int = 40,
+        num_slots: int = 1,
+        **kwargs,
     ):
         self.system_prompt_few_shot_examples = system_prompt_few_shot_examples
         self.server_path = path_to_compiled_llama_server_executable
@@ -170,6 +172,7 @@ class LocalLLM:
         self.n = n
         self.top_p = top_p
         self.top_k = top_k
+        self.num_slots = num_slots
 
     def validate_parameters(self):
         if not os.path.exists(self.server_path):
@@ -201,9 +204,11 @@ class LocalLLM:
             "-m",
             self.model_path,
             "-c",
-            str(self.c),
+            str(int(self.num_slots) * (int(self.c) + int(self.n))),
             "-n",
             str(self.n),
+            "--parallel",
+            str(self.num_slots),
             "-fa",
         ]
         logging.info(f"Starting LLM server ...")

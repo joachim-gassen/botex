@@ -1,6 +1,6 @@
 from os import environ
 import sqlite3
-from threading import Lock, Thread
+from threading import Thread
 from random import sample, shuffle
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -239,7 +239,6 @@ def run_bots_on_session(
     if openai_api_key is None: openai_api_key = environ.get('OPENAI_API_KEY')
     if bot_urls is None: 
         bot_urls = get_bot_urls(session_id, botex_db, already_started)
-    lock = Lock()
     if model == "local":
         local_llm = LocalLLM(**local_model_cfg)
         llm_server = local_llm.start_server()
@@ -250,7 +249,7 @@ def run_bots_on_session(
             target = run_bot, 
             kwargs = {
                 'botex_db': botex_db, 'session_id': session_id, 
-                'url': url, 'lock': lock, 'full_conv_history': full_conv_history, 'model': model, 'openai_api_key': openai_api_key, 'local_llm': local_llm
+                'url': url, 'full_conv_history': full_conv_history, 'model': model, 'openai_api_key': openai_api_key, 'local_llm': local_llm, 'user_prompts': user_prompts
             }
         ) for url in bot_urls 
     ]
