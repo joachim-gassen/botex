@@ -33,7 +33,7 @@ class GGUFParser:
                 if key == 'tokenizer.ggml.add_eos_token':
                     meta_data['add_eos_token'] = value
                 
-                if key == 'llama.context_length':
+                if 'context_length' in key:
                     meta_data['context_length'] = value
                 
                 if key == 'tokenizer.ggml.tokens':

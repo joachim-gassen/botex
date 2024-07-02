@@ -9,39 +9,44 @@ import botex
 from tests.utils import start_otree, stop_otree, init_otree_test_session, delete_botex_db
 
 with open("secrets.env") as f:
+    cfg = {}
     for line in f:
-        if "path_to_compiled_llama_cpp_main_file" in line:
-            path_to_compiled_llama_cpp_main_file = line.split("=")[1].strip()
-        if "local_model_path" in line:
-            local_model_path = line.split("=")[1].strip()
-        if "number_of_layers_to_offload_to_gpu" in line:
-            number_of_layers_to_offload_to_gpu = int(line.split("=")[1].strip())
+        if not line.strip() or line.startswith("#"):
+            continue
+        key, value = line.strip().split("=")
+        cfg[key] = value
 
+user_prompts = {
+    "system": "You are participating in an online survey and/or experiment. Please fully assume this role and answer everything from the first person point of view. Each prompt contains a summary of the survey/experiment including your answers so far, scraped text data from a webpage continuing the survey/experiment, and detailed tasks for you on how to analyze this text data. The materials might contain information on how participants are being compensated or paid for their participation. If this is the case, please act as if this compensation also applies to you and make sure to include this information in the summary. Answers must be given as JSON code ONLY. No text outside of the JSON answer is allowed at any time. In each prompt, I will provide you with detailed information on the respective format."
+}
 
-@pytest.mark.dependency(name="llama_cpp_main_file", scope='session')
-def test_llama_cpp_main_file_exists():
-    assert os.path.exists(path_to_compiled_llama_cpp_main_file)
+@pytest.mark.dependency(name="llama_server_executable", scope='session')
+def test_llama_server_executable_exists():
+    assert os.path.exists(cfg["path_to_compiled_llama_server_executable"])
 
 @pytest.mark.dependency(name="local_model_path", scope='session')
 def test_local_model_path_exists():
-    assert os.path.exists(local_model_path)
+    assert os.path.exists(cfg["local_model_path"])
 
 
 @pytest.mark.dependency(name="num_layers_to_offload_to_gpu", scope='session')
 def test_number_of_layers_to_offload_to_gpu():
-    assert isinstance(number_of_layers_to_offload_to_gpu, int)
-    # TODO: a more specific test to see if there is a gpu to offload to
+    if cfg.get("number_of_layers_to_offload_to_gpu"):
+        assert isinstance(int(cfg["number_of_layers_to_offload_to_gpu"]), int)
+        # TODO: a more specific test to see if there is a gpu to offload to
 
 
-@pytest.mark.dependency(name="instantiate_local_llm", scope='session', depends=["llama_cpp_main_file", "local_model_path", "num_layers_to_offload_to_gpu"])
-def test_instantiate_local_llm():
-    local_llm = botex.LocalLLM(path_to_compiled_llama_cpp_main_file,local_model_path,
-    ngl=number_of_layers_to_offload_to_gpu
-    )
-    assert local_llm
-
-
-@pytest.mark.dependency(name="run_local_bots", scope='session', depends=["instantiate_local_llm", "botex_session", "botex_db"])
+@pytest.mark.dependency(
+        name="run_local_bots",
+        scope='session',
+        depends=[
+            "llama_server_executable",
+            "local_model_path",
+            "num_layers_to_offload_to_gpu",
+            "botex_session",
+            "botex_db"
+        ]
+)
 def test_can_survey_be_completed_by_local_bots():
     delete_botex_db()
     otree_proc = start_otree()
@@ -55,11 +60,8 @@ def test_can_survey_be_completed_by_local_bots():
         bot_urls=botex_session["bot_urls"],
         botex_db="tests/botex.db",
         model="local",
-        local_model_cfg={
-            "path_to_compiled_llama_cpp_main_file": path_to_compiled_llama_cpp_main_file,
-            "local_model_path": local_model_path,
-            "ngl": number_of_layers_to_offload_to_gpu
-        }
+        local_model_cfg=cfg,
+        user_prompts=user_prompts
     )
     stop_otree(otree_proc)
     assert True

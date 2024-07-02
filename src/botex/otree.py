@@ -1,6 +1,6 @@
 from os import environ
 import sqlite3
-from threading import Lock, Thread
+from threading import Thread
 from random import sample, shuffle
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -205,7 +205,8 @@ def run_bots_on_session(
         openai_api_key = None,
         already_started = False,
         wait = True,
-        local_model_cfg={}
+        local_model_cfg={},
+        user_prompts: dict | None = None
     ):
     """
     Run BotEx bots on an oTree session.
@@ -230,7 +231,8 @@ def run_bots_on_session(
         startup properly because of network issues. Default is False.
     wait (bool): If True (the default), the function will wait for the bots to 
         finish.
-    local_model_cfg (dict): Configuration for the local model. If model is "local", as a bare minimum it should contain, the "path_to_compiled_llama_cpp_main_file", and "local_model_path" keys.
+    local_model_cfg (dict): Configuration for the local model. If model is "local", as a bare minimum it should contain, the "path_to_compiled_llama_server_executable", and "local_model_path" keys.
+    user_prompts (dict): A dictionary of user prompts to override the default prompts that the bot uses. The keys should be one or more of the following: ['start', 'analyze_first_page_no_q', 'analyze_first_page_q', 'analyze_page_no_q', 'analyze_page_q', 'analyze_page_no_q_full_hist', 'analyze_page_q_full_hist', 'page_not_changed', 'system', 'resp_too_long', 'json_error', 'end'.] If a key is not present in the dictionary, the default prompt will be used. If a key that is not in the default prompts is present in the dictionary, then the bot will exit with a warning and not running to make sure that the user is aware of the issue.
 
     Returns: None (bot conversation logs are stored in database)
     """
@@ -239,9 +241,9 @@ def run_bots_on_session(
     if openai_api_key is None: openai_api_key = environ.get('OPENAI_API_KEY')
     if bot_urls is None: 
         bot_urls = get_bot_urls(session_id, botex_db, already_started)
-    lock = Lock()
     if model == "local":
         local_llm = LocalLLM(**local_model_cfg)
+        llm_server = local_llm.start_server()
     else:
         local_llm = None 
     threads = [
@@ -249,13 +251,17 @@ def run_bots_on_session(
             target = run_bot, 
             kwargs = {
                 'botex_db': botex_db, 'session_id': session_id, 
-                'url': url, 'lock': lock, 'full_conv_history': full_conv_history, 'model': model, 'openai_api_key': openai_api_key, 'local_llm': local_llm
+                'url': url, 'full_conv_history': full_conv_history, 'model': model, 'openai_api_key': openai_api_key, 'local_llm': local_llm, 'user_prompts': user_prompts
             }
         ) for url in bot_urls 
     ]
     for t in threads: t.start()
     if wait: 
         for t in threads: t.join()
+    
+    if local_llm:
+        assert llm_server, "Local LLM server not started, but should have been."
+        local_llm.stop_server(llm_server)
 
 
 if __name__ == '__main__':
