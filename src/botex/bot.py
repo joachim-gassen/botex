@@ -85,7 +85,8 @@ def run_bot(
     
     def wait_next_page(dr, timeout = 10):
         attempts = 0
-        while attempts < 600:
+        max_attempts = 360
+        while attempts < max_attempts:
             try:
                 WebDriverWait(dr, timeout).until(
                     lambda x: x.find_element(By.CLASS_NAME, 'otree-form')
@@ -93,11 +94,13 @@ def run_bot(
                 break # Exit the loop if successful
             except TimeoutException:
                 attempts += 1
+                if attempts % 60 == 0:
+                    logging.info(f"Waiting for page to load. Attempt {attempts}/{max_attempts}.")
                 continue # Retry if a timeout occurs
-        
-        if attempts == 600:
+
+        if attempts == max_attempts:
             logging.error("Timeout on wait page after 600 attempts.")
-            raise Exception("Timeout on wait page after 600 attempts.")
+            return 'Timeout on wait page after 600 attempts.'
 
         
     def scan_page(dr):
@@ -195,7 +198,7 @@ def run_bot(
         while resp_dict is None:
             if attempts > max_attempts:
                 logging.error("The llm did not return a valid response after %s number of attempts." % max_attempts)
-                raise Exception("Maximum number of attempts reached.")
+                return 'Maximum number of attempts reached.'
             attempts += 1
             try:
                 correction_message = conversation + [{"role": "assistant", "content": resp_str}, {"role": "user", "content": message}]
@@ -234,7 +237,7 @@ def run_bot(
                 resp_str = resp_str[start:end+1]
                 resp_dict = json.loads(resp_str, strict = False)
             except (AssertionError, json.JSONDecodeError):
-                logging.warning("Bot's response is not a valid JSON. Trying again.")
+                logging.warning(f"Bot's response is not a valid JSON\n{resp_str}\n. Trying again.")
                 resp_dict = None
                 message = prompts['json_error']
                 continue
@@ -244,7 +247,7 @@ def run_bot(
                 else:
                     success, error_msgs, error_logs = check_response(resp_dict)
                 if not success:
-                    logging.warning(f"Detected an issue: {' '.join(error_logs)}. Adjusting response.")
+                    logging.warning(f"Detected an issue: {' '.join(error_logs)}.\n{resp_dict}.\nAdjusting response.")
                     message = ''
                     for i, error_msg in enumerate(error_msgs):
                         if ':' in error_msg:
@@ -273,7 +276,7 @@ def run_bot(
             error_log = "Bot's response does not have the required understood key."
             check_result["error_log"].append(error_log)
             check_result["error"].append("no_understood_key")
-        if not str(resp['understood']).lower() == "yes":
+        if str(resp.get('understood')).lower() != "yes":
             error_log = "Bot did not understand the message."
             check_result["error_log"].append(error_log)
             check_result["error"].append("not_understood")
@@ -401,6 +404,52 @@ def run_bot(
         if check_result.get("error"):
             return False, check_result["error"], check_result["error_log"]
         return True, None, None
+    
+    def gracefully_exit_failed_bot(failure_place):
+        if failure_place == "start":
+            result = "Bot could not even start. Stopping."
+        elif failure_place == "abandoned":
+            result = "Bot was likely abandoned by its matched participant. Exiting."
+        else:
+            result = "Bot could not provide a valid response after 5 attempts. Exiting."        
+        conv.append({"role": "system", "content": result})
+        store_data(botex_db, session_id, url, conv, bot_parms)
+        if failure_place != "start" and failure_place != "end":
+            dr.close()
+            dr.quit()
+    
+    def store_data(botex_db, session_id, url, conv, bot_parms):
+        """
+        Store the conversation data in the BotEx database.
+
+        Parameters:
+        botex_db (str): The name of the SQLite database file to store BotEx data.
+        session_id (str): The ID of the oTree session.
+        url (str): The participant URL of the bot instance.
+        conv (list): The conversation data.
+        bot_parms (str): The parameters of the bot.
+
+        Returns: None
+        """
+        conn = sqlite3.connect(botex_db)
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            INSERT INTO conversations (id, bot_parms, conversation) 
+            VALUES (?, ?, ?)
+            """, (url[-8:], bot_parms, json.dumps(conv))
+        )
+        conn.commit()
+        cursor.execute(
+            """
+            UPDATE participants SET time_out = ? 
+            WHERE session_id = ? and url = ?
+            """, 
+            (datetime.now(timezone.utc).isoformat(), session_id, url)
+        )
+        conn.commit()
+        cursor.close()
+        conn.close()
 
     
     conn = sqlite3.connect(botex_db)
@@ -426,6 +475,9 @@ def run_bot(
     message = prompts['start']
     conv = []
     resp = llm_send_message(message, conv, check_response_start)
+    if resp == 'Maximum number of attempts reached.':
+        gracefully_exit_failed_bot("start")
+        return
     logging.info(f"Bot's response to start message: '{resp}'")
     
     options = Options()
@@ -452,9 +504,24 @@ def run_bot(
     text = ""
     while True:
         old_text = text
-        text, wait_page, next_button, questions = scan_page(dr)
+        attempts = 0
+        while attempts < 5:
+            try:
+                text, wait_page, next_button, questions = scan_page(dr)
+                break
+            except:
+                attempts += 1
+                logging.warning("Failed to scrape my oTree URL. Trying again.")
+                if attempts == 5:
+                    logging.error("Could not scrape my oTree URL after 5 attempts. Stopping.")
+                    gracefully_exit_failed_bot("middle")
+                    return
+                time.sleep(1)
         if wait_page:
-            wait_next_page(dr)
+            wait_result = wait_next_page(dr)
+            if wait_result == 'Timeout on wait page after 600 attempts.':
+                gracefully_exit_failed_bot("abandoned")
+                return
             continue
 
         if full_conv_history:
@@ -502,6 +569,10 @@ def run_bot(
             message = prompts['page_not_changed'] + message
             
         resp = llm_send_message(message, conv, check_response, questions=questions)
+        if resp == 'Maximum number of attempts reached.':
+            gracefully_exit_failed_bot("middle")
+            return
+
         logging.info(f"Bot analysis of page: '{resp}'")
         if not full_conv_history: summary = resp['summary']
         if questions is None and next_button is not None:
@@ -549,26 +620,15 @@ def run_bot(
     dr.quit()
     message = prompts['end'].format(summary = summary)
     resp = llm_send_message(message, conv, check_response_end)
+    if resp == 'Maximum number of attempts reached.':
+        gracefully_exit_failed_bot("end")
+        return
     logging.info(f"Bot's final remarks about experiment: '{resp}'")
     logging.info("Bot finished.")
-        
-    conn = sqlite3.connect(botex_db)
-    cursor = conn.cursor()
-    cursor.execute(
-        """
-        INSERT INTO conversations (id, bot_parms, conversation) 
-        VALUES (?, ?, ?)
-        """, (url[-8:], bot_parms, json.dumps(conv))
-    )
-    conn.commit()
-    cursor.execute(
-        """
-        UPDATE participants SET time_out = ? 
-        WHERE session_id = ? and url = ?
-        """, 
-        (datetime.now(timezone.utc).isoformat(), session_id, url)
-    )
-    conn.commit()
-    cursor.close()
-    conn.close()
+    store_data(botex_db, session_id, url, conv, bot_parms)
+
+
+
+
+
 

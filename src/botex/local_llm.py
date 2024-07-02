@@ -359,7 +359,17 @@ class LocalLLM:
             "max_tokens": self.n,
         }
 
-        response = requests.post(url, json=payload)
+        attempts = 0
+        while True:
+            try:
+                response = requests.post(url, json=payload, timeout=300)
+                break
+            except requests.Timeout:
+                logging.error("Request timed out. Retrying...")
+                attempts += 1
+                if attempts == 3:
+                    raise Exception("Request timed out after 3 attempts.")
+                
 
         if response.status_code != 200:
             raise Exception(
