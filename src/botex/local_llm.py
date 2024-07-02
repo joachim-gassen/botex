@@ -145,11 +145,12 @@ class LocalLLM:
         path_to_compiled_llama_server_executable: str,
         local_model_path: str,
         api_base_url: str = "http://localhost:8080",
+        context_length: int | None = None,
         system_prompt_few_shot_examples: ChatHistory | None = None,
         has_system_role: bool = False,
-        ngl: int = 1,
-        temp: float = 0.5,
-        n: int = 10000,
+        number_of_layers_to_offload_to_gpu: int = 1,
+        temperature: float = 0.5,
+        maximum_tokens_to_predict: int = 10000,
         top_p: float = 0.9,
         top_k: int = 40,
         num_slots: int = 1,
@@ -166,10 +167,10 @@ class LocalLLM:
             if isinstance(has_system_role, bool)
             else eval(has_system_role)
         )
-        self.ngl = ngl
-        self.c = self.metadata.get("context_length", 32768)
-        self.temp = temp
-        self.n = n
+        self.ngl = number_of_layers_to_offload_to_gpu
+        self.c = context_length if context_length else self.metadata.get("context_length", 4096)
+        self.temp = temperature
+        self.n = maximum_tokens_to_predict
         self.top_p = top_p
         self.top_k = top_k
         self.num_slots = num_slots
