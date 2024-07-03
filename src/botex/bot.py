@@ -21,9 +21,9 @@ from .local_llm import LocalLLM
 logging.getLogger("LiteLLM").setLevel(logging.WARNING)
 
 def run_bot(
-        botex_db, session_id, url, lock, full_conv_history = False,
+        botex_db, session_id, url, full_conv_history = False,
         model = "gpt-4o", openai_api_key = None,
-        local_llm: LocalLLM | None = None
+        local_llm: LocalLLM | None = None, user_prompts: dict | None = None
     ):
     """
     Run a bot on an oTree session. Normally, this function should not be called
@@ -33,7 +33,6 @@ def run_bot(
     botex_db (str): The name of the SQLite database file to store BotEx data.
     session_id (str): The ID of the oTree session.
     url (str): The participant URL of the bot instance.
-    lock (threading.Lock): A lock to prevent concurrent access to the local model.
     full_conv_history (bool): Whether to keep the full conversation history.
         This will increase token use and only work with very short experiments.
         Default is False.
@@ -43,11 +42,11 @@ def run_bot(
     openai_api_key (str): The API key for the OpenAI service.
     local_llm (LocalLLM): A LocalLLM object to use for the bot. If this is not
         None, the bot will use the local model instead of the OpenAI model.
+    user_prompts (dict): A dictionary of user prompts to override the default prompts that the bot uses. The keys should be one or more of the following: ['start', 'analyze_first_page_no_q', 'analyze_first_page_q', 'analyze_page_no_q', 'analyze_page_q', 'analyze_page_no_q_full_hist', 'analyze_page_q_full_hist', 'page_not_changed', 'system', 'resp_too_long', 'json_error', 'end'.] If a key is not present in the dictionary, the default prompt will be used. If a key that is not in the default prompts is present in the dictionary, then the bot will exit with a warning and not running to make sure that the user is aware of the issue.
 
     Returns: None (conversation is stored in BotEx database)
     """
     bot_parms = locals()
-    bot_parms.pop('lock')
     bot_parms.pop('local_llm')
     bot_parms['local_llm'] = vars(local_llm) if local_llm else None
     if bot_parms['openai_api_key'] is not None: 
@@ -87,7 +86,8 @@ def run_bot(
     
     def wait_next_page(dr, timeout = 10):
         attempts = 0
-        while attempts < 600:
+        max_attempts = 360
+        while attempts < max_attempts:
             try:
                 WebDriverWait(dr, timeout).until(
                     lambda x: x.find_element(By.CLASS_NAME, 'otree-form')
@@ -95,11 +95,13 @@ def run_bot(
                 break # Exit the loop if successful
             except TimeoutException:
                 attempts += 1
+                if attempts % 60 == 0:
+                    logging.info(f"Waiting for page to load. Attempt {attempts}/{max_attempts}.")
                 continue # Retry if a timeout occurs
-        
-        if attempts == 600:
+
+        if attempts == max_attempts:
             logging.error("Timeout on wait page after 600 attempts.")
-            raise Exception("Timeout on wait page after 600 attempts.")
+            return 'Timeout on wait page after 600 attempts.'
 
         
     def scan_page(dr):
@@ -197,7 +199,7 @@ def run_bot(
         while resp_dict is None:
             if attempts > max_attempts:
                 logging.error("The llm did not return a valid response after %s number of attempts." % max_attempts)
-                raise Exception("Maximum number of attempts reached.")
+                return 'Maximum number of attempts reached.'
             attempts += 1
             try:
                 correction_message = conversation + [{"role": "assistant", "content": resp_str}, {"role": "user", "content": message}]
@@ -206,11 +208,10 @@ def run_bot(
             if model == "local":
                 assert local_llm, "Model is local but local_llm is not set."
                 assert conversation, "Conversation is empty."
-                with lock:
-                    if correction_message:
-                        resp = local_llm.completion(correction_message)
-                    else:
-                        resp = local_llm.completion(conversation)
+                if correction_message:
+                    resp = local_llm.completion(correction_message)
+                else:
+                    resp = local_llm.completion(conversation)
             else:
                 if correction_message:
                     resp = completion(
@@ -222,7 +223,7 @@ def run_bot(
                     resp =  completion(
                         messages=conversation, model=model,api_key=openai_api_key,
                         response_format = {"type": "json_object"}
-                )
+                    )
 
             resp_str = resp.choices[0].message.content
             if resp.choices[0].finish_reason == "length":
@@ -236,9 +237,8 @@ def run_bot(
                 end = resp_str.rfind('}', start)
                 resp_str = resp_str[start:end+1]
                 resp_dict = json.loads(resp_str, strict = False)
-            except:
-                logging.exception('')
-                logging.warning("Bot's response is not a valid JSON. Trying again.")
+            except (AssertionError, json.JSONDecodeError):
+                logging.warning(f"Bot's response is not a valid JSON\n{resp_str}\n. Trying again.")
                 resp_dict = None
                 message = prompts['json_error']
                 continue
@@ -248,13 +248,16 @@ def run_bot(
                 else:
                     success, error_msgs, error_logs = check_response(resp_dict)
                 if not success:
-                    logging.warning(f"Detected an issue: {''.join(error_logs)}. Adjusting response.")
+                    logging.warning(f"Detected an issue: {' '.join(error_logs)}.\n{resp_dict}.\nAdjusting response.")
                     message = ''
-                    for error_msg in error_msgs:
+                    for i, error_msg in enumerate(error_msgs):
                         if ':' in error_msg:
-                            error, ids = error_msg.split(": ")
+                            error, ids = error_msg.split(": ", 1)
                             f_dict = {error: ids}
-                            message += prompts[error].format(**f_dict) + ' '
+                            if i == 0:
+                                message += prompts[error].format(**f_dict) + ' '
+                            else:
+                                message += 'Additionally, ' + prompts[error].format(**f_dict) + ' '
                         else:
                             message += prompts[error_msg] + ' '
                     resp_dict = None
@@ -274,7 +277,7 @@ def run_bot(
             error_log = "Bot's response does not have the required understood key."
             check_result["error_log"].append(error_log)
             check_result["error"].append("no_understood_key")
-        if not str(resp['understood']).lower() == "yes":
+        if str(resp.get('understood')).lower() != "yes":
             error_log = "Bot did not understand the message."
             check_result["error_log"].append(error_log)
             check_result["error"].append("not_understood")
@@ -323,35 +326,38 @@ def run_bot(
                 check_result["error"].append("questions_not_list")
 
 
-        q_ids = [q['question_id'] for q in questions] 
-        answer_ids = [q['id'] for q in resp['questions']]
+        q_ids = [q['question_id'] for q in questions]
+        answer_ids = [q['id'] for q in resp['questions'] if q.get('id')]
         unanswered_q_ids = set(q_ids) - set(answer_ids)
         if unanswered_q_ids:
             check_result["error_log"].append(f"unanswered_questions: {' '.join(unanswered_q_ids)}")
             check_result["error"].append(f"unanswered_questions: {' '.join(unanswered_q_ids)}")
 
         errors = {
-            "missing_answer_keys": [],
             "missing_answer": [],
             "missing_reason": [],
             "answer_not_number": [],
             "answer_not_float": [],
             "select_answer_number": [],
-            "select_answer_unknown": []
+            "select_answer_unknown": [],
+            "answer_id_not_found_in_q_id_list": []
         }
         for answer in resp['questions']:
             missing_answer_keys = set(["id", "answer", "reason"]) - set(answer)
             if missing_answer_keys:
-                errors['missing_answer_keys'].append({'question_id': answer['id'], 'missing_answer_keys': missing_answer_keys})
-            # is not empty, and can be parsed to the correct type
-            if answer['answer'] == "" or answer['answer'] is None:
+                if "id" in missing_answer_keys:
+                    continue
+            if not answer.get('answer'):
                 errors['missing_answer'].append(answer['id'])
-            if answer['reason'] == "" or answer['reason'] is None:
+            if not answer.get('reason'):
                 errors['missing_reason'].append(answer['id'])
             
             
             if answer['id'] in q_ids:
                 qtype = questions[q_ids.index(answer['id'])]['question_type']
+            else:
+                errors['answer_id_not_found_in_q_id_list'].append(answer['id'])
+                continue
             if qtype == 'number' and isinstance(answer['answer'], str):
                 try:
                     int_const_pattern = r'[-+]?[0-9]+'
@@ -399,6 +405,52 @@ def run_bot(
         if check_result.get("error"):
             return False, check_result["error"], check_result["error_log"]
         return True, None, None
+    
+    def gracefully_exit_failed_bot(failure_place):
+        if failure_place == "start":
+            result = "Bot could not even start. Stopping."
+        elif failure_place == "abandoned":
+            result = "Bot was likely abandoned by its matched participant. Exiting."
+        else:
+            result = "Bot could not provide a valid response after 5 attempts. Exiting."        
+        conv.append({"role": "system", "content": result})
+        store_data(botex_db, session_id, url, conv, bot_parms)
+        if failure_place != "start" and failure_place != "end":
+            dr.close()
+            dr.quit()
+    
+    def store_data(botex_db, session_id, url, conv, bot_parms):
+        """
+        Store the conversation data in the BotEx database.
+
+        Parameters:
+        botex_db (str): The name of the SQLite database file to store BotEx data.
+        session_id (str): The ID of the oTree session.
+        url (str): The participant URL of the bot instance.
+        conv (list): The conversation data.
+        bot_parms (str): The parameters of the bot.
+
+        Returns: None
+        """
+        conn = sqlite3.connect(botex_db)
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            INSERT INTO conversations (id, bot_parms, conversation) 
+            VALUES (?, ?, ?)
+            """, (url[-8:], bot_parms, json.dumps(conv))
+        )
+        conn.commit()
+        cursor.execute(
+            """
+            UPDATE participants SET time_out = ? 
+            WHERE session_id = ? and url = ?
+            """, 
+            (datetime.now(timezone.utc).isoformat(), session_id, url)
+        )
+        conn.commit()
+        cursor.close()
+        conn.close()
 
     
     conn = sqlite3.connect(botex_db)
@@ -420,10 +472,22 @@ def run_bot(
         next(rv)
         prompts = dict()
         for row in rv: prompts[row[0]] = row[1]
+    
+
+    if user_prompts:
+        for key in user_prompts:
+            if key not in prompts.keys():
+                logging.error(f"The bot is exiting because the user prompt that you provided has a key: '{key}' that is not expected by the bot. Please make sure that any default prompts that you want to override are given with the exact same key as the default prompt.")
+                return
+            else:
+                prompts[key] = user_prompts[key]
 
     message = prompts['start']
     conv = []
     resp = llm_send_message(message, conv, check_response_start)
+    if resp == 'Maximum number of attempts reached.':
+        gracefully_exit_failed_bot("start")
+        return
     logging.info(f"Bot's response to start message: '{resp}'")
     
     options = Options()
@@ -450,9 +514,24 @@ def run_bot(
     text = ""
     while True:
         old_text = text
-        text, wait_page, next_button, questions = scan_page(dr)
+        attempts = 0
+        while attempts < 5:
+            try:
+                text, wait_page, next_button, questions = scan_page(dr)
+                break
+            except:
+                attempts += 1
+                logging.warning("Failed to scrape my oTree URL. Trying again.")
+                if attempts == 5:
+                    logging.error("Could not scrape my oTree URL after 5 attempts. Stopping.")
+                    gracefully_exit_failed_bot("middle")
+                    return
+                time.sleep(1)
         if wait_page:
-            wait_next_page(dr)
+            wait_result = wait_next_page(dr)
+            if wait_result == 'Timeout on wait page after 600 attempts.':
+                gracefully_exit_failed_bot("abandoned")
+                return
             continue
 
         if full_conv_history:
@@ -500,6 +579,10 @@ def run_bot(
             message = prompts['page_not_changed'] + message
             
         resp = llm_send_message(message, conv, check_response, questions=questions)
+        if resp == 'Maximum number of attempts reached.':
+            gracefully_exit_failed_bot("middle")
+            return
+
         logging.info(f"Bot analysis of page: '{resp}'")
         if not full_conv_history: summary = resp['summary']
         if questions is None and next_button is not None:
@@ -547,26 +630,15 @@ def run_bot(
     dr.quit()
     message = prompts['end'].format(summary = summary)
     resp = llm_send_message(message, conv, check_response_end)
+    if resp == 'Maximum number of attempts reached.':
+        gracefully_exit_failed_bot("end")
+        return
     logging.info(f"Bot's final remarks about experiment: '{resp}'")
     logging.info("Bot finished.")
-        
-    conn = sqlite3.connect(botex_db)
-    cursor = conn.cursor()
-    cursor.execute(
-        """
-        INSERT INTO conversations (id, bot_parms, conversation) 
-        VALUES (?, ?, ?)
-        """, (url[-8:], bot_parms, json.dumps(conv))
-    )
-    conn.commit()
-    cursor.execute(
-        """
-        UPDATE participants SET time_out = ? 
-        WHERE session_id = ? and url = ?
-        """, 
-        (datetime.now(timezone.utc).isoformat(), session_id, url)
-    )
-    conn.commit()
-    cursor.close()
-    conn.close()
+    store_data(botex_db, session_id, url, conv, bot_parms)
+
+
+
+
+
 
