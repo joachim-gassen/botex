@@ -215,9 +215,9 @@ def run_bot(
             else:
                 if correction_message:
                     resp = completion(
-                        message = correction_message, model = model,
-                        openai_api_key = openai_api_key,
-                        nopause = nopause
+                        messages = correction_message, model = model,
+                        api_key = openai_api_key,
+                        response_format = {"type": "json_object"}
                     )
                 else:
                     resp =  completion(
