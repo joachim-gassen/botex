@@ -140,7 +140,7 @@ def test_is_conversation_complete():
         add_answer_and_reason(qtexts, q)
         
     assert ids == qids
-    with open("tests/questions_and_answers.csv", 'w') as f:
+    with open("tests/questions_and_answers_local.csv", 'w') as f:
         writer = csv.DictWriter(f, fieldnames=qtexts[0].keys())
         writer.writeheader()
         writer.writerows(qtexts)

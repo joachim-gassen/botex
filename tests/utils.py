@@ -55,10 +55,11 @@ def init_otree_test_session():
     )
     return botex_session    
 
-def create_answer_message():
-    if not os.path.exists("tests/questions_and_answers.csv"):
+def create_answer_message(type):
+    csv_file = f"tests/questions_and_answers_{type}.csv"
+    if not os.path.exists(csv_file):
         return ""
-    with open("tests/questions_and_answers.csv") as f:
+    with open(csv_file) as f:
         quest_answers = list(csv.DictReader(f))
     am = ""
     for qa in quest_answers:

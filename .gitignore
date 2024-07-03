@@ -21,7 +21,9 @@ build
 *.egg-info
 tests/botex.db
 tests/otree/db.sqlite3
-tests/questions_and_answers.csv
+tests/questions_and_answers*.csv
 tests/botex_participants.csv
 tests/botex_response.csv
 .coverage
+*.log
+models
