@@ -223,16 +223,29 @@ def run_bots_on_session(
         Default is False.
     model (str): The model to use for the bot. Default is "gpt-4-turbo-preview"
         from OpenAI. You will need an OpenAI key and be prepared to pay to 
-        use this model. If None (the default), it will be obtained from the environment variable
-        OPENAI_API_KEY.
+        use this model. If None (the default), it will be obtained from the 
+        environment variable OPENAI_API_KEY.
     openai_api_key (str): The API key for the OpenAI service.
     already_started (bool): If True, the function will also run bots that have
         already started but not yet finished. This is useful if bots did not 
         startup properly because of network issues. Default is False.
     wait (bool): If True (the default), the function will wait for the bots to 
         finish.
-    local_model_cfg (dict): Configuration for the local model. If model is "local", as a bare minimum it should contain, the "path_to_compiled_llama_server_executable", and "local_model_path" keys.
-    user_prompts (dict): A dictionary of user prompts to override the default prompts that the bot uses. The keys should be one or more of the following: ['start', 'analyze_first_page_no_q', 'analyze_first_page_q', 'analyze_page_no_q', 'analyze_page_q', 'analyze_page_no_q_full_hist', 'analyze_page_q_full_hist', 'page_not_changed', 'system', 'resp_too_long', 'json_error', 'end'.] If a key is not present in the dictionary, the default prompt will be used. If a key that is not in the default prompts is present in the dictionary, then the bot will exit with a warning and not running to make sure that the user is aware of the issue.
+    local_model_cfg (dict): Configuration for the local model. If model is 
+        "local", as a bare minimum it should contain, 
+        the "path_to_compiled_llama_server_executable", 
+        and "local_model_path" keys. If these ar not present, the function will
+        try to get them from the environment variables.
+    user_prompts (dict): A dictionary of user prompts to override the default 
+        prompts that the bot uses. The keys should be one or more of the 
+        following: ['start', 'analyze_first_page_no_q', 'analyze_first_page_q', 
+        'analyze_page_no_q', 'analyze_page_q', 'analyze_page_no_q_full_hist', 
+        'analyze_page_q_full_hist', 'page_not_changed', 'system', 
+        'resp_too_long', 'json_error', 'end'.] If a key is not present in the 
+        dictionary, the default prompt will be used. If a key that is not in 
+        the default prompts is present in the dictionary, then the bot will 
+        exit with a warning and not running to make sure that the user 
+        is aware of the issue.
 
     Returns: None (bot conversation logs are stored in database)
     """
@@ -242,6 +255,10 @@ def run_bots_on_session(
     if bot_urls is None: 
         bot_urls = get_bot_urls(session_id, botex_db, already_started)
     if model == "local":
+        if not "path_to_compiled_llama_server_executable" in local_model_cfg:
+            local_model_cfg["path_to_compiled_llama_server_executable"] = environ.get('path_to_compiled_llama_server_executable')
+        if not "local_model_path" in local_model_cfg:
+            local_model_cfg["local_model_path"] = environ.get('local_model_path')    
         local_llm = LocalLLM(**local_model_cfg)
         llm_server = local_llm.start_server()
     else:
@@ -251,7 +268,9 @@ def run_bots_on_session(
             target = run_bot, 
             kwargs = {
                 'botex_db': botex_db, 'session_id': session_id, 
-                'url': url, 'full_conv_history': full_conv_history, 'model': model, 'openai_api_key': openai_api_key, 'local_llm': local_llm, 'user_prompts': user_prompts
+                'url': url, 'full_conv_history': full_conv_history, 
+                'model': model, 'openai_api_key': openai_api_key, 
+                'local_llm': local_llm, 'user_prompts': user_prompts
             }
         ) for url in bot_urls 
     ]
