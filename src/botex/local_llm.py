@@ -1,5 +1,4 @@
 import logging
-from jinja2 import Template
 import os
 import psutil
 import requests
@@ -168,9 +167,9 @@ class LocalLLM:
             else eval(has_system_role)
         )
         self.ngl = number_of_layers_to_offload_to_gpu
-        self.c = context_length if context_length else self.metadata.get("context_length", 4096)
-        self.temp = temperature
-        self.n = maximum_tokens_to_predict
+        self.c = int(context_length) if context_length else self.metadata.get("context_length", 4096)
+        self.temp = float(temperature)
+        self.n = int(maximum_tokens_to_predict)
         self.top_p = top_p
         self.top_k = top_k
         self.num_slots = num_slots
@@ -270,75 +269,6 @@ class LocalLLM:
         else:
             logging.warning("Server is not running.")
 
-    def prepare_prompt(
-        self,
-        chat_history: ChatHistory,
-        question: Union[HumanMessage, str] | None = None,
-    ) -> str:
-        """
-        Prepares a full prompt from a given question and chat history by applying formatting to fit the model's template.
-
-        :param question: A human message or a string that represents the question to be answered.
-        :param chat_history: The chat history instance containing previous conversation context.
-        """
-        if not isinstance(chat_history, ChatHistory):
-            chat_history = ChatHistory(chat_history)
-        if question and not isinstance(question, (HumanMessage, str)):
-            raise ValueError("question must be of type HumanMessage or str.")
-        if isinstance(question, str):
-            question = HumanMessage(question)
-
-        full_prompt = [*chat_history, question] if question else chat_history
-
-        if self.system_prompt_few_shot_examples:
-            full_prompt = ChatHistory(
-                full_prompt[:1] + self.system_prompt_few_shot_examples + full_prompt[1:]
-            )
-        return self.format_prompt_to_template(full_prompt)  # type: ignore
-
-    def format_prompt_to_template(self, messages: ChatHistory) -> str:
-        """
-        Formats a chat history into a prompt template suitable for model processing, handling tokenization and templating.
-
-        :param messages: The chat history instance to format.
-        :raises FileNotFoundError: If essential tokenizer configuration files are missing.
-        """
-        # using Mistral 7b v3 instruct template as default
-        default_chat_template = """
-        {{ bos_token }}{% for message in messages %}{% if (message['role'] == 'user') != (loop.index0 % 2 == 0) %}{{ raise_exception('Conversation roles must alternate user/assistant/user/assistant/...') }}{% endif %}{% if message['role'] == 'user' %}{{ '[INST] ' + message['content'] + ' [/INST]' }}{% elif message['role'] == 'assistant' %}{{ message['content'] + eos_token}}{% else %}{{ raise_exception('Only user and assistant roles are supported!') }}{% endif %}{% endfor %}
-        """
-
-        if not self.metadata.get("chat_template"):
-            logging.warning(
-                "No chat template found in the metadata of the model. Using default template from Mistral 7b v3 instruct. This might severely affect the model's performance. Also keep in mind there is no system role in the default template."
-            )
-            self.metadata["chat_template"] = default_chat_template
-            self.has_system_role = False
-
-        template = Template(self.metadata["chat_template"])  # type: ignore
-
-        if not self.has_system_role:
-            messages = self.push_system_message_to_user(messages)
-
-        return template.render(
-            messages=messages, add_generation_prompt=True, **self.metadata
-        )
-
-    @staticmethod
-    def push_system_message_to_user(messages: ChatHistory) -> ChatHistory:
-        """
-        Adjusts the chat history by merging system messages into subsequent human messages. This is necessary for models that do not support system messages.
-
-        :param messages: The original chat history that may include system messages.
-        :return: A modified ChatHistory where system messages are integrated into the next human message.
-        """
-        for i, message in enumerate(messages):
-            if isinstance(message, SystemMessage):
-                messages[i + 1] = HumanMessage(
-                    message["content"] + "\n" + messages[i + 1]["content"]
-                )
-                messages.pop(i)
-        return messages
 
     def completion(self, messages) -> MirrorLiteLLMResponse:
         """
@@ -349,15 +279,15 @@ class LocalLLM:
         :return: A tuple containing the generated completion and the finish reason.
         :raises Exception: If there is an error during the execution of the model command.
         """
-        prompt = self.prepare_prompt(messages)
 
-        url = f"{self.api_base_url}/completion"
+        url = f"{self.api_base_url}/v1/chat/completions"
 
         payload = {
-            "prompt": prompt,
+            "messages": messages,
             "temperature": self.temp,
             "cache_prompt": False,
             "max_tokens": self.n,
+            "response_format": {"type": "json_object"},
         }
 
         attempts = 0
@@ -376,10 +306,10 @@ class LocalLLM:
             raise Exception(
                 f"An error occurred while generating the completion: {response.text}"
             )
+        
 
-        completion = response.json()["content"]
-        finish_reason = "length" if response.json()["stopped_limit"] else "stop"
+        completion = response.json()["choices"][0]["message"]["content"]
+        finish_reason = response.json()["choices"][0]["finish_reason"]
 
-        time.sleep(1)
 
         return MirrorLiteLLMResponse(completion, finish_reason)

@@ -24,27 +24,9 @@ class GGUFParser:
                 value_type = struct.unpack("I", f.read(4))[0]
                 value = GGUFParser.read_value(f, value_type)
 
-                if key == 'tokenizer.chat_template':
-                    meta_data['chat_template'] = value
-                
-                if key == 'tokenizer.ggml.add_bos_token':
-                    meta_data['add_bos_token'] = value
-                
-                if key == 'tokenizer.ggml.add_eos_token':
-                    meta_data['add_eos_token'] = value
-                
                 if 'context_length' in key:
                     meta_data['context_length'] = value
                 
-                if key == 'tokenizer.ggml.tokens':
-                    tokens = value
-                
-                if key == 'tokenizer.ggml.bos_token_id':
-                    meta_data['bos_token'] = tokens[value]
-
-                if key == 'tokenizer.ggml.eos_token_id':
-                    meta_data['eos_token'] = tokens[value]
-            
         
         return meta_data
 
