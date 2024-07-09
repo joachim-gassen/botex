@@ -63,7 +63,8 @@ def init_otree_session(
         room_name = None,
         botex_db = None,
         otree_server_url = None,
-        otree_rest_key = None
+        otree_rest_key = None,
+        modified_session_config_fields = None,
     ):
     """
     Initialize an oTree session with a given number of participants.
@@ -87,6 +88,8 @@ def init_otree_session(
     otree_rest_key (str): The API key for the oTree server.
         If None (the default), it will be obtained from the environment variable 
         OTREE_REST_KEY.
+    modified_session_config_fields (dict): A dictionary of fields to modify in the
+        the oTree session config. Default is None. 
 
     Returns:
     dict with the keys 'session_id', 'participant_code', 'is_human', 
@@ -130,7 +133,8 @@ def init_otree_session(
     
     session_id = call_api(
         requests.post, 'sessions', session_config_name=config_name, 
-        num_participants=npart, room_name=room_name
+        num_participants=npart, room_name=room_name,
+        modified_session_config_fields=modified_session_config_fields
     )['code']
     part_data = sorted(
         call_api(requests.get, 'sessions', session_id)['participants'],
@@ -221,7 +225,7 @@ def run_bots_on_session(
         full_conv_history (bool): Whether to keep the full conversation history.
         This will increase token use and only work with very short experiments.
         Default is False.
-    model (str): The model to use for the bot. Default is "gpt-4-turbo-preview"
+    model (str): The model to use for the bot. Default is "gpt-4o"
         from OpenAI. You will need an OpenAI key and be prepared to pay to 
         use this model. If None (the default), it will be obtained from the 
         environment variable OPENAI_API_KEY.

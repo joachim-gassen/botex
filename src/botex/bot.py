@@ -98,10 +98,9 @@ def run_bot(
                 if attempts % 60 == 0:
                     logging.info(f"Waiting for page to load. Attempt {attempts}/{max_attempts}.")
                 continue # Retry if a timeout occurs
-
         if attempts == max_attempts:
-            logging.error("Timeout on wait page after 600 attempts.")
-            return 'Timeout on wait page after 600 attempts.'
+            logging.error(f"Timeout on wait page after {max_attempts} attempts.")
+            return 'Timeout on wait page.'
 
         
     def scan_page(dr):
@@ -177,7 +176,7 @@ def run_bot(
     
     def llm_send_message(
             message, conv_hist, check_response = None, 
-            model = model, nopause = False, questions = None
+            model = model, questions = None
         ):
         if not full_conv_history:
             conversation = [
@@ -221,7 +220,8 @@ def run_bot(
                     )
                 else:
                     resp =  completion(
-                        messages=conversation, model=model,api_key=openai_api_key,
+                        messages=conversation, model=model,
+                        api_key=openai_api_key,
                         response_format = {"type": "json_object"}
                     )
 
@@ -504,10 +504,10 @@ def run_bot(
         except:
             attempts += 1
             logging.warning("Could not start Chrome. Trying again.")
+            if attempts == 5:
+                logging.error("Could not start Chrome after 5 attempts. Stopping.")
+                raise   
             time.sleep(1)
-    if attempts == 5:
-        logging.error("Could not start Chrome after 5 attempts. Stopping.")
-        return    
         
     first_page = True
     summary = None
@@ -527,9 +527,10 @@ def run_bot(
                     gracefully_exit_failed_bot("middle")
                     return
                 time.sleep(1)
+        
         if wait_page:
             wait_result = wait_next_page(dr)
-            if wait_result == 'Timeout on wait page after 600 attempts.':
+            if wait_result == 'Timeout on wait page.':
                 gracefully_exit_failed_bot("abandoned")
                 return
             continue
