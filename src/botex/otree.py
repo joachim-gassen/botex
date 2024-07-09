@@ -1,10 +1,7 @@
 from os import environ
 import sqlite3
 from threading import Thread
-from random import sample, shuffle
-import logging
-logging.basicConfig(level=logging.INFO)
-from datetime import datetime, timezone
+from random import shuffle
 from itertools import compress
 import requests
 
@@ -222,14 +219,16 @@ def run_bots_on_session(
     bot_db (str): The name of the SQLite database file for BotEx data.
         If None (the default), it will be obtained from the environment 
         variable BOTEX_DB.
-        full_conv_history (bool): Whether to keep the full conversation history.
+    full_conv_history (bool): Whether to keep the full conversation history.
         This will increase token use and only work with very short experiments.
         Default is False.
     model (str): The model to use for the bot. Default is "gpt-4o"
         from OpenAI. You will need an OpenAI key and be prepared to pay to 
-        use this model. If None (the default), it will be obtained from the 
-        environment variable OPENAI_API_KEY.
-    openai_api_key (str): The API key for the OpenAI service.
+        use this model. If set to "local", you need to provide a configuration
+        for the local model in local_model_cfg.
+    openai_api_key (str): The API key for the OpenAI service. If None 
+        (the default), it will be obtained from the environment variable 
+        OPENAI_API_KEY.
     already_started (bool): If True, the function will also run bots that have
         already started but not yet finished. This is useful if bots did not 
         startup properly because of network issues. Default is False.
@@ -237,9 +236,10 @@ def run_bots_on_session(
         finish.
     local_model_cfg (dict): Configuration for the local model. If model is 
         "local", as a bare minimum it should contain, 
-        the "path_to_compiled_llama_server_executable", 
-        and "local_model_path" keys. If these ar not present, the function will
-        try to get them from the environment variables.
+        the "path_to_llama_server", and "local_llm_path" keys. 
+        If these ar not present, the function will
+        try to get them from the environment variables PATH_TO_LLAMA_SERVER
+        and LOCAL_LLM_PATH.
     user_prompts (dict): A dictionary of user prompts to override the default 
         prompts that the bot uses. The keys should be one or more of the 
         following: ['start', 'analyze_first_page_no_q', 'analyze_first_page_q', 
@@ -259,10 +259,10 @@ def run_bots_on_session(
     if bot_urls is None: 
         bot_urls = get_bot_urls(session_id, botex_db, already_started)
     if model == "local":
-        if not "path_to_compiled_llama_server_executable" in local_model_cfg:
-            local_model_cfg["path_to_compiled_llama_server_executable"] = environ.get('path_to_compiled_llama_server_executable')
-        if not "local_model_path" in local_model_cfg:
-            local_model_cfg["local_model_path"] = environ.get('local_model_path')    
+        if not "path_to_llama_server" in local_model_cfg:
+            local_model_cfg["path_to_llama_server"] = environ.get('PATH_TO_LLAMA_SERVER')
+        if not "local_llm_path" in local_model_cfg:
+            local_model_cfg["local_llm_path"] = environ.get('LOCAL_LLM_PATH')    
         local_llm = LocalLLM(**local_model_cfg)
         llm_server = local_llm.start_server()
     else:
@@ -286,28 +286,3 @@ def run_bots_on_session(
         assert llm_server, "Local LLM server not started, but should have been."
         local_llm.stop_server(llm_server)
 
-
-if __name__ == '__main__':
-    SESSION_CONFIG_NAME = 'deception'
-    PLAYERS = 2
-    # pip install python-dotenv
-    from dotenv import load_dotenv
-    load_dotenv("secrets.env")
-
-    nbots = int(input(
-        f"Starting the session {SESSION_CONFIG_NAME} with {PLAYERS} players. " +
-        "How many bots do you want? "
-    ))
-    if nbots > PLAYERS: raise(Exception(
-        f"Wrong entry - bot number cannot be higher than {PLAYERS}."
-    ))
-    sdata =  init_otree_session(
-        SESSION_CONFIG_NAME, npart = PLAYERS, nhumans = PLAYERS - nbots
-    )
-
-    print("Session ID:", sdata['session_id'])
-    print("Human URLs:", sdata['human_urls'])
-    print("Bot URLs", sdata['bot_urls'])
-
-    run_bots_on_session(sdata['session_id'], sdata['bot_urls'])
- 

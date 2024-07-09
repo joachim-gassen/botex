@@ -14,19 +14,16 @@ with open("secrets.env") as f:
         if not line.strip() or line.startswith("#"):
             continue
         key, value = line.strip().split("=")
-        cfg[key] = value
-
-user_prompts = {
-    "system": "You are participating in an online survey and/or experiment. Please fully assume this role and answer everything from the first person point of view. Each prompt contains a summary of the survey/experiment including your answers so far, scraped text data from a webpage continuing the survey/experiment, and detailed tasks for you on how to analyze this text data. The materials might contain information on how participants are being compensated or paid for their participation. If this is the case, please act as if this compensation also applies to you and make sure to include this information in the summary. Answers must be given as JSON code ONLY. No text outside of the JSON answer is allowed at any time. In each prompt, I will provide you with detailed information on the respective format."
-}
+        cfg[key] = value.strip('\"\'')
+    cfg = {k.lower(): v for k, v in cfg.items()}
 
 @pytest.mark.dependency(name="llama_server_executable", scope='session')
 def test_llama_server_executable_exists():
-    assert os.path.exists(cfg["path_to_compiled_llama_server_executable"])
+    assert os.path.exists(cfg["path_to_llama_server"])
 
-@pytest.mark.dependency(name="local_model_path", scope='session')
-def test_local_model_path_exists():
-    assert os.path.exists(cfg["local_model_path"])
+@pytest.mark.dependency(name="local_llm_path", scope='session')
+def test_local_llm_path_exists():
+    assert os.path.exists(cfg["local_llm_path"])
 
 
 @pytest.mark.dependency(name="num_layers_to_offload_to_gpu", scope='session')
@@ -41,7 +38,7 @@ def test_number_of_layers_to_offload_to_gpu():
         scope='session',
         depends=[
             "llama_server_executable",
-            "local_model_path",
+            "local_llm_path",
             "num_layers_to_offload_to_gpu",
             "botex_session",
             "botex_db"
@@ -60,8 +57,7 @@ def test_can_survey_be_completed_by_local_bots():
         bot_urls=botex_session["bot_urls"],
         botex_db="tests/botex.db",
         model="local",
-        local_model_cfg=cfg,
-        user_prompts=user_prompts
+        local_model_cfg=cfg
     )
     stop_otree(otree_proc)
     assert True

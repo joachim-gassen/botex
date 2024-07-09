@@ -141,8 +141,8 @@ class LocalLLM:
 
     def __init__(
         self,
-        path_to_compiled_llama_server_executable: str,
-        local_model_path: str,
+        path_to_llama_server: str,
+        local_llm_path: str,
         api_base_url: str = "http://localhost:8080",
         context_length: int | None = None,
         system_prompt_few_shot_examples: ChatHistory | None = None,
@@ -156,8 +156,8 @@ class LocalLLM:
         **kwargs,
     ):
         self.system_prompt_few_shot_examples = system_prompt_few_shot_examples
-        self.server_path = path_to_compiled_llama_server_executable
-        self.model_path = local_model_path
+        self.server_path = path_to_llama_server
+        self.model_path = local_llm_path
         self.api_base_url = api_base_url
         parsed_gguf = GGUFParser(self.model_path)
         self.metadata = parsed_gguf.get_metadata()

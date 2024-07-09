@@ -26,4 +26,5 @@ tests/botex_participants.csv
 tests/botex_response.csv
 .coverage
 *.log
+llama.cpp
 models

@@ -36,15 +36,24 @@ def run_bot(
     full_conv_history (bool): Whether to keep the full conversation history.
         This will increase token use and only work with very short experiments.
         Default is False.
-    model (str): The model to use for the bot. Default is "gpt-4-turbo-preview"
+    model (str): The model to use for the bot. Default is "gpt-4o"
         from OpenAI. You will need an OpenAI key and be prepared to pay to 
         use this model.
     openai_api_key (str): The API key for the OpenAI service.
     local_llm (LocalLLM): A LocalLLM object to use for the bot. If this is not
         None, the bot will use the local model instead of the OpenAI model.
-    user_prompts (dict): A dictionary of user prompts to override the default prompts that the bot uses. The keys should be one or more of the following: ['start', 'analyze_first_page_no_q', 'analyze_first_page_q', 'analyze_page_no_q', 'analyze_page_q', 'analyze_page_no_q_full_hist', 'analyze_page_q_full_hist', 'page_not_changed', 'system', 'resp_too_long', 'json_error', 'end'.] If a key is not present in the dictionary, the default prompt will be used. If a key that is not in the default prompts is present in the dictionary, then the bot will exit with a warning and not running to make sure that the user is aware of the issue.
+    user_prompts (dict): A dictionary of user prompts to override the default 
+        prompts that the bot uses. The keys should be one or more of the 
+        following: ['start', 'analyze_first_page_no_q', 'analyze_first_page_q', 
+        'analyze_page_no_q', 'analyze_page_q', 'analyze_page_no_q_full_hist', 
+        'analyze_page_q_full_hist', 'page_not_changed', 'system', 
+        'resp_too_long', 'json_error', 'end'.] If a key is not present in the 
+        dictionary, the default prompt will be used. If a key that is not in 
+        the default prompts is present in the dictionary, then the bot will 
+        exit with a warning and not running to make sure that the user is aware 
+        of the issue.
 
-    Returns: None (conversation is stored in BotEx database)
+    Returns: None (conversation is stored in the botex database)
     """
     bot_parms = locals()
     bot_parms.pop('local_llm')
@@ -53,16 +62,6 @@ def run_bot(
         bot_parms["openai_api_key"] = "******"       
     bot_parms = json.dumps(bot_parms)
     logging.info(f"Running bot with parameters: {bot_parms}")
-
-    def click_on_element_by_id(dr, id, timeout = 3600):
-        chart = WebDriverWait(dr, timeout).until(
-            EC.visibility_of_element_located((By.ID, id))
-        )
-        dr.execute_script("arguments[0].scrollIntoView(true)", chart)
-        element = WebDriverWait(dr, timeout).until(
-            EC.element_to_be_clickable((By.ID, id))
-        )
-        dr.execute_script("arguments[0].click()", element)
 
     def click_on_element(dr, element, timeout = 3600):
         dr.execute_script("arguments[0].scrollIntoView(true)", element)
@@ -73,7 +72,9 @@ def run_bot(
 
     def set_id_value(dr, id, type, value, timeout = 3600):
         if type != "radio":
-            WebDriverWait(dr, timeout).until(lambda x: x.find_element(By.ID, id)).send_keys(str(value))
+            WebDriverWait(dr, timeout).until(
+                lambda x: x.find_element(By.ID, id)
+            ).send_keys(str(value))
         else:
             rb = dr.find_element(By.ID, id)
             resp = rb.find_elements(By.CLASS_NAME, "form-check")
@@ -96,7 +97,9 @@ def run_bot(
             except TimeoutException:
                 attempts += 1
                 if attempts % 60 == 0:
-                    logging.info(f"Waiting for page to load. Attempt {attempts}/{max_attempts}.")
+                    logging.info(
+                        f"Waiting for page to load. Attempt {attempts}/{max_attempts}."
+                    )
                 continue # Retry if a timeout occurs
         if attempts == max_attempts:
             logging.error(f"Timeout on wait page after {max_attempts} attempts.")
@@ -201,7 +204,10 @@ def run_bot(
                 return 'Maximum number of attempts reached.'
             attempts += 1
             try:
-                correction_message = conversation + [{"role": "assistant", "content": resp_str}, {"role": "user", "content": message}]
+                correction_message = conversation + [
+                    {"role": "assistant", "content": resp_str}, 
+                    {"role": "user", "content": message}
+                ]
             except:
                 correction_message = None
             if model == "local":
