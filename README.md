@@ -87,8 +87,8 @@ botex.run_bots_on_session(
     botex_db = "same path that you used for initializing the session", 
     model = "local",
     local_model_cfg={
-        "path_to_compiled_llama_server_executable": "the path to the llama.cpp server (called server or llama-server)",
-        "local_model_path": "the path to your LLM model gguf file"
+        "path_to_compiled_llama_server_executable": "the path to the llama.cpp server (called llama-server or server on older versions)",
+        "local_model_path": "the path to your LLM model GGUF file"
     }
 )
 ```
