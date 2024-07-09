@@ -4,8 +4,9 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "botex"
-version = "0.0.1"
+version = "0.1.0"
 authors = [
+    { name="Fikir Worku Edossa", email="edossafi@wiwi.hu-berlin.de" },
     { name="Joachim Gassen", email="gassen@wiwi.hu-berlin.de" },
 ]
 description = "Using LLMs as Experimental Participants in oTree"
@@ -15,17 +16,17 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Private :: Do Not Upload",
-    "Development Status :: 2 - Pre-Alpha",
-    "Intended Audience :: Science/Research"
+    "Development Status :: 3 - Alpha ,
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence"
 ]
 dependencies = [
     "requests", "selenium", "litellm"
 ]
 
 [project.urls]
-Homepage = "https://github.com/joachim-gassen/BotEx"
-Issues = "https://github.com/joachim-gassen/BotEx/issues"
+Homepage = "https://github.com/joachim-gassen/botex"
+Issues = "https://github.com/joachim-gassen/botex/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]
