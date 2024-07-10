@@ -28,3 +28,4 @@ tests/botex_response.csv
 *.log
 llama.cpp
 models
+dist
