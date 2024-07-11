@@ -286,3 +286,67 @@ def run_bots_on_session(
         assert llm_server, "Local LLM server not started, but should have been."
         local_llm.stop_server(llm_server)
 
+
+def run_single_bot(
+    url, session_name = "unknown", session_id = "unknown", 
+    participant_id = "unknown",
+    botex_db = None, full_conv_history = False,
+    model = "gpt-4o", openai_api_key = None,
+    local_llm: LocalLLM | None = None, user_prompts: dict | None = None
+):
+    """
+    Runs a single botex bot manually.
+
+    Parameters:
+    url (str): The participant URL to start the bot on.
+    session_name (str): The name of the oTree session. Defaults to "unknown"
+    session_id (str): The oTree ID of the oTree session. Defaults to "unknown".
+    participant_id (str): The oTree ID of the participant. Defaults to "unknown".
+    botex_db (str): The name of the SQLite database file to store botex data.
+    full_conv_history (bool): Whether to keep the full conversation history.
+        This will increase token use and only work with very short experiments.
+        Default is False.
+    model (str): The model to use for the bot. Default is "gpt-4o"
+        from OpenAI. You will need an OpenAI key and be prepared to pay to 
+        use this model.
+    openai_api_key (str): The API key for the OpenAI service.
+    local_llm (LocalLLM): A LocalLLM object to use for the bot. If this is not
+        None, the bot will use the local model instead of the OpenAI model.
+
+    Returns: None (conversation is stored in the botex database)
+    """
+    if botex_db is None: botex_db = environ.get('BOTEX_DB')
+    if openai_api_key is None: openai_api_key = environ.get('OPENAI_API_KEY')
+    if model == "local":
+        if not "path_to_llama_server" in local_model_cfg:
+            local_model_cfg["path_to_llama_server"] = environ.get('PATH_TO_LLAMA_SERVER')
+        if not "local_llm_path" in local_model_cfg:
+            local_model_cfg["local_llm_path"] = environ.get('LOCAL_LLM_PATH')    
+        local_llm = LocalLLM(**local_model_cfg)
+        llm_server = local_llm.start_server()
+    else:
+        local_llm = None 
+    
+    if local_llm:
+        assert llm_server, "Local LLM server not started, but should have been."
+        local_llm.stop_server(llm_server)
+
+    is_human = 0
+
+    conn = setup_botex_db(botex_db)
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        INSERT INTO participants (
+            session_name, session_id, participant_id, is_human, url) 
+            VALUES (?, ?, ?, ?, ?) 
+        """, (session_name, session_id, participant_id, is_human, url,)
+    )
+    conn.commit()
+    cursor.close()
+    
+    run_bot(
+        botex_db, session_id, url, full_conv_history,
+        model, openai_api_key, local_llm, user_prompts
+    )
+

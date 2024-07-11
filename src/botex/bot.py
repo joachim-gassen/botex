@@ -26,8 +26,9 @@ def run_bot(
         local_llm: LocalLLM | None = None, user_prompts: dict | None = None
     ):
     """
-    Run a bot on an oTree session. Normally, this function should not be called
-    directly, but through the run_bots_on_session function.
+    Run a bot on an oTree session. You should not call this function
+    directly, but only through the run_single_bot or run_bots_on_session 
+    functions.
 
     Parameters:
     botex_db (str): The name of the SQLite database file to store BotEx data.
@@ -349,15 +350,16 @@ def run_bot(
             "answer_id_not_found_in_q_id_list": []
         }
         for answer in resp['questions']:
-            missing_answer_keys = set(["id", "answer", "reason"]) - set(answer)
-            if missing_answer_keys:
-                if "id" in missing_answer_keys:
-                    continue
-            if not answer.get('answer'):
-                errors['missing_answer'].append(answer['id'])
-            if not answer.get('reason'):
-                errors['missing_reason'].append(answer['id'])
+            if "id" not in answer:
+                continue
             
+            if "answer" not in answer:
+                errors['missing_answer'].append(answer['id'])
+            if "reason" not in answer:
+                errors['missing_reason'].append(answer['id'])
+            else: 
+                if answer['reason'] is None or answer['reason'] == "":
+                    errors['missing_reason'].append(answer['id'])
             
             if answer['id'] in q_ids:
                 qtype = questions[q_ids.index(answer['id'])]['question_type']
