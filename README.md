@@ -33,7 +33,7 @@ logging.basicConfig(level=logging.INFO)
 import botex
 
 # Running a botex bot on a specific oTree participant link
-botex.run_bot(
+botex.run_single_bot(
     botex_db = "path to a sqlite3 file that will store the bot data (does not need to exist)", 
     session_id = "The session ID of your oTree experiment (will be stored with the botex data)", 
     url = "the URL of the participant link", 
@@ -196,8 +196,8 @@ The costs of running the test on OpenAI using the "gpt-4o" model are roughly 0.1
 
 If you want to learn more about botex
 
-- take a look at our botex case study, providing a code walk-through for an actual online experiment (in which you can also participate), or
-- read our current and somewhat preliminary paper.
+- take a look at our [botex examples repo](https://github.com/trr266/botex_examples), providing a code walk-through for an actual online experiment (in which you can also participate), or
+- read our current and somewhat preliminary [paper](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4891763).
 
 ## Get in touch!
 
