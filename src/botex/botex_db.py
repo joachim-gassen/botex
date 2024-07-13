@@ -80,7 +80,7 @@ def read_participants_from_botex_db(session_id = None, botex_db = None):
 
 
 def read_conversations_from_botex_db(
-        session_id = None, botex_db = None
+        participant_id = None, botex_db = None
     ):
     """
     Reads the conversations table from the botex database. 
@@ -88,7 +88,7 @@ def read_conversations_from_botex_db(
     with the LLM underlying the bot.
 
     Parameters:
-        session_id (str, optional): A session ID to filter the results.
+        participant_id (str, optional): A Participant ID to filter the results.
         botex_db (str, optional): The name of a SQLite database file.
             If not provided, it will try to read the file name from
             the environment variable BOTEX_DB.
@@ -102,7 +102,7 @@ def read_conversations_from_botex_db(
     cursor = conn.cursor()
     if session_id:
         cursor.execute(
-            "SELECT * FROM conversations WHERE session_id = ?", (session_id,)
+            "SELECT * FROM conversations WHERE id = ?", (participant_id,)
         )
     else:
         cursor.execute("SELECT * FROM conversations")
@@ -111,12 +111,12 @@ def read_conversations_from_botex_db(
     conn.close()
     return conversations
 
-def read_responses_from_botex_db(session_id = None, botex_db = None):
+# We might want to implement a session id filter at some point
+def read_responses_from_botex_db(botex_db = None):
     """
     Extracts the responses and their rationales from the botex conversation data. 
 
     Parameters:
-        session_id (str, optional): A session ID to filter the results.
         botex_db (str, optional): The name of a SQLite database file.
             If not provided, it will try to read the file name from
             the environment variable BOTEX_DB.
