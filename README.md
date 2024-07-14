@@ -19,7 +19,7 @@ The downside of this approach is that the scraping has to rely on some level of 
 If you want to use botex to create LLM participants for your own oTree experiments, you need the following:
 
 - A working python environment >= 3.10 and preferable a virtual environment.
-- [Google Chrome](https://www.google.com/chrome/) and [ChromeDriver](https://developer.chrome.com/docs/chromedriver/get-started) for scraping the oTree participant pages
+- [Google Chrome](https://www.google.com/chrome/) for scraping the oTree participant pages
 - If you plan to use Chat-GPT 4 as your LLM (recommended for beginners), an [OpenAI API key](https://openai.com/api). If you want to go local, take a look at the next section.
 - Access to an oTree server that you can start sessions on or at least an URL of an oTree participant link. The server can be local or remote.
 
@@ -69,7 +69,7 @@ botex.run_bots_on_session(
 )
 ```
 
-After the bots have completed their runs, you should have their response data stored in your oTree database just as it is the case for human participants. If you are interested in exploring the botex data itself, which is stored in the sqlite3 file that you provided, we recommend that you take a look at our botex case study.
+After the bots have completed their runs, you should have their response data stored in your oTree database just as it is the case for human participants. If you are interested in exploring the botex data itself, which is stored in the sqlite3 file that you provided, we recommend that you take a look at our botex [walk-through](https://github.com/trr266/botex_examples).
 
 
 ## Use of local LLMs
