@@ -84,6 +84,9 @@ def test_is_conversation_complete():
                 qtext[i]['reason'] = q['reason']
                 break
     
+    err_start = [
+        'I am sorry', 'Unfortunately', 'Your response was not valid'
+    ]
     convs = botex.read_conversations_from_botex_db(botex_db="tests/botex.db")
     with open("tests/questions.csv") as f:
         qtexts = list(csv.DictReader(f))
@@ -98,7 +101,10 @@ def test_is_conversation_complete():
         assert isinstance(bot_parms, dict)
         conv = json.loads(c['conversation'])
         assert isinstance(conv, list)
-        for m in conv:
+        for i, m in enumerate(conv):
+            if i+2 < len(conv) and conv[i+1]['role'] == 'user':
+                    if any(conv[i + 1]['content'].startswith(prefix) for prefix in err_start):
+                        continue
             assert isinstance(m, dict)
             assert isinstance(m['role'], str)
             assert isinstance(m['content'], str)
