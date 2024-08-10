@@ -100,7 +100,7 @@ def read_conversations_from_botex_db(
     conn = sqlite3.connect(botex_db)
     conn.row_factory = sqlite3.Row 
     cursor = conn.cursor()
-    if session_id:
+    if participant_id:
         cursor.execute(
             "SELECT * FROM conversations WHERE id = ?", (participant_id,)
         )
