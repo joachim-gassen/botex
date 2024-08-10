@@ -179,66 +179,54 @@ def run_bot(
         )
     
     def llm_send_message(
-            message, conv_hist, check_response = None, 
-            model = model, questions = None
+            message, check_response = None, model = model, questions = None
         ):
-        if not full_conv_history:
-            conversation = [
-                {
-                    "role": "system",
-                    "content": prompts['system']
-                }
-            ]
-            if conv_hist == []:
-                conv_hist += conversation
-        else:
-            conversation = conv_hist
+        conversation = []
+        nonlocal conv_hist_botex_db
+        nonlocal conv_hist
+        
+
+        def append_message_to_conversation(message):
+            nonlocal conversation
+            nonlocal conv_hist_botex_db
+            conversation.append(message)
+            conv_hist_botex_db.append(message)
+
+        if conv_hist: conversation = conv_hist
+
         resp_dict = None
+        error = False
         attempts = 0
         max_attempts = 5
-        conversation.append({"role": "user", "content": message})
-        if not full_conv_history:
-            conv_hist.append({"role": "user", "content": message})
+        append_message_to_conversation({"role": "user", "content": message})
         while resp_dict is None:
             if attempts > max_attempts:
                 logging.error("The llm did not return a valid response after %s number of attempts." % max_attempts)
                 return 'Maximum number of attempts reached.'
             attempts += 1
-            try:
-                correction_message = conversation + [
-                    {"role": "assistant", "content": resp_str}, 
-                    {"role": "user", "content": message}
-                ]
-            except:
-                correction_message = None
+            if error:
+                append_message_to_conversation({"role": "user", "content": message})
+                logging.info(
+                    f"Sending the following conversation to the llm to fix error: {conversation}"
+                )
             if model == "local":
                 assert local_llm, "Model is local but local_llm is not set."
                 assert conversation, "Conversation is empty."
-                if correction_message:
-                    resp = local_llm.completion(correction_message)
-                else:
-                    resp = local_llm.completion(conversation)
+                resp = local_llm.completion([system_prompt] + conversation)
             else:
-                if correction_message:
-                    resp = completion(
-                        messages = correction_message, model = model,
-                        api_key = openai_api_key,
-                        response_format = {"type": "json_object"}
-                    )
-                else:
-                    resp =  completion(
-                        messages=conversation, model=model,
-                        api_key=openai_api_key,
-                        response_format = {"type": "json_object"}
-                    )
+                resp =  completion(
+                    messages=[system_prompt] + conversation, 
+                    model=model, api_key=openai_api_key,
+                    response_format = {"type": "json_object"}
+                )
 
             resp_str = resp.choices[0].message.content
-            if resp.choices[0].finish_reason == "length":
-                logging.warning("Bot's response is too long. Trying again.")
-                message = prompts['resp_too_long']
-                continue
 
             try:
+                if error:
+                    conversation = conversation[:-2]
+                    error = False
+                append_message_to_conversation({"role": "assistant", "content": resp_str})
                 assert resp_str, "Bot's response is empty."
                 start = resp_str.find('{', 0)
                 end = resp_str.rfind('}', start)
@@ -247,31 +235,39 @@ def run_bot(
             except (AssertionError, json.JSONDecodeError):
                 logging.warning(f"Bot's response is not a valid JSON\n{resp_str}\n. Trying again.")
                 resp_dict = None
+                error = True
                 message = prompts['json_error']
                 continue
+
+            if resp.choices[0].finish_reason == "length":
+                logging.warning("Bot's response is too long. Trying again.")
+                error = True
+                message = prompts['resp_too_long']
+                continue
+
             if check_response:
                 if questions:
                     success, error_msgs, error_logs = check_response(resp_dict, questions)
                 else:
                     success, error_msgs, error_logs = check_response(resp_dict)
                 if not success:
+                    error = True
                     logging.warning(f"Detected an issue: {' '.join(error_logs)}.\n{resp_dict}.\nAdjusting response.")
                     message = ''
                     for i, error_msg in enumerate(error_msgs):
                         if ':' in error_msg:
-                            error, ids = error_msg.split(": ", 1)
-                            f_dict = {error: ids}
+                            err, ids = error_msg.split(": ", 1)
+                            f_dict = {err: ids}
                             if i == 0:
-                                message += prompts[error].format(**f_dict) + ' '
+                                message += prompts[err].format(**f_dict) + ' '
                             else:
-                                message += 'Additionally, ' + prompts[error].format(**f_dict) + ' '
+                                message += 'Additionally, ' + prompts[err].format(**f_dict) + ' '
                         else:
                             message += prompts[error_msg] + ' '
                     resp_dict = None
                     continue
 
-        conv_hist.append({"role": "assistant", "content": resp_str})
-        conversation.append({"role": "assistant", "content": resp_str})
+        if full_conv_history: conv_hist.append(conversation)
         return resp_dict
 
     def check_response_start(resp):
@@ -366,7 +362,8 @@ def run_bot(
             else:
                 errors['answer_id_not_found_in_q_id_list'].append(answer['id'])
                 continue
-            if qtype == 'number' and isinstance(answer['answer'], str):
+            # 'answer' in answer - because I got answer = {'id': 'id_integer_field', '':''} in the response
+            if qtype == 'number' and 'answer' in answer and isinstance(answer['answer'], str):
                 try:
                     int_const_pattern = r'[-+]?[0-9]+'
                     rx = re.compile(int_const_pattern, re.VERBOSE)
@@ -374,7 +371,7 @@ def run_bot(
                     answer = ints[0]
                 except:
                     errors['answer_not_number'].append(answer['id'])
-            if qtype == 'float' and isinstance(answer['answer'], str):
+            if qtype == 'float' and 'answer' in answer and isinstance(answer['answer'], str):
                 try:
                     numeric_const_pattern = r'[-+]? (?: (?: \d* \. \d+ ) | (?: \d+ \.? ) )(?: [Ee] [+-]? \d+ ) ?'
                     rx = re.compile(numeric_const_pattern, re.VERBOSE)
@@ -421,8 +418,9 @@ def run_bot(
             result = "Bot was likely abandoned by its matched participant. Exiting."
         else:
             result = "Bot could not provide a valid response after 5 attempts. Exiting."        
-        conv.append({"role": "system", "content": result})
-        store_data(botex_db, session_id, url, conv, bot_parms)
+        conv_hist_botex_db.append({"role": "system", "content": result})
+        store_data(botex_db, session_id, url, conv_hist_botex_db, bot_parms)
+        logging.info("Gracefully exiting failed bot.")
         if failure_place != "start" and failure_place != "end":
             dr.close()
             dr.quit()
@@ -459,6 +457,7 @@ def run_bot(
         conn.commit()
         cursor.close()
         conn.close()
+        logging.info("Data stored in botex database.")
 
     
     conn = sqlite3.connect(botex_db)
@@ -489,10 +488,16 @@ def run_bot(
                 return
             else:
                 prompts[key] = user_prompts[key]
-
+    
+    system_prompt = {
+        "role": "system",
+        "content": prompts['system']
+    }
     message = prompts['start']
-    conv = []
-    resp = llm_send_message(message, conv, check_response_start)
+    conv_hist_botex_db = [system_prompt]
+    conv_hist = []
+
+    resp = llm_send_message(message, check_response_start)
     if resp == 'Maximum number of attempts reached.':
         gracefully_exit_failed_bot("start")
         return
@@ -587,7 +592,7 @@ def run_bot(
                 """)
             message = prompts['page_not_changed'] + message
             
-        resp = llm_send_message(message, conv, check_response, questions=questions)
+        resp = llm_send_message(message, check_response, questions=questions)
         if resp == 'Maximum number of attempts reached.':
             gracefully_exit_failed_bot("middle")
             return
@@ -638,13 +643,13 @@ def run_bot(
     dr.close()
     dr.quit()
     message = prompts['end'].format(summary = summary)
-    resp = llm_send_message(message, conv, check_response_end)
+    resp = llm_send_message(message, check_response_end)
     if resp == 'Maximum number of attempts reached.':
         gracefully_exit_failed_bot("end")
         return
     logging.info(f"Bot's final remarks about experiment: '{resp}'")
     logging.info("Bot finished.")
-    store_data(botex_db, session_id, url, conv, bot_parms)
+    store_data(botex_db, session_id, url, conv_hist_botex_db, bot_parms)
 
 
 
