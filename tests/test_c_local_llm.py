@@ -15,6 +15,8 @@ with open("secrets.env") as f:
             continue
         key, value = line.strip().split("=")
         cfg[key] = value.strip('\"\'')
+        if key == "start_llama_server":
+            cfg[key] = eval(cfg[key])
     cfg = {k.lower(): v for k, v in cfg.items()}
 
 @pytest.mark.dependency(name="llama_server_executable", scope='session')

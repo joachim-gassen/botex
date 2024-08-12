@@ -31,6 +31,7 @@ class LocalLLM:
     Parameters:
     path_to_llama_server (str): The path to the llama cpp server executable.
     local_llm_path (str): The path to the local language model.
+    start_llama_server (bool): Whether to start the llama cpp server, defaults to True. If False, the program will not start the server and will expect the server to be started manually by the user.
     api_base_url (str): The base URL for the llama cpp server.
     context_length (int): The context length for the model, defaults to None.
         If None, the program will try to get the context length from the local
@@ -45,6 +46,7 @@ class LocalLLM:
         self,
         path_to_llama_server: str,
         local_llm_path: str,
+        start_llama_server: bool = True,
         api_base_url: str = "http://localhost:8080",
         context_length: int | None = None,
         number_of_layers_to_offload_to_gpu: int = 1,
@@ -57,6 +59,7 @@ class LocalLLM:
     ):
         self.server_path = path_to_llama_server
         self.model_path = local_llm_path
+        self.start_llama_server = start_llama_server
         self.api_base_url = api_base_url
         parsed_gguf = GGUFParser(self.model_path)
         self.metadata = parsed_gguf.get_metadata()
@@ -82,9 +85,15 @@ class LocalLLM:
         """
         Starts the local language model server.
         """
+        parsed_url = urlparse(self.api_base_url)
+        if not self.start_llama_server:
+            if self.wait_for_server(parsed_url.hostname, parsed_url.port):
+                logging.info("You have chosen to manually start the LLM server. LLM server is running on %s. Make sure this is what you intended", self.api_base_url)
+            else:
+                raise Exception(f"You have chosen to manually start the LLM server. But the server is not running on api_base_url: {self.api_base_url}. Please make sure that llama_server is up and running on api_base_url: {self.api_base_url}")
+            return
         self.validate_parameters()
 
-        parsed_url = urlparse(self.api_base_url)
         cmd = [
             self.server_path,
             "--host",
@@ -155,6 +164,9 @@ class LocalLLM:
         """
         Stops the local language model server.
         """
+        if not self.start_llama_server:
+            logging.info("The LLM server is started manually. Please stop it manually as well.")
+            return
         if process:
             logging.info("Stopping server...")
             parent = psutil.Process(process.pid)
