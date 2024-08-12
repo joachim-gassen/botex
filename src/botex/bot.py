@@ -207,7 +207,7 @@ def run_bot(
             if error:
                 append_message_to_conversation({"role": "user", "content": message})
                 logging.info(
-                    f"Sending the following conversation to the llm to fix error: {conversation}"
+                    f"Sending the following conversation to the llm to fix error:\n{json.dumps(conversation, indent=4)}"
                 )
             if model == "local":
                 assert local_llm, "Model is local but local_llm is not set."
@@ -233,7 +233,7 @@ def run_bot(
                 resp_str = resp_str[start:end+1]
                 resp_dict = json.loads(resp_str, strict = False)
             except (AssertionError, json.JSONDecodeError):
-                logging.warning(f"Bot's response is not a valid JSON\n{resp_str}\n. Trying again.")
+                logging.warning("Bot's response is not a valid JSON.")
                 resp_dict = None
                 error = True
                 message = prompts['json_error']
@@ -252,7 +252,7 @@ def run_bot(
                     success, error_msgs, error_logs = check_response(resp_dict)
                 if not success:
                     error = True
-                    logging.warning(f"Detected an issue: {' '.join(error_logs)}.\n{resp_dict}.\nAdjusting response.")
+                    logging.warning(f"Detected an issue: {' '.join(error_logs)}.")
                     message = ''
                     for i, error_msg in enumerate(error_msgs):
                         if ':' in error_msg:
@@ -501,7 +501,7 @@ def run_bot(
     if resp == 'Maximum number of attempts reached.':
         gracefully_exit_failed_bot("start")
         return
-    logging.info(f"Bot's response to start message: '{resp}'")
+    logging.info(f"Bot's response to start message:\n{json.dumps(resp, indent=4)}")
     
     options = Options()
     options.add_argument("--headless=new")
@@ -597,7 +597,7 @@ def run_bot(
             gracefully_exit_failed_bot("middle")
             return
 
-        logging.info(f"Bot analysis of page: '{resp}'")
+        logging.info(f"Bot's analysis of page:\n{json.dumps(resp, indent=4)}")
         if not full_conv_history: summary = resp['summary']
         if questions is None and next_button is not None:
             logging.info("Page has no question but next button. Clicking")
@@ -647,7 +647,7 @@ def run_bot(
     if resp == 'Maximum number of attempts reached.':
         gracefully_exit_failed_bot("end")
         return
-    logging.info(f"Bot's final remarks about experiment: '{resp}'")
+    logging.info(f"Bot's final remarks about experiment:\n{json.dumps(resp, indent=4)}")
     logging.info("Bot finished.")
     store_data(botex_db, session_id, url, conv_hist_botex_db, bot_parms)
 
