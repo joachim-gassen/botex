@@ -85,12 +85,15 @@ class LocalLLM:
         """
         Starts the local language model server.
         """
+        parsed_url = urlparse(self.api_base_url)
         if not self.start_llama_server:
-            logging.info("You have chosen to manually start the LLM server. Please make sure that llama_server is up and running on %s", self.api_base_url)
+            if self.wait_for_server(parsed_url.hostname, parsed_url.port):
+                logging.info("You have chosen to manually start the LLM server. LLM server is running on %s. Make sure this is what you intended", self.api_base_url)
+            else:
+                raise Exception(f"You have chosen to manually start the LLM server. But the server is not running on api_base_url: {self.api_base_url}. Please make sure that llama_server is up and running on api_base_url: {self.api_base_url}")
             return
         self.validate_parameters()
 
-        parsed_url = urlparse(self.api_base_url)
         cmd = [
             self.server_path,
             "--host",
