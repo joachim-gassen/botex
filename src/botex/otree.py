@@ -282,7 +282,7 @@ def run_bots_on_session(
     if wait: 
         for t in threads: t.join()
     
-    if local_llm:
+    if local_llm and local_llm.start_llama_server:
         assert llm_server, "Local LLM server not started, but should have been."
         local_llm.stop_server(llm_server)
 
