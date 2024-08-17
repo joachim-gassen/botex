@@ -45,7 +45,7 @@ def stop_otree(otree_proc):
         if platform.system() == "Windows":
             proc.children()[0].send_signal(signal.CTRL_BREAK_EVENT)
         else:
-            proc.send_signal(signal.SIGILL)
+            proc.children()[0].send_signal(signal.SIGKILL)
         otree_proc.kill()
     try:
         os.remove("tests/otree/db.sqlite3")
