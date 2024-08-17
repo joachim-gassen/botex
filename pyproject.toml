@@ -42,5 +42,8 @@ Issues = "https://github.com/joachim-gassen/botex/issues"
 where = ["src"]
 
 [tool.pytest.ini_options]
+testpaths = ['tests']
 filterwarnings = ["ignore:::litellm:", "ignore:::pydantic:"]
-
+log_cli = true
+log_cli_level = 'INFO'
+log_cli_format = '%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)'

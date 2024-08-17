@@ -15,36 +15,44 @@ with open("secrets.env") as f:
             continue
         key, value = line.strip().split("=")
         cfg[key] = value.strip('\"\'')
-        if key == "start_llama_server":
-            cfg[key] = eval(cfg[key])
+        if key.lower() == "start_llama_server":
+            cfg[key] = bool(eval(cfg[key]))
     cfg = {k.lower(): v for k, v in cfg.items()}
+    if not "start_llama_server" in cfg:
+        cfg["start_llama_server"] = True
 
 @pytest.mark.dependency(name="llama_server_executable", scope='session')
+@pytest.mark.skipif(
+    not cfg.get("start_llama_server"),
+    reason="Using externally started llama.cpp server"
+)
 def test_llama_server_executable_exists():
-    if cfg.get("start_llama_server"):
-        assert os.path.exists(cfg["path_to_llama_server"])
+    assert os.path.exists(cfg["path_to_llama_server"])
 
 @pytest.mark.dependency(name="local_llm_path", scope='session')
+@pytest.mark.skipif(
+    not cfg.get("start_llama_server"),
+    reason="Using externally started llama.cpp server"
+)
 def test_local_llm_path_exists():
     if cfg.get("start_llama_server"):
         assert os.path.exists(cfg["local_llm_path"])
 
-
 @pytest.mark.dependency(name="num_layers_to_offload_to_gpu", scope='session')
+@pytest.mark.skipif(
+    not cfg.get("start_llama_server"),
+    reason="Using externally started llama.cpp server"
+)
 def test_number_of_layers_to_offload_to_gpu():
     if cfg.get("number_of_layers_to_offload_to_gpu"):
-        if cfg.get("start_llama_server"):
-            assert isinstance(int(cfg["number_of_layers_to_offload_to_gpu"]), int)
-            # TODO: a more specific test to see if there is a gpu to offload to
+        assert isinstance(int(cfg["number_of_layers_to_offload_to_gpu"]), int)
+        # TODO: a more specific test to see if there is a gpu to offload to
 
 
 @pytest.mark.dependency(
         name="run_local_bots",
         scope='session',
         depends=[
-            "llama_server_executable",
-            "local_llm_path",
-            "num_layers_to_offload_to_gpu",
             "botex_session",
             "botex_db"
         ]
