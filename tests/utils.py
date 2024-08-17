@@ -25,10 +25,17 @@ def delete_otree_db():
 
 def start_otree():
     dotenv.load_dotenv("secrets.env")
-    otree_proc = subprocess.Popen(
-        ["otree", "devserver"], cwd="tests/otree",
-        stderr=subprocess.PIPE, stdout=subprocess.PIPE
-    )
+    if platform.system() == "Windows":
+        otree_proc = subprocess.Popen(
+            ["otree", "devserver"], cwd="tests/otree",
+            stderr=subprocess.PIPE, stdout=subprocess.PIPE,
+            creationflags=subprocess.CREATE_NEW_PROCESS_GROUP
+        )
+    else:
+        otree_proc = subprocess.Popen(
+            ["otree", "devserver"], cwd="tests/otree",
+            stderr=subprocess.PIPE, stdout=subprocess.PIPE
+        )
     time.sleep(OTREE_STARTUP_WAIT)
     otree_running = otree_proc.poll() is None
     if not otree_running:
@@ -43,10 +50,12 @@ def stop_otree(otree_proc):
     if otree_running: 
         proc = psutil.Process(otree_proc.pid)
         if platform.system() == "Windows":
-            proc.children()[0].send_signal(signal.CTRL_BREAK_EVENT)
-        else:
+            proc.send_signal(signal.CTRL_BREAK_EVENT)
+            proc.wait()
+        else: 
             proc.children()[0].send_signal(signal.SIGKILL)
-        otree_proc.kill()
+            otree_proc.kill()
+            otree_proc.wait()
     try:
         os.remove("tests/otree/db.sqlite3")
     except OSError:
