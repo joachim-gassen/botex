@@ -21,18 +21,21 @@ with open("secrets.env") as f:
 
 @pytest.mark.dependency(name="llama_server_executable", scope='session')
 def test_llama_server_executable_exists():
-    assert os.path.exists(cfg["path_to_llama_server"])
+    if cfg.get("start_llama_server"):
+        assert os.path.exists(cfg["path_to_llama_server"])
 
 @pytest.mark.dependency(name="local_llm_path", scope='session')
 def test_local_llm_path_exists():
-    assert os.path.exists(cfg["local_llm_path"])
+    if cfg.get("start_llama_server"):
+        assert os.path.exists(cfg["local_llm_path"])
 
 
 @pytest.mark.dependency(name="num_layers_to_offload_to_gpu", scope='session')
 def test_number_of_layers_to_offload_to_gpu():
     if cfg.get("number_of_layers_to_offload_to_gpu"):
-        assert isinstance(int(cfg["number_of_layers_to_offload_to_gpu"]), int)
-        # TODO: a more specific test to see if there is a gpu to offload to
+        if cfg.get("start_llama_server"):
+            assert isinstance(int(cfg["number_of_layers_to_offload_to_gpu"]), int)
+            # TODO: a more specific test to see if there is a gpu to offload to
 
 
 @pytest.mark.dependency(
