@@ -3,6 +3,8 @@ import os
 import dotenv
 import time
 import csv
+import signal
+import platform
 
 import psutil
 import botex
@@ -40,7 +42,10 @@ def stop_otree(otree_proc):
     otree_running = otree_proc.poll() is None
     if otree_running: 
         proc = psutil.Process(otree_proc.pid)
-        proc.children()[0].send_signal(9)
+        if platform.system() == "Windows":
+            proc.children()[0].send_signal(signal.CTRL_BREAK_EVENT)
+        else:
+            proc.send_signal(signal.SIGILL)
         otree_proc.kill()
     try:
         os.remove("tests/otree/db.sqlite3")
