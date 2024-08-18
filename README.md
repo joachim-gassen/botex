@@ -79,7 +79,7 @@ If you want to use a local LLM instead of commercial APIs via the litellm interf
 - llama.cpp. Clone it from [here](https://github.com/ggerganov/llama.cpp) and follow the instructions to build it.
 - A local LLM model. You can use different models (e.g., from Hugging Face) but for starters download a GGUF-format model of [Mistral-7B-Instruct-v0.3.Q4_K_M.gguf](https://huggingface.co/MaziyarPanahi/Mistral-7B-Instruct-v0.3-GGUF). At the moment the following [Q4_K_M version](https://huggingface.co/MaziyarPanahi/Mistral-7B-Instruct-v0.3-GGUF/resolve/main/Mistral-7B-Instruct-v0.3.Q4_K_M.gguf) is tested and working.
 
-Then all that you need to do is to adjust the botex calls from above by specifying the model and its configuration. You do this by providing a `LocalLLM` object to the botex calls that start bots. For example, for `botex.run_bots_on_session()`, your call would look something like this
+Then all that you need to do is to adjust the botex calls from above by specifying the model and its configuration. You do this by providing a dict that will become a `LocalLLM` object to the botex calls that start bots. For example, for `botex.run_bots_on_session()`, your call would look something like this
 
 ```python
 botex.run_bots_on_session(

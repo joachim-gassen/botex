@@ -158,7 +158,7 @@ class LocalLLM:
         ]
         logging.info(f"Starting llama.cpp server ...")
         with open("llama_cpp_server.log", "a") as log_file:
-            process = subprocess.Popen(cmd, stdout=log_file, stderr=subprocess.PIPE)
+            process = subprocess.Popen(cmd, stdout=log_file, stderr=subprocess.STDOUT)
 
         if self.wait_for_server(parsed_url.hostname, parsed_url.port):
             logging.info("llama.cpp server started successfully.")
@@ -183,7 +183,7 @@ class LocalLLM:
             process.terminate()
             return None
 
-    def wait_for_server(self, host, port, timeout=10):
+    def wait_for_server(self, host, port, timeout=30):
         """
         Waits for the server to become responsive.
         """

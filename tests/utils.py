@@ -80,7 +80,7 @@ def create_answer_message(type):
         am += (
             f"Question: {qa['question']}'\n" +  
             f"Answer: '{qa['answer']}'\n" + 
-            f"Rationale: '{qa['reason']}'.\n\n"
+            f"Rationale: '{qa['reason']}'\n\n"
         )
     return am[:-1]
 
