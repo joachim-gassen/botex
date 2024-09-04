@@ -6,6 +6,7 @@ from datetime import datetime, timezone
 import sqlite3
 import csv
 from importlib.resources import files
+from random import random
 
 from litellm import completion
 
@@ -16,14 +17,15 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
-from .local_llm import LocalLLM
+from .local_llm import LocalLLM 
 
-logging.getLogger("LiteLLM").setLevel(logging.WARNING)
+logging.getLogger("LiteLLM").setLevel(logging.ERROR)
 
 def run_bot(
         botex_db, session_id, url, full_conv_history = False,
         model = "gpt-4o", openai_api_key = None,
-        local_llm: LocalLLM | None = None, user_prompts: dict | None = None
+        local_llm: LocalLLM | None = None, user_prompts: dict | None = None,
+        throttle = False
     ):
     """
     Run a bot on an oTree session. You should not call this function
@@ -53,6 +55,9 @@ def run_bot(
         the default prompts is present in the dictionary, then the bot will 
         exit with a warning and not running to make sure that the user is aware 
         of the issue.
+    throttle (bool): Whether to slow down the bot's requests to the OpenAI API.
+        Slowing done the requests can help to avoid rate limiting. Default is 
+        False.
 
     Returns: None (conversation is stored in the botex database)
     """
@@ -185,6 +190,44 @@ def run_bot(
         nonlocal conv_hist_botex_db
         nonlocal conv_hist
         
+        def retry_with_exponential_backoff(
+            func,
+            wait_before_retry_min: float = 0,
+            wait_before_retry_max: float = 60,
+            initial_delay: float = 20,
+            exponential_base: float = 2,
+            jitter: bool = True,
+            max_retries: int = 100
+        ):
+            def wrapper(*args, **kwargs):
+                num_retries = 0
+                delay = initial_delay
+
+                while True:
+                    try:
+                        wait_before = wait_before_retry_min + (wait_before_retry_max - wait_before_retry_min) * random()
+                        if wait_before > 0 and num_retries == 0:
+                            logging.info(f"Throttling: Waiting for {wait_before:.1f} seconds before sending completion request.")
+                            time.sleep(wait_before)
+                        return func(*args, **kwargs)
+
+                    except Exception as e:
+                        num_retries += 1
+                        if num_retries > max_retries:
+                            raise Exception(
+                                f"Throttling: Maximum number of retries ({max_retries}) exceeded."
+                            )
+                        delay *= exponential_base * (1 + jitter * random())
+                        logging.info(
+                            f"Throttling: Request error: '{e}'. Retrying in {delay:.2f} seconds."
+                        )
+                        time.sleep(delay)
+
+            return wrapper
+
+        @retry_with_exponential_backoff
+        def completion_with_backoff(**kwargs):
+            return completion(**kwargs)
 
         def append_message_to_conversation(message):
             nonlocal conversation
@@ -214,11 +257,24 @@ def run_bot(
                 assert conversation, "Conversation is empty."
                 resp = local_llm.completion([system_prompt] + conversation)
             else:
-                resp =  completion(
-                    messages=[system_prompt] + conversation, 
-                    model=model, api_key=openai_api_key,
-                    response_format = {"type": "json_object"}
-                )
+                if throttle: 
+                    # num_retries seems to be for the litellm wrapper and
+                    # max_retries for the actual completion function
+                    # of OpenAI. We set everything to 0 as we are handling
+                    # the retries ourselves.
+                    resp =  completion_with_backoff(
+                        messages=[system_prompt] + conversation, 
+                        model=model, api_key=openai_api_key,
+                        response_format = {"type": "json_object"},
+                        num_retries = 0, max_retries = 0
+                    )
+                else:
+                    resp =  completion(
+                        messages=[system_prompt] + conversation, 
+                        model=model, api_key=openai_api_key,
+                        response_format = {"type": "json_object"}
+                    )
+                    
 
             resp_str = resp.choices[0].message.content
 

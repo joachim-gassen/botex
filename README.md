@@ -23,7 +23,9 @@ If you want to use botex to create LLM participants for your own oTree experimen
 - If you plan to use Chat-GPT 4 as your LLM (recommended for beginners), an [OpenAI API key](https://openai.com/api). If you want to go local, take a look at the next section.
 - Access to an oTree server that you can start sessions on or at least an URL of an oTree participant link. The server can be local or remote.
 
-Then install the botex package: `pip install botex`. After that, you should be able to start botex on an existing oTree participant link by running the following code snippet
+Then install the botex package: `pip install botex`. If you are courageous and want to use the most current development version, you can also install it directly from this repository: `pip install git+https://github.com/joachim-gassen/botex.git`.
+
+After that, you should be able to start botex on an existing oTree participant link by running the following code snippet
 
 ```python
 # Enabling logging is a good idea if you want to see what is going on

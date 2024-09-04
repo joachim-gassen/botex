@@ -207,7 +207,8 @@ def run_bots_on_session(
         already_started = False,
         wait = True,
         local_model_cfg={},
-        user_prompts: dict | None = None
+        user_prompts: dict | None = None,
+        throttle = False
     ):
     """
     Run BotEx bots on an oTree session.
@@ -250,6 +251,9 @@ def run_bots_on_session(
         the default prompts is present in the dictionary, then the bot will 
         exit with a warning and not running to make sure that the user 
         is aware of the issue.
+    throttle (bool): Whether to slow down the bot's requests to the OpenAI API.
+        Slowing done the requests can help to avoid rate limiting. Default is 
+        False.
 
     Returns: None (bot conversation logs are stored in database)
     """
@@ -274,7 +278,8 @@ def run_bots_on_session(
                 'botex_db': botex_db, 'session_id': session_id, 
                 'url': url, 'full_conv_history': full_conv_history, 
                 'model': model, 'openai_api_key': openai_api_key, 
-                'local_llm': local_llm, 'user_prompts': user_prompts
+                'local_llm': local_llm, 'user_prompts': user_prompts,
+                'throttle': throttle
             }
         ) for url in bot_urls 
     ]
