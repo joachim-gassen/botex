@@ -166,7 +166,8 @@ def run_bot(
             question_label = [x.text for x in labels]
             questions = []
             for id, qtype, label, answer_choices in zip(
-                question_id, question_type, question_label, answer_choices, strict=True
+                question_id, question_type, question_label, answer_choices, 
+                strict=True
             ):
                 questions.append(
                     {
@@ -192,22 +193,27 @@ def run_bot(
         
         def retry_with_exponential_backoff(
             func,
-            wait_before_retry_min: float = 0,
-            wait_before_retry_max: float = 60,
-            initial_delay: float = 20,
+            wait_before_request_min: float = 0,
+            wait_before_request_max: float = 60,
+            minimum_backoff: float = 20,
             exponential_base: float = 2,
             jitter: bool = True,
             max_retries: int = 100
         ):
             def wrapper(*args, **kwargs):
                 num_retries = 0
-                delay = initial_delay
+                delay = minimum_backoff
 
                 while True:
                     try:
-                        wait_before = wait_before_retry_min + (wait_before_retry_max - wait_before_retry_min) * random()
+                        wait_before = wait_before_request_min + \
+                            (wait_before_request_max-wait_before_request_min) *\
+                            random()
                         if wait_before > 0 and num_retries == 0:
-                            logging.info(f"Throttling: Waiting for {wait_before:.1f} seconds before sending completion request.")
+                            logging.info(
+                                f"Throttling: Waiting for {wait_before:.1f} " + 
+                                "seconds before sending completion request."
+                            )
                             time.sleep(wait_before)
                         return func(*args, **kwargs)
 
@@ -215,11 +221,13 @@ def run_bot(
                         num_retries += 1
                         if num_retries > max_retries:
                             raise Exception(
-                                f"Throttling: Maximum number of retries ({max_retries}) exceeded."
+                                "Throttling: Maximum number of retries " + 
+                                f"({max_retries}) exceeded."
                             )
                         delay *= exponential_base * (1 + jitter * random())
                         logging.info(
-                            f"Throttling: Request error: '{e}'. Retrying in {delay:.2f} seconds."
+                            f"Throttling: Request error: '{e}'. "+ 
+                            "Retrying in {delay:.2f} seconds."
                         )
                         time.sleep(delay)
 
