@@ -301,16 +301,23 @@ def run_bot(
 
             resp_str = resp.choices[0].message.content
 
+            if error:
+                conversation = conversation[:-2]
+            append_message_to_conversation({"role": "assistant", "content": resp_str})
+            
+            if resp.choices[0].finish_reason == "length":
+                logging.warning("Bot's response is too long. Trying again.")
+                error = True
+                message = prompts['resp_too_long']
+                continue
+
             try:
-                if error:
-                    conversation = conversation[:-2]
-                    error = False
-                append_message_to_conversation({"role": "assistant", "content": resp_str})
                 assert resp_str, "Bot's response is empty."
                 start = resp_str.find('{', 0)
                 end = resp_str.rfind('}', start)
                 resp_str = resp_str[start:end+1]
                 resp_dict = json.loads(resp_str, strict = False)
+                error = False
             except (AssertionError, json.JSONDecodeError):
                 logging.warning("Bot's response is not a valid JSON.")
                 resp_dict = None
@@ -318,11 +325,6 @@ def run_bot(
                 message = prompts['json_error']
                 continue
 
-            if resp.choices[0].finish_reason == "length":
-                logging.warning("Bot's response is too long. Trying again.")
-                error = True
-                message = prompts['resp_too_long']
-                continue
 
             if check_response:
                 success, error_msgs, error_logs = check_response(resp_dict, response_format)
@@ -383,12 +385,6 @@ def run_bot(
         if check_result.get("error"):
             return False, check_result["error"], check_result["error_log"]
         return True, None, None
-
-        if check_result.get("error"):
-            return False, check_result["error"], check_result["error_log"]
-        return True, None, None
-
-
 
             
     def check_response_end(resp, response_format):
