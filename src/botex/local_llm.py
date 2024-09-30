@@ -8,20 +8,60 @@ from urllib.parse import urlparse
 
 from .gguf_parser import GGUFParser
 
+from pydantic import BaseModel, Field, model_validator, ValidationError
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from typing import List, Optional
 
-class MirrorLiteLLMResponse:
-    def __init__(self, content, finish_reason):
-        self._content = content
-        self.finish_reason = finish_reason
-        self.choices = [self]
+class Message(BaseModel):
+    role: str
+    content: str
 
-    @property
-    def message(self):
+class Choice(BaseModel):
+    index: int
+    message: Message
+    finish_reason: Optional[str]
+
+class Usage(BaseModel):
+    completion_tokens: int
+    prompt_tokens: int
+    total_tokens: int
+
+class ChatCompletionResponse(BaseModel):
+    id: str
+    object: str
+    created: int
+    model: str
+    usage: Usage
+    choices: List[Choice]
+
+class LocalLLMConfig(BaseSettings):
+    model_config = SettingsConfigDict(env_ignore_empty=True)
+
+    start_llama_server: bool = Field(default=True)
+    llama_server_url: str = Field(default='http://localhost:8080')
+    path_to_llama_server: str | None = Field(default=None)
+    local_llm_path: str | None = Field(default=None)
+    context_length: int | None = Field(default=None)
+    number_of_layers_to_offload_to_gpu: int = Field(default=0)
+    temperature: float = Field(default=0.5)
+    maximum_tokens_to_predict: int = Field(default=1000)
+    top_p: float = Field(default=0.9)
+    top_k: int = Field(default=40)
+    num_slots: int = Field(default=1)
+
+    @model_validator(mode='after')
+    def check_required_fields(self):
+        if self.start_llama_server:
+            if not self.path_to_llama_server:
+                raise ValueError("You have indicated that you want botex to start the llama.cpp server, but you have not provided the path to the server.")
+            if not self.local_llm_path:
+                raise ValueError("You have indicated that you want botex to start the llama.cpp server, but you have not provided the path to the local language model.")
+            if not os.path.exists(self.path_to_llama_server):
+                raise FileNotFoundError(f"Server path {self.path_to_llama_server} not found.")
+            if not os.path.exists(self.local_llm_path):
+                raise FileNotFoundError(f"Model path {self.local_llm_path} not found.")
         return self
-
-    @property
-    def content(self):
-        return self._content
+    
 
 
 class LocalLLM:
@@ -29,65 +69,44 @@ class LocalLLM:
     A class to interact with the local language model server.
 
     Parameters:
-    start_llama_server (bool): Whether to start the llama cpp server, defaults 
-        to True. If False, the program will not start the server and will 
-        expect the server to be accessible under the URL provided by 
-        'llama_server_url'.
-    path_to_llama_server (str): The path to the llama cpp server executable.
-    local_llm_path (str): The path to the local language model.
-    llama_server_url (str): The base URL for the llama cpp server.
-    context_length (int): The context length for the model, defaults to None.
-        If None, the program will try to get the context length from the local
-        model metadata, if that is not possible defaults to 4096.
-    number_of_layers_to_offload_to_gpu (int): The number of layers to offload 
-        to the GPU, defaults to 0.
-    temperature (float): The temperature for the model, defaults to 0.5.
-    top_p (float): The top p value for the model, defaults to 0.9.
-    top_k (int): The top k value for the model, defaults to 40.
-    num_slots (int): The number of slots for the model, defaults to 1.
+    local_model_cfg (dict): A dictionary containing the configuration for the 
+        local language model. The dictionary can contain any of the following keys:
+        
+        - start_llama_server (bool): Whether to start the llama cpp server, defaults to True. If False, the program will not start the server and will expect the server to be accessible under the URL provided by 'llama_server_url'.
+        - path_to_llama_server (str): The path to the llama cpp server executable.
+        - local_llm_path (str): The path to the local language model.
+        - llama_server_url (str): The base URL for the llama cpp server, defaults to "http://localhost:8080".
+        - context_length (int): The context length for the model, defaults to None. If None, the program will try to get the context length from the local model metadata, if that is not possible defaults to 4096.
+        - number_of_layers_to_offload_to_gpu (int): The number of layers to offload to the GPU, defaults to 0.
+        - temperature (float): The temperature for the model, defaults to 0.5.
+        - maximum_tokens_to_predict (int): The maximum number of tokens to predict, defaults to 10000.
+        - top_p (float): The top p value for the model, defaults to 0.9.
+        - top_k (int): The top k value for the model, defaults to 40.
+        - num_slots (int): The number of slots for the model, defaults to 1.
+    
+        For all the keys, if not provided, the program will try to get the value from environment variables (in all capital letters), if that is not possible, it will use the default value.
     """
-
-    def __init__(
-        self,
-        start_llama_server: bool = True,
-        path_to_llama_server: str | None = None,
-        local_llm_path: str | None = None,
-        llama_server_url: str = "http://localhost:8080",
-        context_length: int | None = None,
-        number_of_layers_to_offload_to_gpu: int = 0,
-        temperature: float = 0.5,
-        maximum_tokens_to_predict: int = 10000,
-        top_p: float = 0.9,
-        top_k: int = 40,
-        num_slots: int = 1,
-        **kwargs,
-    ):
-        self.start_llama_server = start_llama_server
-        self.llama_server_url = llama_server_url
-        if start_llama_server:
-            if path_to_llama_server is None:
-                raise ValueError("You have indicated that you want botex to start the llama.cpp server, but you have not provided the path to the server.")
-            else:
-                self.server_path = path_to_llama_server
-            if local_llm_path is None:
-                raise ValueError("You have indicated that you want botex to start the llama.cpp server, but you have not provided the path to the local language model.")
-            else:
-                self.model_path = local_llm_path
-            parsed_gguf = GGUFParser(self.model_path)
+    def __init__(self, local_model_cfg: dict):
+        self.cfg = LocalLLMConfig(**local_model_cfg)
+        
+        self.start_llama_server = self.cfg.start_llama_server
+        self.llama_server_url = self.cfg.llama_server_url
+        
+        if self.start_llama_server:
+            self.path_to_llama_server = self.cfg.path_to_llama_server
+            self.local_llm_path = self.cfg.local_llm_path
+            parsed_gguf = GGUFParser(self.local_llm_path)
             self.metadata = parsed_gguf.get_metadata()
-            self.ngl = int(number_of_layers_to_offload_to_gpu)
-            self.c = (
-                int(context_length)
-                if context_length
-                else self.metadata.get("context_length", 4096)
-            )
-            self.temperature = float(temperature)
-            self.n = int(maximum_tokens_to_predict)
-            self.top_p = float(top_p)
-            self.top_k = int(top_k)
-            self.num_slots = num_slots
+            self.ngl = self.cfg.number_of_layers_to_offload_to_gpu
+            self.c = int(self.cfg.context_length or self.metadata.get("context_length", 4096))
+            self.temperature = self.cfg.temperature
+            self.n = self.cfg.maximum_tokens_to_predict
+            self.top_p = self.cfg.top_p
+            self.top_k = self.cfg.top_k
+            self.num_slots = self.cfg.num_slots
         else:
             self.set_params_from_running_api()
+
 
     def set_params_from_running_api(self) -> None:
         url = f"{self.llama_server_url}/slots"
@@ -103,21 +122,28 @@ class LocalLLM:
                 "An error occurred while trying to connect to your running llama.cpp server. Are you sure you are running llama.cpp server and the llama_server_url is correct?"
             )   
         try:
-            self.model_path = res[0]['model']
+            self.local_llm_path = res[0]['model']
             self.c = res[0]['n_ctx']
             self.temperature = round(res[0]['temperature'], 2)
             self.n = res[0]['n_predict']
             self.top_p = round(res[0]['top_p'], 2)
             self.top_k = res[0]['top_k']
             self.num_slots = len(res)
+
+            self.cfg = LocalLLMConfig(
+                start_llama_server=False,
+                llama_server_url=self.llama_server_url,
+                local_llm_path=self.local_llm_path,
+                context_length=self.c,
+                number_of_layers_to_offload_to_gpu=0,
+                temperature=self.temperature,
+                maximum_tokens_to_predict=self.n,
+                top_p=self.top_p,
+                top_k=self.top_k,
+                num_slots=self.num_slots
+            )
         except KeyError as e:
             raise Exception("An error occurred while trying to get metadata, %s from the running API. Are you sure you are running llama.cpp server and the llama_server_url is correct? If so, please consider raising an issue on github." % e)
-
-    def validate_parameters(self):
-        if not os.path.exists(self.server_path):
-            raise FileNotFoundError(f"Server path not found: {self.server_path}")
-        if not os.path.exists(self.model_path):
-            raise FileNotFoundError(f"Model path not found: {self.model_path}")
 
     def start_server(self):
         """
@@ -125,15 +151,16 @@ class LocalLLM:
         """
         parsed_url = urlparse(self.llama_server_url)
         if not self.start_llama_server:
-            if self.wait_for_server(parsed_url.hostname, parsed_url.port):
-                logging.info("You have chosen to use an already running llama.cpp server. llama.cpp server is running on %s. Make sure this is what you intended", self.llama_server_url)
-            else:
-                raise Exception(f"You have chosen to use an already running llama.cpp server but the server is not reachable. Please make sure that llama.cpp server is up and running on llama_server_url: {self.llama_server_url}")
-            return
-        self.validate_parameters()
+            if self.is_server_reachable(parsed_url.hostname, parsed_url.port):
+                logging.info("You have chosen to use an already running llama.cpp server. The server is running on %s and is reachable.", self.llama_server_url)
+                return None
+            raise Exception(f"You have chosen to use an already running llama.cpp server but the server is not reachable. Please make sure that llama.cpp server is up and running on llama_server_url: {self.llama_server_url}")
+
+        if self.is_server_reachable(parsed_url.hostname, parsed_url.port):
+            raise Exception("llama.cpp server is already running on %s, but you have indicated that you want botex to start the llama.cpp server. Please stop the server manually if you want botex to start the server or set start_llama_server to Fasle to work with an already running llama.cpp server.", self.llama_server_url)
 
         cmd = [
-            self.server_path,
+            self.path_to_llama_server,
             "--host",
             parsed_url.hostname,
             "--port",
@@ -147,7 +174,7 @@ class LocalLLM:
             "--reverse_prompt",
             " \n  \n  \n  \n  \n  \n  \n  \n  ",
             "-m",
-            self.model_path,
+            self.local_llm_path,
             "-c",
             str(int(self.num_slots) * (int(self.c) + int(self.n))),
             "-n",
@@ -156,11 +183,11 @@ class LocalLLM:
             str(self.num_slots),
             "-fa",
         ]
-        logging.info(f"Starting llama.cpp server ...")
+        logging.info("Starting llama.cpp server ...")
         with open("llama_cpp_server.log", "a") as log_file:
             process = subprocess.Popen(cmd, stdout=log_file, stderr=subprocess.STDOUT)
 
-        if self.wait_for_server(parsed_url.hostname, parsed_url.port):
+        if self.is_server_reachable(parsed_url.hostname, parsed_url.port):
             logging.info("llama.cpp server started successfully.")
             return process
 
@@ -169,13 +196,13 @@ class LocalLLM:
             logging.error("Failed to start llama.cpp server.")
             if "cudaMalloc failed: out of memory" in stderr.decode("utf-8"):
                 raise Exception(
-                    f"Failed to start llama.cpp server. Your model {self.model_path} is too large for the available GPU memory. Please try a smaller model or decrease the number of layers, {self.ngl} that are offloaded to the GPU."
+                    f"Failed to start llama.cpp server. Your model {self.local_llm_path} is too large for the available GPU memory. Please try a smaller model or decrease the number of layers, {self.ngl} that are offloaded to the GPU."
                 )
             raise Exception(
                 f"Failed to start llama.cpp server. Error: {stderr.decode('utf-8')}"
             )
 
-        if self.wait_for_server(parsed_url.hostname, parsed_url.port):
+        if self.is_server_reachable(parsed_url.hostname, parsed_url.port):
             logging.info("llama.cpp server started successfully.")
             return process
         else:
@@ -183,7 +210,7 @@ class LocalLLM:
             process.terminate()
             return None
 
-    def wait_for_server(self, host, port, timeout=30):
+    def is_server_reachable(self, host, port, timeout=30):
         """
         Waits for the server to become responsive.
         """
@@ -217,7 +244,7 @@ class LocalLLM:
         else:
             logging.warning("llama.cpp server is not running.")
 
-    def completion(self, messages) -> MirrorLiteLLMResponse:
+    def completion(self, messages) -> ChatCompletionResponse:
         """
         Generates a completion for the given messages.
 
@@ -242,8 +269,8 @@ class LocalLLM:
             try:
                 response = requests.post(url, json=payload, timeout=300)
                 break
-            except requests.Timeout:
-                logging.error("Request timed out. Retrying...")
+            except Exception as e:
+                logging.error(f"Error getting a response from local llm server: {e}. Retrying... (Attempt {attempts + 1}/3)")
                 attempts += 1
                 if attempts == 3:
                     raise Exception("Request timed out after 3 attempts.")
@@ -252,8 +279,14 @@ class LocalLLM:
             raise Exception(
                 f"An error occurred while generating the completion: {response.text}"
             )
-
-        completion = response.json()["choices"][0]["message"]["content"]
-        finish_reason = response.json()["choices"][0]["finish_reason"]
-
-        return MirrorLiteLLMResponse(completion, finish_reason)
+        
+        try:
+            res = response.json()
+            # Unfortunately, the response from llama.cpp is not correct here, this is a known issue on llama.cpp and there is a PR to fix it.
+            if res.get('usage') and res['usage']['completion_tokens'] >= self.n:
+                res['choices'][0]['finish_reason'] = "length"
+            return ChatCompletionResponse(**res)
+        except ValidationError as e:
+            error_log = "An error occurred while parsing the response. This is most likely because the local llm server is not responding with an OpenAI compliant JSON. Here is the error and response text:\n %s \n %s" % (e, response.text)
+            logging.error(error_log)
+            raise Exception(error_log)

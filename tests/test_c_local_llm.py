@@ -8,46 +8,24 @@ import botex
 
 from tests.utils import start_otree, stop_otree, init_otree_test_session, delete_botex_db
 
-with open("secrets.env") as f:
-    cfg = {}
-    for line in f:
-        if not line.strip() or line.startswith("#"):
-            continue
-        key, value = line.strip().split("=")
-        cfg[key] = value.strip('\"\'')
-        if key.lower() == "start_llama_server":
-            cfg[key] = bool(eval(cfg[key]))
-    cfg = {k.lower(): v for k, v in cfg.items()}
-    if not "start_llama_server" in cfg:
-        cfg["start_llama_server"] = True
+from dotenv import load_dotenv
+load_dotenv("secrets.env")
 
 @pytest.mark.dependency(name="llama_server_executable", scope='session')
 @pytest.mark.skipif(
-    not cfg.get("start_llama_server"),
+    not eval(os.environ.get("START_LLAMA_SERVER")),
     reason="Using externally started llama.cpp server"
 )
 def test_llama_server_executable_exists():
-    assert os.path.exists(cfg["path_to_llama_server"])
+    assert os.path.exists(os.environ.get("PATH_TO_LLAMA_SERVER"))
 
 @pytest.mark.dependency(name="local_llm_path", scope='session')
 @pytest.mark.skipif(
-    not cfg.get("start_llama_server"),
+    not eval(os.environ.get("START_LLAMA_SERVER")),
     reason="Using externally started llama.cpp server"
 )
 def test_local_llm_path_exists():
-    if cfg.get("start_llama_server"):
-        assert os.path.exists(cfg["local_llm_path"])
-
-@pytest.mark.dependency(name="num_layers_to_offload_to_gpu", scope='session')
-@pytest.mark.skipif(
-    not cfg.get("start_llama_server"),
-    reason="Using externally started llama.cpp server"
-)
-def test_number_of_layers_to_offload_to_gpu():
-    if cfg.get("number_of_layers_to_offload_to_gpu"):
-        assert isinstance(int(cfg["number_of_layers_to_offload_to_gpu"]), int)
-        # TODO: a more specific test to see if there is a gpu to offload to
-
+    assert os.path.exists(os.environ.get("LOCAL_LLM_PATH")) 
 
 @pytest.mark.dependency(
         name="run_local_bots",
@@ -69,8 +47,7 @@ def test_can_survey_be_completed_by_local_bots():
         session_id=botex_session["session_id"],
         bot_urls=botex_session["bot_urls"],
         botex_db="tests/botex.db",
-        model="local",
-        local_model_cfg=cfg
+        model="local"
     )
     stop_otree(otree_proc)
     assert True
