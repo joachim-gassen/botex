@@ -244,7 +244,7 @@ class LocalLLM:
         else:
             logging.warning("llama.cpp server is not running.")
 
-    def completion(self, messages) -> ChatCompletionResponse:
+    def completion(self, messages, response_format) -> ChatCompletionResponse:
         """
         Generates a completion for the given messages.
 
@@ -259,7 +259,10 @@ class LocalLLM:
             "temperature": self.temperature,
             "cache_prompt": False,
             "max_tokens": self.n,
-            "response_format": {"type": "json_object"},
+            "response_format":  {
+                "type": "json_object",
+                "schema": response_format.model_json_schema()
+            },
             "top_p": self.top_p,
             "top_k": self.top_k,
         }

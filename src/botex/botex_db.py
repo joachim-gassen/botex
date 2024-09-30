@@ -12,7 +12,7 @@ def retrieve_responses(resp_str):
         end = resp_str.rfind('}', start)
         resp_str = resp_str[start:end+1]
         cont = json.loads(resp_str, strict = False)
-        if 'questions' in cont: return cont['questions']
+        if 'answers' in cont: return cont['answers']
     except:
         logging.info(
             f"message :'{resp_str}' failed to load as json"
@@ -28,17 +28,19 @@ def parse_history(h):
             pot_a = retrieve_responses(m['content'])
         else: 
             if pot_a is not None:
-                if m['content'][:7] == 'Perfect': answers.extend(pot_a)
+                if m['content'][:7] == 'Perfect': answers.append(pot_a)
                 pot_a = None
 
     ids = []
     round = 1
+
     for i,a in enumerate(answers):
-        ids.append(a['id'])
-        c_id = ids.count(a['id'])
-        if c_id > 1:
-            if c_id > round:
-                round = c_id
+        for id_, a in a.items():
+            ids.append(id_)
+            c_id = ids.count(id_)
+            if c_id > 1:
+                if c_id > round:
+                    round = c_id
         answers[i]['round'] = round
     return answers
     
@@ -129,15 +131,17 @@ def read_responses_from_botex_db(botex_db = None):
     resp = [parse_conversation(c) for c in cs]
     rt = []
     for r in resp:
-        for a in r['answers']:
-            rt.append({
-                'session_id': r['session_id'], 
-                'participant_id': r['participant_id'], 
-                'round': a['round'], 
-                'question_id': a['id'], 
-                'answer': a['answer'], 
-                'reason': a['reason']
-            })
+        for answer_dict in r['answers']:
+            for id_, a in answer_dict.items():
+                if id_ == 'round': continue
+                rt.append({
+                    'session_id': r['session_id'], 
+                    'participant_id': r['participant_id'], 
+                    'round': answer_dict['round'], 
+                    'question_id': id_, 
+                    'answer': a['answer'], 
+                    'reason': a['reason']
+                })
     return rt
 
 

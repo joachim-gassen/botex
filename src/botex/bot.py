@@ -10,6 +10,7 @@ from random import random
 
 from litellm import completion
 
+from pydantic import ValidationError
 from selenium import webdriver
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.chrome.options import Options
@@ -17,13 +18,14 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
-from .local_llm import LocalLLM 
+from .local_llm import LocalLLM
+from .schemas import create_answers_response_model, EndSchema, Phase, StartSchema, SummarySchema
 
 logging.getLogger("LiteLLM").setLevel(logging.ERROR)
 
 def run_bot(
         botex_db, session_id, url, full_conv_history = False,
-        model = "gpt-4o", openai_api_key = None,
+        model = "gpt-4o-2024-08-06", openai_api_key = None,
         local_llm: LocalLLM | None = None, user_prompts: dict | None = None,
         throttle = False
     ):
@@ -39,12 +41,11 @@ def run_bot(
     full_conv_history (bool): Whether to keep the full conversation history.
         This will increase token use and only work with very short experiments.
         Default is False.
-    model (str): The model to use for the bot. Default is "gpt-4o"
-        from OpenAI. You will need an OpenAI key and be prepared to pay to 
-        use this model.
+    model (str): The model to use for the bot. Default is "gpt-4o-2024-08-06"
+        from OpenAI. It needs to be a model that supports structured outputs.
+        For OpenAI, these are gpt-4o-mini-2024-07-18 and later or gpt-4o-2024-08-06 and later. You will need an OpenAI key and be prepared to pay to use this model. If set to "local", you need to provide a LocalLLM object to local_llm.
     openai_api_key (str): The API key for the OpenAI service.
-    local_llm (LocalLLM): A LocalLLM object to use for the bot. If this is not
-        None, the bot will use the local model instead of the OpenAI model.
+    local_llm (LocalLLM): A LocalLLM object to use for the bot.
     user_prompts (dict): A dictionary of user prompts to override the default 
         prompts that the bot uses. The keys should be one or more of the 
         following: ['start', 'analyze_first_page_no_q', 'analyze_first_page_q', 
@@ -62,8 +63,9 @@ def run_bot(
     Returns: None (conversation is stored in the botex database)
     """
     bot_parms = locals()
-    bot_parms.pop('local_llm')
-    bot_parms['local_llm'] = vars(local_llm) if local_llm else None
+    if local_llm:
+        bot_parms.pop('local_llm')
+        bot_parms['local_llm'] = local_llm.cfg.model_dump_json()
     if bot_parms['openai_api_key'] is not None: 
         bot_parms["openai_api_key"] = "******"       
     bot_parms = json.dumps(bot_parms)
@@ -185,12 +187,25 @@ def run_bot(
         )
     
     def llm_send_message(
-            message, check_response = None, model = model, questions = None
+            message, phase: Phase, check_response = None, model = model, questions = None
         ):
         conversation = []
         nonlocal conv_hist_botex_db
         nonlocal conv_hist
-        
+
+        # set schemas
+        if phase == Phase.start:
+            response_format = StartSchema
+        elif phase == Phase.middle:
+            if questions:
+                response_format = create_answers_response_model(questions)
+            else:
+                response_format = SummarySchema
+        elif phase == Phase.end:
+            response_format = EndSchema
+        else:
+            raise ValueError("Invalid phase.")
+
         def retry_with_exponential_backoff(
             func,
             wait_before_request_min: float = 0,
@@ -263,7 +278,7 @@ def run_bot(
             if model == "local":
                 assert local_llm, "Model is local but local_llm is not set."
                 assert conversation, "Conversation is empty."
-                resp = local_llm.completion([system_prompt] + conversation)
+                resp = local_llm.completion([system_prompt] + conversation, response_format)
             else:
                 if throttle: 
                     # num_retries seems to be for the litellm wrapper and
@@ -273,14 +288,14 @@ def run_bot(
                     resp =  completion_with_backoff(
                         messages=[system_prompt] + conversation, 
                         model=model, api_key=openai_api_key,
-                        response_format = {"type": "json_object"},
+                        response_format = response_format,
                         num_retries = 0, max_retries = 0
                     )
                 else:
                     resp =  completion(
                         messages=[system_prompt] + conversation, 
                         model=model, api_key=openai_api_key,
-                        response_format = {"type": "json_object"}
+                        response_format = response_format
                     )
                     
 
@@ -310,10 +325,7 @@ def run_bot(
                 continue
 
             if check_response:
-                if questions:
-                    success, error_msgs, error_logs = check_response(resp_dict, questions)
-                else:
-                    success, error_msgs, error_logs = check_response(resp_dict)
+                success, error_msgs, error_logs = check_response(resp_dict, response_format)
                 if not success:
                     error = True
                     logging.warning(f"Detected an issue: {' '.join(error_logs)}.")
@@ -333,144 +345,59 @@ def run_bot(
 
         if full_conv_history: conv_hist.append(conversation)
         return resp_dict
+    
+    def validate_response(resp, schema, check_result):
+        try:
+            schema.model_validate_json(json.dumps(resp))
+        except ValidationError as e:
+            e = json.loads(e.json())[0]['msg']
+            e_log = f"Bot's response does not respect the schema: {e}."
+            check_result['error_log'].append(e_log)
+            check_result['error'].append(f"schema_error: {e}")
+            return check_result
+        return check_result
 
-    def check_response_start(resp):
+    def check_response_start(resp, response_format):
         check_result = {"error": [], "error_log": []}
-        if "error" in resp and resp["error"] != "" and resp["error"] != "None":
-            error_log = f"Bot's response indicates error: '{resp['error']}'."
-            check_result["error_log"].append(error_log)
-            check_result["error"].append("confused")
-        if 'understood' not in set(resp):
-            error_log = "Bot's response does not have the required understood key."
-            check_result["error_log"].append(error_log)
-            check_result["error"].append("no_understood_key")
-        if str(resp.get('understood')).lower() != "yes":
+        check_result = validate_response(resp, response_format, check_result)
+        
+        if not resp['understood']:
             error_log = "Bot did not understand the message."
             check_result["error_log"].append(error_log)
             check_result["error"].append("not_understood")
+
         if check_result.get("error"):
             return False, check_result["error"], check_result["error_log"]
         return True, None, None
         
 
-    def check_response_summary(resp):
+    def check_response_middle(resp, response_format):
         check_result = {"error": [], "error_log": []}
-        if "error" in resp and resp["error"] != "" and resp["error"] != "None":
-            error_log = f"Bot's response indicates error: '{resp['error']}'."
-            check_result["error_log"].append(error_log)
-            check_result["error"].append("confused")
-        if set(resp) != set(["summary"]):
-            error_log = "Bot's response does not have the required set of keys."
-            check_result["error_log"].append(error_log)
-            check_result["error"].append("no_summary_key")
+        check_result = validate_response(resp, response_format, check_result)
         
+        if resp["confused"]:
+            check_result["error_log"].append("Bot is confused.")
+            check_result["error"].append("confused")
+
+
         if check_result.get("error"):
             return False, check_result["error"], check_result["error_log"]
         return True, None, None
 
-    def check_response_question(resp, questions):
-        check_result = {"error": [], "error_log": []}
-        if "error" in resp and resp["error"] != "" and resp["error"] != "None":
-            error_log = f"Bot's response indicates error: '{resp['error']}'."
-            check_result["error_log"].append(error_log)
-            check_result["error"].append("confused")
-        if "summary" not in resp:
-            error_log = "Bot's response does not have a summary key"
-            check_result["error_log"].append(error_log)
-            check_result["error"].append("no_summary_key")
-        if "questions" not in resp:
-            error_log = "Bot's response does not have a questions key"
-            check_result["error_log"].append(error_log)
-            check_result["error"].append("no_questions_key")
-            return False, check_result["error"], check_result["error_log"]
-
-        if not isinstance(resp['questions'], list):
-            if isinstance(resp['questions'], dict):
-                resp['questions'] = [resp['questions']]
-            else:
-                error_log = "Questions is not a list."
-                check_result["error_log"].append(error_log)
-                check_result["error"].append("questions_not_list")
-
-
-        q_ids = [q['question_id'] for q in questions]
-        answer_ids = [q['id'] for q in resp['questions'] if q.get('id')]
-        unanswered_q_ids = set(q_ids) - set(answer_ids)
-        if unanswered_q_ids:
-            check_result["error_log"].append(f"unanswered_questions: {' '.join(unanswered_q_ids)}")
-            check_result["error"].append(f"unanswered_questions: {' '.join(unanswered_q_ids)}")
-
-        errors = {
-            "missing_answer": [],
-            "missing_reason": [],
-            "answer_not_number": [],
-            "answer_not_float": [],
-            "select_answer_number": [],
-            "select_answer_unknown": [],
-            "answer_id_not_found_in_q_id_list": []
-        }
-        for answer in resp['questions']:
-            if "id" not in answer:
-                continue
-            
-            if "answer" not in answer:
-                errors['missing_answer'].append(answer['id'])
-            if "reason" not in answer:
-                errors['missing_reason'].append(answer['id'])
-            else: 
-                if answer['reason'] is None or answer['reason'] == "":
-                    errors['missing_reason'].append(answer['id'])
-            
-            if answer['id'] in q_ids:
-                qtype = questions[q_ids.index(answer['id'])]['question_type']
-            else:
-                errors['answer_id_not_found_in_q_id_list'].append(answer['id'])
-                continue
-            # 'answer' in answer - because I got answer = {'id': 'id_integer_field', '':''} in the response
-            if qtype == 'number' and 'answer' in answer and isinstance(answer['answer'], str):
-                try:
-                    int_const_pattern = r'[-+]?[0-9]+'
-                    rx = re.compile(int_const_pattern, re.VERBOSE)
-                    ints = rx.findall(answer['answer'])
-                    answer = ints[0]
-                except:
-                    errors['answer_not_number'].append(answer['id'])
-            if qtype == 'float' and 'answer' in answer and isinstance(answer['answer'], str):
-                try:
-                    numeric_const_pattern = r'[-+]? (?: (?: \d* \. \d+ ) | (?: \d+ \.? ) )(?: [Ee] [+-]? \d+ ) ?'
-                    rx = re.compile(numeric_const_pattern, re.VERBOSE)
-                    floats = rx.findall(answer['answer'])
-                    answer = floats[0]
-                except:
-                    errors['answer_not_float'].append(answer['id'])
-            
-            if qtype == 'select-one':
-                if not answer['answer'] in questions[q_ids.index(answer['id'])]['answer_choices']:
-                    try:
-                        int(answer['answer'])
-                        errors['select_answer_number'].append(answer['id'])
-                    except:
-                        errors['select_answer_unknown'].append(answer['id'])
-        
-        for error in errors:
-            if errors[error]:
-                check_result["error_log"].append(f"{error}: {errors[error]}")
-                check_result["error"].append(f"{error}: {errors[error]}")
-        
         if check_result.get("error"):
             return False, check_result["error"], check_result["error_log"]
         return True, None, None
+
+
+
             
-    def check_response_end(resp):
+    def check_response_end(resp, response_format):
         check_result = {"error": [], "error_log": []}
-        if "error" in resp and resp["error"] != "" and resp["error"] != "None":
-            error_log = f"Bot's response indicates error: '{resp['error']}'."
-            check_result["error_log"].append(error_log)
+        check_result = validate_response(resp, response_format, check_result)
+
+        if resp["confused"]:
+            check_result["error_log"].append("Bot is confused.")
             check_result["error"].append("confused")
-        if "remarks" not in resp:
-            error_log = "Bot's response does not have the required remarks key."
-            check_result["error_log"].append(error_log)
-            check_result["error"].append("no_remarks_key")
         if check_result.get("error"):
             return False, check_result["error"], check_result["error_log"]
         return True, None, None
@@ -561,7 +488,7 @@ def run_bot(
     conv_hist_botex_db = [system_prompt]
     conv_hist = []
 
-    resp = llm_send_message(message, check_response_start)
+    resp = llm_send_message(message, Phase.start, check_response_start)
     if resp == 'Maximum number of attempts reached.':
         gracefully_exit_failed_bot("start")
         return
@@ -627,11 +554,10 @@ def run_bot(
         if questions == None:
             nr_q = 0
             questions_json = ""
-            check_response = check_response_summary
         else:
             nr_q = len(questions)
             questions_json = json.dumps(questions)
-            check_response = check_response_question
+        check_response = check_response_middle
 
         message = prompts[analyze_prompt].format(
             body = text.strip(), summary = summary, nr_q = nr_q,
@@ -656,7 +582,8 @@ def run_bot(
                 """)
             message = prompts['page_not_changed'] + message
             
-        resp = llm_send_message(message, check_response, questions=questions)
+        resp = llm_send_message(
+            message, Phase.middle, check_response, questions=questions)
         if resp == 'Maximum number of attempts reached.':
             gracefully_exit_failed_bot("middle")
             return
@@ -672,19 +599,18 @@ def run_bot(
             logging.info("Page has no question and no next button. Stopping.")
             break
 
-        logging.info(
-            f"Page has {len(questions)} question(s)."
-        )
-        for q in resp['questions']: 
+        logging.info(f"Page has {len(questions)} question(s).")
+
+        for id_, a in resp['answers'].items(): 
             logging.info(
                 "Bot has answered question " + 
-                f"'{q['id']}' with '{q['answer']}'."
+                f"'{id_}' with '{a['answer']}'."
             )
-            answer = q['answer']
+            answer = a['answer']
             try:
-                qtype = next(qst['question_type'] for qst in questions if qst['question_id'] == q['id'])
+                qtype = next(qst['question_type'] for qst in questions if qst['question_id'] == id_)
             except:
-                logging.warning(f"Question '{q['id']}' not found in questions.")
+                logging.warning(f"Question '{id_}' not found in questions.")
                 qtype = None
                 break
 
@@ -700,14 +626,14 @@ def run_bot(
                 answer = floats[0]
             if qtype == 'radio' and isinstance(answer, bool):
                 answer = 'Yes' if answer else 'No'
-            set_id_value(dr, q['id'], qtype, answer)
+            set_id_value(dr, id_, qtype, answer)
 
         if qtype is not None: click_on_element(dr, next_button)
     
     dr.close()
     dr.quit()
     message = prompts['end'].format(summary = summary)
-    resp = llm_send_message(message, check_response_end)
+    resp = llm_send_message(message, Phase.end, check_response_end)
     if resp == 'Maximum number of attempts reached.':
         gracefully_exit_failed_bot("end")
         return

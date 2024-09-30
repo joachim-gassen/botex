@@ -201,7 +201,7 @@ def get_bot_urls(session_id, botex_db = None, already_started = False):
 def run_bots_on_session(
         session_id, bot_urls = None, 
         botex_db = None, 
-        model = "gpt-4o",
+        model = "gpt-4o-mini-2024-07-18",
         full_conv_history = False,
         openai_api_key = None,
         already_started = False,
@@ -223,10 +223,9 @@ def run_bots_on_session(
     full_conv_history (bool): Whether to keep the full conversation history.
         This will increase token use and only work with very short experiments.
         Default is False.
-    model (str): The model to use for the bot. Default is "gpt-4o"
-        from OpenAI. You will need an OpenAI key and be prepared to pay to 
-        use this model. If set to "local", you need to provide a configuration
-        for the local model in local_model_cfg.
+    model (str): The model to use for the bot. Default is "gpt-4o-2024-08-06"
+        from OpenAI. It needs to be a model that supports structured outputs.
+        For OpenAI, these are gpt-4o-mini-2024-07-18 and later or gpt-4o-2024-08-06 and later. You will need an OpenAI key and be prepared to pay to use this model. If set to "local", you need to provide a configuration for the local model in local_model_cfg.
     openai_api_key (str): The API key for the OpenAI service. If None 
         (the default), it will be obtained from the environment variable 
         OPENAI_API_KEY.
@@ -309,7 +308,7 @@ def run_single_bot(
     url, session_name = "unknown", session_id = "unknown", 
     participant_id = "unknown",
     botex_db = None, full_conv_history = False,
-    model = "gpt-4o", openai_api_key = None,
+    model = "gpt-4o-mini-2024-07-18", openai_api_key = None,
     local_model_cfg: dict | None = None, user_prompts: dict | None = None
 ):
     """
@@ -324,9 +323,9 @@ def run_single_bot(
     full_conv_history (bool): Whether to keep the full conversation history.
         This will increase token use and only work with very short experiments.
         Default is False.
-    model (str): The model to use for the bot. Default is "gpt-4o"
-        from OpenAI. You will need an OpenAI key and be prepared to pay to 
-        use this model.
+    model (str): The model to use for the bot. Default is "gpt-4o-2024-08-06"
+        from OpenAI. It needs to be a model that supports structured outputs.
+        For OpenAI, these are gpt-4o-mini-2024-07-18 and later or gpt-4o-2024-08-06 and later. You will need an OpenAI key and be prepared to pay to use this model. If set to "local", you need to provide a configuration for the local model in local_model_cfg.
     openai_api_key (str): The API key for the OpenAI service.
         local_model_cfg (dict): A dictionary containing the configuration for the 
         local language model. The dictionary can contain any of the following keys:
