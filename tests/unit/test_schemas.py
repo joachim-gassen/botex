@@ -20,10 +20,10 @@ schemas_data = {
 
 response_data_sets = {
     'text': {
-        'questions_json': [{'question_id': 'q1', 'question_type': 'text'}],
+        'questions_json': {'q1': {'question_type': 'text', 'question_label': 'What is your favorite color?'}},
         'response_data': {
             'answers': {
-                'q1': {'answer': 'This is an answer', 'reason': 'Because it is required'}
+                'q1': {'answer': 'Blue', 'reason': 'Because it is calming'}
             },
             'summary': 'Test summary',
             'confused': False
@@ -32,7 +32,7 @@ response_data_sets = {
         'error_log': "Input should be a valid string"
     },
     'radio': {
-        'questions_json': [{'question_id': 'q1', 'question_type': 'radio', 'answer_choices': ['Yes', 'No', 'Maybe']}],
+        'questions_json': {'q1': {'question_type': 'radio', 'question_label': 'Do you like ice cream','answer_choices': ['Yes', 'No', 'Maybe']}},
         'response_data': {
             'answers': {
                 'q1': {'answer': 'Yes', 'reason': 'Because I agree'}
@@ -44,7 +44,7 @@ response_data_sets = {
         'error_log': "Input should be 'Yes', 'No' or 'Maybe'"
     },
     'integer': {
-        'questions_json': [{'question_id': 'q1', 'question_type': 'number'}],
+        'questions_json': {'q1': {'question_type': 'number', 'question_label': 'What is your favorite number?'}},
         'response_data': {
             'answers': {
                 'q1': {'answer': 42, 'reason': 'Because it is the answer'}
@@ -56,10 +56,10 @@ response_data_sets = {
         'error_log': "Input should be a valid integer"
     },
     'float': {
-        'questions_json': [{'question_id': 'q1', 'question_type': 'float'}],
+        'questions_json': {'q1': {'question_type': 'float', 'question_label': 'How many people live on earth approximately in billions?'}},
         'response_data': {
             'answers': {
-                'q1': {'answer': 42.0, 'reason': 'Because it is the answer'}
+                'q1': {'answer': 7.9, 'reason': 'Because it is the answer'}
             },
             'summary': 'Test summary',
             'confused': False
@@ -156,7 +156,6 @@ def test_create_answers_response_model(params):
     assert response_instance.summary == response_data['summary']
     assert response_instance.confused == response_data['confused']
 
-
 @pytest.mark.unit
 @pytest.mark.parametrize("params", response_data_sets.values())
 def test_create_answers_response_model_invalid_input(params):
@@ -169,3 +168,28 @@ def test_create_answers_response_model_invalid_input(params):
     with pytest.raises(ValidationError) as excinfo:
         ResponseModel(**response_data)
     assert error_log in str(excinfo.value)
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize("params", response_data_sets.values())
+def test_create_answers_response_model_fields_not_empty(params):
+    """Test that both summary and reason fields are not empty."""
+    questions_json, response_data, _, _ = params.values()
+
+    ResponseModel = create_answers_response_model(questions_json)
+    
+    # Test empty summary
+    response_data_with_empty_summary = response_data.copy()
+    response_data_with_empty_summary['summary'] = ""
+
+    with pytest.raises(ValidationError) as excinfo:
+        ResponseModel(**response_data_with_empty_summary)
+    assert "Summary must not be empty" in str(excinfo.value)
+
+    # Test empty reason
+    response_data_with_empty_reason = response_data.copy()
+    response_data_with_empty_reason['answers']['q1']['reason'] = ""
+
+    with pytest.raises(ValidationError) as excinfo:
+        ResponseModel(**response_data_with_empty_reason)
+    assert "Reason must not be empty" in str(excinfo.value)

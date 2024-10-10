@@ -166,20 +166,16 @@ def run_bot(
         if question_id != []:
             labels = dr.find_elements(By.CLASS_NAME, "col-form-label")
             question_label = [x.text for x in labels]
-            questions = []
+            questions = {}
             for id, qtype, label, answer_choices in zip(
                 question_id, question_type, question_label, answer_choices, 
                 strict=True
             ):
-                questions.append(
-                    {
-                        "question_id": id,
-                        "question_type": qtype,
-                        "question_label": label
-                    }
-                )
+                questions[id] = {
+                    "question_type": qtype, "question_label": label
+                }
                 if answer_choices:
-                    questions[-1]["answer_choices"] = answer_choices
+                    questions[id]["answer_choices"] = answer_choices
         else:
             questions = None
         return (
@@ -604,7 +600,7 @@ def run_bot(
             )
             answer = a['answer']
             try:
-                qtype = next(qst['question_type'] for qst in questions if qst['question_id'] == id_)
+                qtype = questions[id_]['question_type']
             except:
                 logging.warning(f"Question '{id_}' not found in questions.")
                 qtype = None

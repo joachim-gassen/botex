@@ -42,9 +42,9 @@ class LocalLLMConfig(BaseSettings):
     path_to_llama_server: str | None = Field(default=None)
     local_llm_path: str | None = Field(default=None)
     context_length: int | None = Field(default=None)
-    number_of_layers_to_offload_to_gpu: int = Field(default=0)
+    number_of_layers_to_offload_to_gpu: int | None = Field(default=0)
     temperature: float = Field(default=0.5)
-    maximum_tokens_to_predict: int = Field(default=1000)
+    maximum_tokens_to_predict: int = Field(default=10000)
     top_p: float = Field(default=0.9)
     top_k: int = Field(default=40)
     num_slots: int = Field(default=1)
@@ -92,6 +92,10 @@ class LocalLLM:
         self.start_llama_server = self.cfg.start_llama_server
         self.llama_server_url = self.cfg.llama_server_url
         
+        self.top_p = self.cfg.top_p
+        self.temperature = self.cfg.temperature
+        self.top_k = self.cfg.top_k
+
         if self.start_llama_server:
             self.path_to_llama_server = self.cfg.path_to_llama_server
             self.local_llm_path = self.cfg.local_llm_path
@@ -99,10 +103,7 @@ class LocalLLM:
             self.metadata = parsed_gguf.get_metadata()
             self.ngl = self.cfg.number_of_layers_to_offload_to_gpu
             self.c = int(self.cfg.context_length or self.metadata.get("context_length", 4096))
-            self.temperature = self.cfg.temperature
             self.n = self.cfg.maximum_tokens_to_predict
-            self.top_p = self.cfg.top_p
-            self.top_k = self.cfg.top_k
             self.num_slots = self.cfg.num_slots
         else:
             self.set_params_from_running_api()
@@ -124,23 +125,20 @@ class LocalLLM:
         try:
             self.local_llm_path = res[0]['model']
             self.c = res[0]['n_ctx']
-            self.temperature = round(res[0]['temperature'], 2)
-            self.n = res[0]['n_predict']
-            self.top_p = round(res[0]['top_p'], 2)
-            self.top_k = res[0]['top_k']
             self.num_slots = len(res)
+            self.n = res[0]['n_predict']
 
             self.cfg = LocalLLMConfig(
-                start_llama_server=False,
-                llama_server_url=self.llama_server_url,
-                local_llm_path=self.local_llm_path,
-                context_length=self.c,
-                number_of_layers_to_offload_to_gpu=0,
-                temperature=self.temperature,
-                maximum_tokens_to_predict=self.n,
-                top_p=self.top_p,
-                top_k=self.top_k,
-                num_slots=self.num_slots
+                start_llama_server = False,
+                llama_server_url = self.llama_server_url,
+                local_llm_path = self.local_llm_path,
+                context_length = self.c,
+                number_of_layers_to_offload_to_gpu = None,
+                temperature = self.temperature,
+                maximum_tokens_to_predict = self.n,
+                top_p = self.top_p,
+                top_k = self.top_k,
+                num_slots = self.num_slots
             )
         except KeyError as e:
             raise Exception("An error occurred while trying to get metadata, %s from the running API. Are you sure you are running llama.cpp server and the llama_server_url is correct? If so, please consider raising an issue on github." % e)
