@@ -31,7 +31,8 @@ dependencies = [
     'requests', 
     'psutil', 
     'selenium', 
-    'litellm'
+    'litellm>=1.44.28',
+    'pydantic-settings'
 ]
 
 [project.urls]
