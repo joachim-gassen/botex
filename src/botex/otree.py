@@ -201,7 +201,7 @@ def get_bot_urls(session_id, botex_db = None, already_started = False):
 def run_bots_on_session(
         session_id, bot_urls = None, 
         botex_db = None, 
-        model = "gpt-4o-mini-2024-07-18",
+        model = "gpt-4o-2024-08-06",
         full_conv_history = False,
         openai_api_key = None,
         already_started = False,
@@ -225,7 +225,10 @@ def run_bots_on_session(
         Default is False.
     model (str): The model to use for the bot. Default is "gpt-4o-2024-08-06"
         from OpenAI. It needs to be a model that supports structured outputs.
-        For OpenAI, these are gpt-4o-mini-2024-07-18 and later or gpt-4o-2024-08-06 and later. You will need an OpenAI key and be prepared to pay to use this model. If set to "local", you need to provide a configuration for the local model in local_model_cfg.
+        For OpenAI, these are gpt-4o-mini-2024-07-18 and later or 
+        gpt-4o-2024-08-06 and later. You will need an OpenAI key and be prepared 
+        to pay to use this model. If set to "local", you need to provide a 
+        configuration for the local model in local_model_cfg.
     openai_api_key (str): The API key for the OpenAI service. If None 
         (the default), it will be obtained from the environment variable 
         OPENAI_API_KEY.
@@ -241,21 +244,35 @@ def run_bots_on_session(
         try to get them from the environment variables PATH_TO_LLAMA_SERVER
         and LOCAL_LLM_PATH.
     local_model_cfg (dict): A dictionary containing the configuration for the 
-        local language model. The dictionary can contain any of the following keys:
+        local language model. The dictionary can contain any of the following 
+        keys:
         
-        - start_llama_server (bool): Whether to start the llama cpp server, defaults to True. If False, the program will not start the server and will expect the server to be accessible under the URL provided by 'llama_server_url'.
-        - path_to_llama_server (str): The path to the llama cpp server executable.
+        - start_llama_server (bool): Whether to start the llama cpp server, 
+          defaults to True. If False, the program will not start the server 
+          and will expect the server to be accessible under the URL provided by 
+          'llama_server_url'.
+        - path_to_llama_server (str): The path to the llama cpp server 
+          executable.
         - local_llm_path (str): The path to the local language model.
-        - llama_server_url (str): The base URL for the llama cpp server, defaults to "http://localhost:8080".
-        - context_length (int): The context length for the model, defaults to None. If None, the program will try to get the context length from the local model metadata, if that is not possible defaults to 4096.
-        - number_of_layers_to_offload_to_gpu (int): The number of layers to offload to the GPU, defaults to 0.
+        - llama_server_url (str): The base URL for the llama cpp server, 
+          defaults to "http://localhost:8080".
+        - context_length (int): The context length for the model, defaults to 
+          None. If None, the program will try to get the context length from 
+          the local model metadata, if that is not possible defaults to 4096.
+        - number_of_layers_to_offload_to_gpu (int): The number of layers to 
+          offload to the GPU, defaults to 0.
         - temperature (float): The temperature for the model, defaults to 0.5.
-        - maximum_tokens_to_predict (int): The maximum number of tokens to predict, defaults to 10000.
+        - maximum_tokens_to_predict (int): The maximum number of tokens to 
+          predict, defaults to 10000.
         - top_p (float): The top p value for the model, defaults to 0.9.
         - top_k (int): The top k value for the model, defaults to 40.
         - num_slots (int): The number of slots for the model, defaults to 1.
     
-        For all the keys, if not provided, the program will try to get the value from environment variables (in all capital letters), if that is not possible, it will use the default value. if start_llama_server is set to True (default), then path_to_llama_server and local_llm_path need to be provided either in the dictionary or as environment variables.
+        For all the keys, if not provided, the program will try to get the value 
+        from environment variables (in all capital letters), if that is not 
+        possible, it will use the default value. if start_llama_server is set 
+        to True (default), then path_to_llama_server and local_llm_path need 
+        to be provided either in the dictionary or as environment variables.
     user_prompts (dict): A dictionary of user prompts to override the default 
         prompts that the bot uses. The keys should be one or more of the 
         following: ['start', 'analyze_first_page_no_q', 'analyze_first_page_q', 
