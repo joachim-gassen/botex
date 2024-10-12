@@ -80,23 +80,22 @@ def test_is_open_ai_key_purged_from_db():
 )
         
 def test_is_conversation_complete():
-    def add_answer_and_reason(qtext, q):
+    def add_answer_and_reason(qtext, id_, a):
         for i,qst in enumerate(qtext):
-            if qst['id'] == q['id']:
-                qtext[i]['answer'] = q['answer']
-                qtext[i]['reason'] = q['reason']
+            if qst['id'] == id_:
+                qtext[i]['answer'] = a['answer']
+                qtext[i]['reason'] = a['reason']
                 break
     
     err_start = [
         'I am sorry', 'Unfortunately', 'Your response was not valid'
     ]
-    
     convs = botex.read_conversations_from_botex_db(botex_db="tests/botex.db")
     with open("tests/questions.csv") as f:
         qtexts = list(csv.DictReader(f))
         qids = set([q['id'] for q in qtexts])
     
-    questions = []
+    answers = {}
     for c in convs:
         assert isinstance(c['id'], str)
         assert isinstance(c['bot_parms'], str) 
@@ -121,29 +120,31 @@ def test_is_conversation_complete():
                     r = json.loads(r, strict=False)
                 except:
                     break
-                if 'questions' in r:
-                    qs = r['questions']
-                    assert isinstance(qs, list)
-                    for q in qs: questions.append(q)    
+                if 'answers' in r:
+                    qs = r['answers']
+                    assert isinstance(qs, dict)
+                    for a in qs:
+                        answers.update({a: qs[a]})
     ids = set()
-    for q in questions:
-        assert isinstance(q, dict)
-        assert isinstance(q['id'], str)
-        assert isinstance(q['reason'], str)
-        assert q['answer'] is not None
-        ids = ids.union({q['id']})
-        if q['id'] == "id_integer_field": 
-            assert isinstance(q['answer'], str) or isinstance(q['answer'], int)
-        elif q['id'] == "id_float_field":
-            assert isinstance(q['answer'], str) or isinstance(q['answer'], Number)
-        elif q['id'] == "id_boolean_field":
-            assert isinstance(q['answer'], str) or isinstance(q['answer'], bool)
-        elif q['id'] in [
+    for id_, a in answers.items():
+        assert isinstance(a, dict)
+        assert isinstance(id_, str)
+        assert isinstance(a['reason'], str)
+        assert a['answer'] is not None
+        ids = ids.union({id_})
+        if id_ == "id_integer_field": 
+            assert isinstance(a['answer'], str) or isinstance(a['answer'], int)
+        elif id_ == "id_float_field":
+            assert isinstance(a['answer'], str) or isinstance(a['answer'], Number)
+        elif id_ == "id_boolean_field":
+            assert isinstance(a['answer'], str) or isinstance(a['answer'], bool)
+        elif id_ in [
             "id_string_field", "id_feedback",
             "id_choice_integer_field"
         ]:
-            assert isinstance(q['answer'], str)
-        add_answer_and_reason(qtexts, q)
+            assert isinstance(a['answer'], str)
+        add_answer_and_reason(qtexts, id_, a)
+        
         
     assert ids == qids
     with open("tests/questions_and_answers_openai.csv", 'w') as f:
