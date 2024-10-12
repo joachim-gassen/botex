@@ -43,7 +43,10 @@ def run_bot(
         Default is False.
     model (str): The model to use for the bot. Default is "gpt-4o-2024-08-06"
         from OpenAI. It needs to be a model that supports structured outputs.
-        For OpenAI, these are gpt-4o-mini-2024-07-18 and later or gpt-4o-2024-08-06 and later. You will need an OpenAI key and be prepared to pay to use this model. If set to "local", you need to provide a LocalLLM object to local_llm.
+        For OpenAI, these are gpt-4o-mini-2024-07-18 and later or 
+        gpt-4o-2024-08-06 and later. You will need an OpenAI key and be 
+        prepared to pay to use this model. If set to "local", you need to
+        provide a LocalLLM object to local_llm.
     openai_api_key (str): The API key for the OpenAI service.
     local_llm (LocalLLM): A LocalLLM object to use for the bot.
     user_prompts (dict): A dictionary of user prompts to override the default 
