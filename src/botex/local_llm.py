@@ -208,7 +208,7 @@ class LocalLLM:
             process.terminate()
             return None
 
-    def is_server_reachable(self, host, port, timeout=30):
+    def is_server_reachable(self, host, port, timeout=60):
         """
         Waits for the server to become responsive.
         """

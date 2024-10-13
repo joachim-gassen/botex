@@ -266,7 +266,7 @@ def run_bot(
         append_message_to_conversation({"role": "user", "content": message})
         while resp_dict is None:
             if attempts > max_attempts:
-                logging.error("The llm did not return a valid response after %s number of attempts." % max_attempts)
+                logging.error("The llm did not return a valid response after %s attempts." % max_attempts)
                 return 'Maximum number of attempts reached.'
             attempts += 1
             if error:
