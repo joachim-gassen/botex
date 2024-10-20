@@ -110,7 +110,8 @@ class LocalLLM:
 
 
     def set_params_from_running_api(self) -> None:
-        url = f"{self.llama_server_url}/slots"
+        url = f"{self.llama_server_url}/props"
+      
         try:
             response = requests.get(url)
             if response.status_code != 200:
@@ -123,10 +124,10 @@ class LocalLLM:
                 "An error occurred while trying to connect to your running llama.cpp server. Are you sure you are running llama.cpp server and the llama_server_url is correct?"
             )   
         try:
-            self.local_llm_path = res[0]['model']
-            self.c = res[0]['n_ctx']
-            self.num_slots = len(res)
-            self.n = res[0]['n_predict']
+            self.local_llm_path = res['default_generation_settings']['model']
+            self.c = res['default_generation_settings']['n_ctx']
+            self.num_slots = res['total_slots']
+            self.n = res['default_generation_settings']['n_predict']
 
             self.cfg = LocalLLMConfig(
                 start_llama_server = False,
