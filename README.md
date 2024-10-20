@@ -85,28 +85,23 @@ If you want to use a local LLM instead of commercial APIs via the litellm interf
 
 2. **Download a Local LLM Model**:
    - For optimal performance and compatibility, we recommend using the current leading model [Qwen2.5-7B-Instruct](https://huggingface.co/Qwen/Qwen2.5-7B-Instruct-GGUF) from Hugging Face, which is available in the GGUF format.
-   - Download the GGUF-format version of the model for easier integration with `llama.cpp`.
    - You should refer to the model's documentation for specific instructions on which quantized model to download and how much memory it requires.
 
-3. **Configure the Local Model in Botex**:
-   After setting up `llama.cpp` and downloading the model, you need to adjust the `botex` function calls by specifying the model and its configuration. This involves providing a dictionary that will initialize a `LocalLLM` object for the relevant `botex` function calls.
+Then all that you need to do is to adjust the botex calls from above by specifying the model and its configuration. You do this by providing a dict that will become a `LocalLLM` object to the botex calls that start bots. For example, for `botex.run_bots_on_session()`, your call would look something like this
 
-   Here’s an example for `botex.run_bots_on_session()`:
+```python
+botex.run_bots_on_session(
+    session_id = sdict['session_id'],  
+    botex_db = "same path that you used for initializing the session", 
+    model = "local",
+    local_model_cfg = {
+        "path_to_llama_server": "the path to the llama.cpp llama-server",
+        "local_llm_path": "the path to your LLM model GGUF file"
+    }
+)
+```
 
-   ```python
-   botex.run_bots_on_session(
-       session_id = sdict['session_id'],  
-       botex_db = "same path that you used for initializing the session", 
-       model = "local",
-       local_model_cfg = {
-           "path_to_llama_server": "the path to the llama.cpp llama-server",
-           "local_llm_path": "the path to your LLM model GGUF file"
-       }
-   )
-   ```
-
-   Replace `"the path to the llama.cpp server"` with the actual path to the `llama-server` binary and `"the path to your LLM model GGUF file"` with the location of your downloaded Qwen2.5-7B model file. Everything else from above remains the same.
-
+Everything else from above remains the same. When starting local LLMs as bots take a good look at the log files to see how they do.
 
 ## Installation for Development
 
