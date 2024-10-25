@@ -349,7 +349,7 @@ def run_bot(
                     resp_dict = None
                     continue
 
-        if full_conv_history: conv_hist.append(conversation)
+        if full_conv_history: conv_hist = conversation.copy()
         return resp_dict
     
     def validate_response(resp, schema, check_result):
@@ -639,7 +639,7 @@ def run_bot(
     
     dr.close()
     dr.quit()
-    message = prompts['end'].format(summary = summary)
+    message = prompts['end_full_hist'] if full_conv_history else prompts['end'].format(summary = summary)
     resp = llm_send_message(message, Phase.end, check_response_end)
     if resp == 'Maximum number of attempts reached.':
         gracefully_exit_failed_bot("end")
