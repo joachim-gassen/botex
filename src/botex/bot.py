@@ -468,8 +468,7 @@ def run_bot(
     with open(files('botex').joinpath('bot_prompts.csv'), 'r') as f:
         rv = csv.reader(f)
         next(rv)
-        prompts = dict()
-        for row in rv: prompts[row[0]] = row[1]
+        prompts = {row[0]:row[1] for row in rv}
     
 
     if user_prompts:
