@@ -43,7 +43,7 @@ class LocalLLMConfig(BaseSettings):
     local_llm_path: str | None = Field(default=None)
     context_length: int | None = Field(default=None)
     number_of_layers_to_offload_to_gpu: int | None = Field(default=0)
-    temperature: float = Field(default=0.5)
+    temperature: float = Field(default=0.8)
     maximum_tokens_to_predict: int = Field(default=10000)
     top_p: float = Field(default=0.9)
     top_k: int = Field(default=40)
