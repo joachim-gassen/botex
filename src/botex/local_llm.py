@@ -263,7 +263,7 @@ class LocalLLM:
         attempts = 0
         while True:
             try:
-                response = requests.post(url, json=payload, timeout=300)
+                response = requests.post(url, json=payload, timeout=900)
                 break
             except Exception as e:
                 logging.error(f"Error getting a response from local llm server: {e}. Retrying... (Attempt {attempts + 1}/3)")
@@ -279,6 +279,7 @@ class LocalLLM:
         try:
             res = response.json()
             # Unfortunately, the response from llama.cpp is not correct here, this is a known issue on llama.cpp and there is a PR to fix it.
+            logging.info(f'Total tokens used: {res['usage']['total_tokens']}')
             if res.get('usage') and res['usage']['completion_tokens'] >= self.n:
                 res['choices'][0]['finish_reason'] = "length"
             return ChatCompletionResponse(**res)
