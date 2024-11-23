@@ -78,8 +78,14 @@ After the bots have completed their runs, you should have their response data st
 
 If you want to use a local LLM instead of commercial APIs via the litellm interface you need, in addition to the above:
 
-- llama.cpp. Clone it from [here](https://github.com/ggerganov/llama.cpp) and follow the instructions to build it.
-- A local LLM model. You can use different models (e.g., from Hugging Face) but for starters download a GGUF-format model of [Mistral-7B-Instruct-v0.3.Q4_K_M.gguf](https://huggingface.co/MaziyarPanahi/Mistral-7B-Instruct-v0.3-GGUF). At the moment the following [Q4_K_M version](https://huggingface.co/MaziyarPanahi/Mistral-7B-Instruct-v0.3-GGUF/resolve/main/Mistral-7B-Instruct-v0.3.Q4_K_M.gguf) is tested and working.
+1. **Set up `llama.cpp`**:
+   - Clone the `llama.cpp` repository from [this link](https://github.com/ggerganov/llama.cpp).
+   - Make sure to use commit [`cda0e4b`](https://github.com/ggerganov/llama.cpp/commit/cda0e4b648dde8fac162b3430b14a99597d3d74f), the latest release as of this writing (Oct 20, 2024), to ensure compatibility and smooth performance.
+   - Follow the instructions provided in the repository to build `llama.cpp`.
+
+2. **Download a Local LLM Model**:
+   - For optimal performance and compatibility, we recommend using the current leading model [Qwen2.5-7B-Instruct](https://huggingface.co/Qwen/Qwen2.5-7B-Instruct-GGUF) from Hugging Face, which is available in the GGUF format.
+   - You should refer to the model's documentation for specific instructions on which quantized model to download and how much memory it requires.
 
 Then all that you need to do is to adjust the botex calls from above by specifying the model and its configuration. You do this by providing a dict that will become a `LocalLLM` object to the botex calls that start bots. For example, for `botex.run_bots_on_session()`, your call would look something like this
 
@@ -88,15 +94,14 @@ botex.run_bots_on_session(
     session_id = sdict['session_id'],  
     botex_db = "same path that you used for initializing the session", 
     model = "local",
-    local_model_cfg={
-        "path_to_llama_server": "the path to the llama.cpp server (called llama-server or server on older versions)",
+    local_model_cfg = {
+        "path_to_llama_server": "the path to the llama.cpp llama-server",
         "local_llm_path": "the path to your LLM model GGUF file"
     }
 )
 ```
 
 Everything else from above remains the same. When starting local LLMs as bots take a good look at the log files to see how they do.
-
 
 ## Installation for Development
 

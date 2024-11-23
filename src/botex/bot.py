@@ -23,6 +23,11 @@ from .schemas import create_answers_response_model, EndSchema, Phase, StartSchem
 
 logging.getLogger("LiteLLM").setLevel(logging.ERROR)
 
+MAX_NUM_OF_ANSWER_ATTEMPTS = 3
+MAX_NUM_OF_SCRAPE_ATTEMPTS = 5
+MAX_NUM_OF_ATTEMPTS_TO_START_CHROME = 5
+
+
 def run_bot(
         botex_db, session_id, url, full_conv_history = False,
         model = "gpt-4o-2024-08-06", openai_api_key = None,
@@ -344,7 +349,7 @@ def run_bot(
                     resp_dict = None
                     continue
 
-        if full_conv_history: conv_hist.append(conversation)
+        if full_conv_history: conv_hist = conversation.copy()
         return resp_dict
     
     def validate_response(resp, schema, check_result):
@@ -403,7 +408,7 @@ def run_bot(
         elif failure_place == "abandoned":
             result = "Bot was likely abandoned by its matched participant. Exiting."
         else:
-            result = "Bot could not provide a valid response after 5 attempts. Exiting."        
+            result = "Bot could not provide a valid response. Exiting."        
         conv_hist_botex_db.append({"role": "system", "content": result})
         store_data(botex_db, session_id, url, conv_hist_botex_db, bot_parms)
         logging.info("Gracefully exiting failed bot.")
@@ -463,8 +468,7 @@ def run_bot(
     with open(files('botex').joinpath('bot_prompts.csv'), 'r') as f:
         rv = csv.reader(f)
         next(rv)
-        prompts = dict()
-        for row in rv: prompts[row[0]] = row[1]
+        prompts = {row[0]:row[1] for row in rv}
     
 
     if user_prompts:
@@ -495,7 +499,7 @@ def run_bot(
     # untrusted web pages
     options.add_argument("--no-sandbox")
     attempts = 0
-    while attempts < 5:
+    while attempts < MAX_NUM_OF_ATTEMPTS_TO_START_CHROME:
         try:
             dr = webdriver.Chrome(options = options)
             dr.set_window_size(1920, 1400)
@@ -504,17 +508,18 @@ def run_bot(
             attempts += 1
             logging.warning("Could not start Chrome. Trying again.")
             if attempts == 5:
-                logging.error("Could not start Chrome after 5 attempts. Stopping.")
+                logging.error(f"Could not start Chrome after {MAX_NUM_OF_ATTEMPTS_TO_START_CHROME} attempts. Stopping.")
                 raise   
             time.sleep(1)
         
     first_page = True
     summary = None
     text = ""
+    answer_attempts = 0
     while True:
         old_text = text
         attempts = 0
-        while attempts < 5:
+        while attempts < MAX_NUM_OF_SCRAPE_ATTEMPTS:
             try:
                 text, wait_page, next_button, questions = scan_page(dr)
                 break
@@ -522,7 +527,7 @@ def run_bot(
                 attempts += 1
                 logging.warning("Failed to scrape my oTree URL. Trying again.")
                 if attempts == 5:
-                    logging.error("Could not scrape my oTree URL after 5 attempts. Stopping.")
+                    logging.error(f"Could not scrape my oTree URL after {MAX_NUM_OF_SCRAPE_ATTEMPTS} attempts. Stopping.")
                     gracefully_exit_failed_bot("middle")
                     return
                 time.sleep(1)
@@ -570,6 +575,13 @@ def run_bot(
         
         if old_text == text:
             logging.warning("Bot's answers were likely erroneous. Trying again.")
+            if answer_attempts > MAX_NUM_OF_ANSWER_ATTEMPTS:
+                logging.error(
+                    f"Bot could not provide valid answers after {MAX_NUM_OF_ANSWER_ATTEMPTS} attempts. Stopping."
+                )
+                gracefully_exit_failed_bot("middle")
+                return
+            answer_attempts += 1
             if questions == None:
                 logging.warning("""
                     This should only happen with pages containing questions.
@@ -627,7 +639,7 @@ def run_bot(
     
     dr.close()
     dr.quit()
-    message = prompts['end'].format(summary = summary)
+    message = prompts['end_full_hist'] if full_conv_history else prompts['end'].format(summary = summary)
     resp = llm_send_message(message, Phase.end, check_response_end)
     if resp == 'Maximum number of attempts reached.':
         gracefully_exit_failed_bot("end")

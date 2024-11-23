@@ -43,7 +43,7 @@ class LocalLLMConfig(BaseSettings):
     local_llm_path: str | None = Field(default=None)
     context_length: int | None = Field(default=None)
     number_of_layers_to_offload_to_gpu: int | None = Field(default=0)
-    temperature: float = Field(default=0.5)
+    temperature: float = Field(default=0.8)
     maximum_tokens_to_predict: int = Field(default=10000)
     top_p: float = Field(default=0.9)
     top_k: int = Field(default=40)
@@ -110,7 +110,8 @@ class LocalLLM:
 
 
     def set_params_from_running_api(self) -> None:
-        url = f"{self.llama_server_url}/slots"
+        url = f"{self.llama_server_url}/props"
+      
         try:
             response = requests.get(url)
             if response.status_code != 200:
@@ -123,10 +124,10 @@ class LocalLLM:
                 "An error occurred while trying to connect to your running llama.cpp server. Are you sure you are running llama.cpp server and the llama_server_url is correct?"
             )   
         try:
-            self.local_llm_path = res[0]['model']
-            self.c = res[0]['n_ctx']
-            self.num_slots = len(res)
-            self.n = res[0]['n_predict']
+            self.local_llm_path = res['default_generation_settings']['model']
+            self.c = res['default_generation_settings']['n_ctx']
+            self.num_slots = res['total_slots']
+            self.n = res['default_generation_settings']['n_predict']
 
             self.cfg = LocalLLMConfig(
                 start_llama_server = False,
@@ -165,12 +166,6 @@ class LocalLLM:
             str(parsed_url.port),
             "-ngl",
             str(self.ngl),
-            "--reverse_prompt",
-            "\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
-            "--reverse_prompt",
-            "\t\t\t\t\t\t\t\t\t\t\t\t\t\t",
-            "--reverse_prompt",
-            " \n  \n  \n  \n  \n  \n  \n  \n  ",
             "-m",
             self.local_llm_path,
             "-c",
@@ -268,7 +263,7 @@ class LocalLLM:
         attempts = 0
         while True:
             try:
-                response = requests.post(url, json=payload, timeout=300)
+                response = requests.post(url, json=payload, timeout=900)
                 break
             except Exception as e:
                 logging.error(f"Error getting a response from local llm server: {e}. Retrying... (Attempt {attempts + 1}/3)")
@@ -284,6 +279,7 @@ class LocalLLM:
         try:
             res = response.json()
             # Unfortunately, the response from llama.cpp is not correct here, this is a known issue on llama.cpp and there is a PR to fix it.
+            logging.info(f"Total tokens used: {res['usage']['total_tokens']}")
             if res.get('usage') and res['usage']['completion_tokens'] >= self.n:
                 res['choices'][0]['finish_reason'] = "length"
             return ChatCompletionResponse(**res)
