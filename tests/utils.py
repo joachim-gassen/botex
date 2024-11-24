@@ -61,11 +61,10 @@ def stop_otree(otree_proc):
     except OSError:
         pass
 
-def init_otree_test_session():
+def init_otree_test_session(botex_db = "tests/botex.db"):
     botex_session = botex.init_otree_session(
         config_name="botex_test", npart=2, 
-        botex_db = "tests/botex.db",
-        otree_server_url="http://localhost:8000"
+        botex_db = botex_db, otree_server_url="http://localhost:8000"
     )
     return botex_session    
 

@@ -465,10 +465,13 @@ def run_bot(
     conn.close()
 
 
-    with open(files('botex').joinpath('bot_prompts.csv'), 'r') as f:
+    with open(
+            files('botex').joinpath('bot_prompts.csv'), 
+            'r', newline='', encoding='utf-8'
+        ) as f:
         rv = csv.reader(f)
         next(rv)
-        prompts = {row[0]:row[1] for row in rv}
+        prompts = {row[0]:row[1].replace(r'\n', '\n') for row in rv}
     
 
     if user_prompts:
@@ -479,10 +482,17 @@ def run_bot(
             else:
                 prompts[key] = user_prompts[key]
     
-    system_prompt = {
-        "role": "system",
-        "content": prompts['system']
-    }
+    if full_conv_history:
+        system_prompt = {
+            "role": "system",
+            "content": prompts['system_full_hist']
+        }    
+    else:
+        system_prompt = {
+            "role": "system",
+            "content": prompts['system']
+        }
+        
     message = prompts['start']
     conv_hist_botex_db = [system_prompt]
     conv_hist = []

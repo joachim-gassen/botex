@@ -56,6 +56,26 @@ def test_can_survey_be_completed_by_bots():
     assert True
 
 @pytest.mark.dependency(
+    name="run_bots_full_host", scope='session',
+    depends=["participants_db", "openai_key"]
+)
+def test_can_survey_be_completed_by_bots_full_hist():
+    otree_proc = start_otree()
+    botex_session = init_otree_test_session(botex_db="tests/botex_full_hist.db")
+    urls = botex.get_bot_urls(
+        botex_session["session_id"], botex_db="tests/botex_full_hist.db",
+    )
+    assert len(urls) == 2
+    botex.run_bots_on_session(
+        session_id=botex_session["session_id"], 
+        bot_urls=botex_session["bot_urls"],
+        botex_db="tests/botex_full_hist.db",
+        full_conv_history=True
+    )
+    stop_otree(otree_proc)
+    assert True
+
+@pytest.mark.dependency(
     name="conversations_db", scope='session',
     depends=["run_bots"]
 )
@@ -78,7 +98,6 @@ def test_is_open_ai_key_purged_from_db():
     name="conversations_complete", scope='session',
     depends=["conversations_db"]
 )
-        
 def test_is_conversation_complete():
     def add_answer_and_reason(qtext, id_, a):
         for i,qst in enumerate(qtext):
