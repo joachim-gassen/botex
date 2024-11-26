@@ -4,14 +4,14 @@
 
 This in-development Python package allows you to use large language models (LLMs) as bots in [oTree](https://www.otree.org) experiments. For interfacing with LLMs, it offers two options
 
-- [litellm](https://litellm.vercel.app): Allows the use of OpenAI's Chat-GPT AI and various other LLMs. 
+- [litellm](https://litellm.vercel.app): Allows the use of various commercial LLMs
 - [llama.cpp](https://github.com/ggerganov/llama.cpp): Allows the use of local (open source) LLMs  
 
-While both approaches have been tested and found to work, currently, we have only used OpenAI's Chat GPT-4 model for our own research work.
+While both approaches have been tested and found to work, currently, we have only used OpenAI's Chat GPT-4o model for our own research work. See further below for a list of commercial and open-source LLMs that we have verified to pass the package tests.
 
-botex has been inspired by [recent work](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4682602) but uses a different approach. Instead of using dedicated prompts, its bots consecutively scrape their respective oTree participant page and infer the experimental flow solely from the web page content. This avoids the risk of misalignment between human (web page) and bot (LLM prompt) experimental designs and, besides facilitating the study of LLM "behavior", allows to use LLM participants to develop and pre-test oTree experiments that are designed (primarily) for human participants.
+botex has been inspired by [recent work](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4682602) but uses a different approach. Instead of using dedicated prompts, its bots consecutively scrape their respective oTree participant page and infer the experimental flow solely from the web page text content. This avoids the risk of misalignment between human (web page) and bot (LLM prompt) experimental designs and, besides facilitating the study of LLM "behavior", allows to use LLM participants to develop and pre-test oTree experiments that are designed (primarily) for human participants.
 
-The downside of this approach is that the scraping has to rely on some level of standardization. Luckily, the oTree framework is relatively rigid, unless the user adds customized HTML forms to their experimental designs. Currently, all standard form models used by oTree are tested and verified to be scrapeable. In the future, we plan to implement also customized HTML forms but likely this will require some standardization by the user implementing the experimental design.
+The downside of this approach is that the scraping has to rely on some level of standardization. Luckily, the oTree framework is relatively rigid, unless the user adds customized HTML forms to their experimental designs. Currently, all standard form models used by oTree are tested and verified to work. In the future, we plan to implement also customized HTML forms but likely this will require some standardization by the user implementing the experimental design.
 
 
 ## Usage
@@ -20,8 +20,8 @@ If you want to use botex to create LLM participants for your own oTree experimen
 
 - A working python environment >= 3.10 and preferable a virtual environment.
 - [Google Chrome](https://www.google.com/chrome/) for scraping the oTree participant pages
-- If you plan to use Chat-GPT 4 as your LLM (recommended for beginners), an [OpenAI API key](https://openai.com/api). If you want to go local, take a look at the next section.
 - Access to an oTree server that you can start sessions on or at least an URL of an oTree participant link. The server can be local or remote.
+- Access to an LLM model for inference. See next section.
 
 Then install the botex package: `pip install botex`. If you are courageous and want to use the most current development version, you can also install it directly from this repository: `pip install git+https://github.com/joachim-gassen/botex.git`.
 
@@ -36,10 +36,12 @@ import botex
 
 # Running a botex bot on a specific oTree participant link
 botex.run_single_bot(
-    botex_db = "path to a sqlite3 file that will store the bot data (does not need to exist)", 
-    session_id = "The session ID of your oTree experiment (will be stored with the botex data)", 
+    botex_db = "path to a sqlite3 file that will store the bot data (does not have to exist)", 
+    session_id = "session config name of your oTree experiment (defaults to 'unknown')", 
+    session_id = "session ID of your oTree experiment (defaults to 'unknown')", 
     url = "the URL of the participant link", 
-    openai_api_key = "your OpenAI api key"
+    model = "The LLM model that you want to use (defaults to 'gpt-4o-2024-08-06')",
+    api_key = "The API key for your model (e.g., OpenAI)"
 )
 ```
 
@@ -56,9 +58,9 @@ sdict = botex.init_otree_session(
     config_name = "config name of your oTree experiment", 
     npart = 6 # number of participants in the session, including bots and humans
     nhumans = 0, # set to non-zero if you want humans to play along
-    botex_db = "path to a sqlite3 file (does not need to exist)",
+    botex_db = "path to a sqlite3 file (does not have to exist)",
     otree_server_url = "url of your server, e.g., http://localhost:8000]",
-    otree_rest_key = "your oTree API secret key"
+    otree_rest_key = "your oTree API secret key, if set"
 )
 
 # The returned dict will contain the oTree session ID, all participant codes, 
@@ -67,11 +69,31 @@ sdict = botex.init_otree_session(
 botex.run_bots_on_session(
     session_id = sdict['session_id'],  
     botex_db = "same path that you used for initializing the session", 
-    openai_api_key = "your OpenAI api key"
+    model = "The LLM model that you want to use (defaults to 'gpt-4o-2024-08-06')",
+    api_key = "The API key for your model (e.g., OpenAI)"
 )
 ```
 
 After the bots have completed their runs, you should have their response data stored in your oTree database just as it is the case for human participants. If you are interested in exploring the botex data itself, which is stored in the sqlite3 file that you provided, we recommend that you take a look at our botex [walk-through](https://github.com/trr266/botex_examples).
+
+## Verified LLMs
+
+The model that you use for inference has to support [structured outputs](https://openai.com/index/introducing-structured-outputs-in-the-api/). We have tested botex with the following LLMs:
+
+| Vendor | Model | Link | Status | Notes |
+| --- | --- | --- | --- | --- |
+| OpenAI | gpt-4o-2024-08-06 and later | [OpenAI API](https://openai.com/api/) | OK | Requires at least paid user tier 1 |
+| OpenAI |  gpt-4o-mini-2024-07-18 and later | [OpenAI API](https://openai.com/api/) | OK | Requires at least paid user tier 1  |
+| Google | gemini/gemini-1.5-flash-8b | [Google AI Studio](https://ai.google.dev) | OK | 1,500 requests per day are free |
+| Google | gemini/gemini-1.5-flash | [Google AI Studio](https://ai.google.dev) | OK | 1,500 requests per day are free |
+| Google | gemini/gemini-1.5-pro | [Google AI Studio](https://ai.google.dev) | OK | 50 requests per day are free (not usable for larger experiments in the free tier) |
+| Open Source | Mistral-7B-Instruct-v0.3.Q4_K_M.gguf | [Hugging Face](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.3) | OK | Run as a local model (see below) |
+| Open Source | qwen2.5-7b-instruct-q4_k_m.gguf | [Hugging Face](https://huggingface.co/Qwen/Qwen2.5-7B-Instruct-GGUF)  | OK | Run as a local model (see below) |
+
+
+If you have success running botex with other models, please let us know so that we can add them to the list.
+
+The default model that botex uses is `gpt-4o-2024-08-06`. If you want to use a different model, you can specify it in the `run_single_bot()` or `run_bots_on_session()` call by providing the model string from the table above as `model` parameter. In any case, you have to provide the API key for the model that you want to use.
 
 
 ## Use of local LLMs

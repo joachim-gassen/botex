@@ -32,7 +32,7 @@ def run_bot(
         botex_db, session_id, url, full_conv_history = False,
         model = "gpt-4o-2024-08-06", openai_api_key = None,
         local_llm: LocalLLM | None = None, user_prompts: dict | None = None,
-        throttle = False
+        throttle = False, **kwargs
     ):
     """
     Run a bot on an oTree session. You should not call this function
@@ -52,7 +52,10 @@ def run_bot(
         gpt-4o-2024-08-06 and later. You will need an OpenAI key and be 
         prepared to pay to use this model. If set to "local", you need to
         provide a LocalLLM object to local_llm.
-    openai_api_key (str): The API key for the OpenAI service.
+    api_key (str): The API key for the model. If None 
+        (the default), it will be obtained from the environment variable 
+        OPENAI_API_KEY. You can also use the depreciated parameter 
+        `openai_api_key` instead.
     local_llm (LocalLLM): A LocalLLM object to use for the bot.
     user_prompts (dict): A dictionary of user prompts to override the default 
         prompts that the bot uses. The keys should be one or more of the 
@@ -67,15 +70,18 @@ def run_bot(
     throttle (bool): Whether to slow down the bot's requests to the OpenAI API.
         Slowing done the requests can help to avoid rate limiting. Default is 
         False.
+    kwargs (dict): Additional keyword arguments to pass to litellm.completion().
 
     Returns: None (conversation is stored in the botex database)
     """
-    bot_parms = locals()
+    bot_parms = dict(locals(), **kwargs)
+    bot_parms.pop('kwargs')
     if local_llm:
-        bot_parms.pop('local_llm')
         bot_parms['local_llm'] = local_llm.cfg.model_dump_json()
     if bot_parms['openai_api_key'] is not None: 
         bot_parms["openai_api_key"] = "******"       
+    if 'api_key' in bot_parms: 
+        if bot_parms['api_key'] is not None: bot_parms["api_key"] = "******"       
     bot_parms = json.dumps(bot_parms)
     logging.info(f"Running bot with parameters: {bot_parms}")
 
@@ -213,8 +219,8 @@ def run_bot(
         def retry_with_exponential_backoff(
             func,
             wait_before_request_min: float = 0,
-            wait_before_request_max: float = 60,
-            minimum_backoff: float = 20,
+            wait_before_request_max: float = 5,
+            minimum_backoff: float = 1,
             exponential_base: float = 2,
             jitter: bool = True,
             max_retries: int = 100
@@ -246,7 +252,7 @@ def run_bot(
                         delay *= exponential_base * (1 + jitter * random())
                         logging.info(
                             f"Throttling: Request error: '{e}'. "+ 
-                            "Retrying in {delay:.2f} seconds."
+                            f"Retrying in {delay:.2f} seconds."
                         )
                         time.sleep(delay)
 
@@ -284,6 +290,7 @@ def run_bot(
                 assert conversation, "Conversation is empty."
                 resp = local_llm.completion([system_prompt] + conversation, response_format)
             else:
+                if 'api_key' not in kwargs: kwargs['api_key'] = openai_api_key
                 if throttle: 
                     # num_retries seems to be for the litellm wrapper and
                     # max_retries for the actual completion function
@@ -291,15 +298,15 @@ def run_bot(
                     # the retries ourselves.
                     resp =  completion_with_backoff(
                         messages=[system_prompt] + conversation, 
-                        model=model, api_key=openai_api_key,
-                        response_format = response_format,
-                        num_retries = 0, max_retries = 0
+                        model=model, response_format = response_format,
+                        num_retries = 0, max_retries = 0,
+                        **kwargs
                     )
                 else:
                     resp =  completion(
                         messages=[system_prompt] + conversation, 
-                        model=model, api_key=openai_api_key,
-                        response_format = response_format
+                        model=model, response_format = response_format,
+                        **kwargs
                     )
                     
 
