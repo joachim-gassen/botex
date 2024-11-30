@@ -82,7 +82,7 @@ def read_participants_from_botex_db(session_id = None, botex_db = None):
 
 
 def read_conversations_from_botex_db(
-        participant_id = None, botex_db = None
+        participant_id = None, botex_db = None, session_id = None
     ):
     """
     Reads the conversations table from the botex database. 
@@ -94,6 +94,7 @@ def read_conversations_from_botex_db(
         botex_db (str, optional): The name of a SQLite database file.
             If not provided, it will try to read the file name from
             the environment variable BOTEX_DB.
+        session_id (str, optional): A session ID to filter the results.
         
     Returns:
         List of dicts: A list of dictionaries with the conversation data.
@@ -109,12 +110,16 @@ def read_conversations_from_botex_db(
     else:
         cursor.execute("SELECT * FROM conversations")
     conversations = [dict(row) for row in cursor.fetchall()]
+    if session_id:
+        conversations = [
+            c for c in conversations 
+            if json.loads(c['bot_parms'])['session_id'] == session_id
+        ]
     cursor.close()
     conn.close()
     return conversations
 
-# We might want to implement a session id filter at some point
-def read_responses_from_botex_db(botex_db = None):
+def read_responses_from_botex_db(botex_db = None, session_id = None):
     """
     Extracts the responses and their rationales from the botex conversation data. 
 
@@ -122,12 +127,13 @@ def read_responses_from_botex_db(botex_db = None):
         botex_db (str, optional): The name of a SQLite database file.
             If not provided, it will try to read the file name from
             the environment variable BOTEX_DB.
+        session_id (str, optional): A session ID to filter the results.
 
     Returns:
         List of dicts: A list of dictionaries with the rationale data.
     """
     
-    cs = read_conversations_from_botex_db(botex_db = botex_db)
+    cs = read_conversations_from_botex_db(botex_db = botex_db, session_id = session_id)
     resp = [parse_conversation(c) for c in cs]
     rt = []
     for r in resp:
@@ -167,7 +173,7 @@ def export_participant_data(csv_file, botex_db = None):
 
 
 
-def export_response_data(csv_file, botex_db = None):
+def export_response_data(csv_file, botex_db = None, session_id = None):
     """
     Export the responses parsed from the bot conversations in the botex
     database to a CSV file.
@@ -177,12 +183,13 @@ def export_response_data(csv_file, botex_db = None):
         botex_db (str, optional): The file path to the botex sqlite3 file. 
             If not provided, it will try to read the file name from
             the environment variable BOTEX_DB.
+        session_id (str, optional): A session ID to filter the results.
 
     Returns:
         None (saves the CSV to the specified file path)
     """
     
-    r = read_responses_from_botex_db(botex_db = botex_db)
+    r = read_responses_from_botex_db(botex_db = botex_db, session_id = session_id)
     with open(csv_file, 'w') as f:
         w = csv.DictWriter(f, r[0].keys())
         w.writeheader()

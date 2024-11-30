@@ -52,7 +52,61 @@ def setup_botex_db(botex_db = None):
         conn.commit()
     cursor.close()
     return conn
+
+def call_otree_api(
+        method, *path_parts, 
+        otree_server_url = None, otree_rest_key = None, **params
+    ) -> dict:
+    """
+    Calls an oTree API REST endpoint.
+
+    Parameters:
+    method (function): The HTTP method to use (e.g., requests.get, requests.post).
+    path_parts (list): The endpoints parts of the API URL.
+    otree_server_url (str): The URL of the oTree server. Read from environment
+        variable OTREE_SERVER_URL if None (the default).
+    otree_rest_key (str): The API key for the oTree server. Read from environment
+        variable OTREE_REST_KEY if None (the default).
+    params (dict): The JSON parameters to send with the request.
+
+    Returns:
+    dict: The JSON response from the API.
+    """
+
+    if otree_server_url is None:
+        otree_server_url = environ.get('OTREE_SERVER_URL')
+    if otree_rest_key is None:
+        otree_rest_key = environ.get('OTREE_REST_KEY')
+
+    path_parts = '/'.join(path_parts)
+    url = f'{otree_server_url}/api/{path_parts}'
+    resp = method(url, json=params, headers={'otree-rest-key': otree_rest_key})
+    if not resp.ok:
+        msg = (
+            f'Request to "{url}" failed '
+            f'with status code {resp.status_code}: {resp.text}'
+        )
+        raise Exception(msg)
+    return resp.json()
  
+def get_session_configs(otree_server_url = None, otree_rest_key = None):
+    """
+    Get the session configurations from an oTree server.
+
+    Parameters:
+    otree_server_url (str): The URL of the oTree server. Read from environment
+        variable OTREE_SERVER_URL if None (the default).
+    otree_rest_key (str): The API key for the oTree server. Read from environment
+        variable OTREE_REST_KEY if None (the default).
+
+    Returns:
+    list: The session configurations.
+    """
+
+    return call_otree_api(
+        requests.get, 'session_configs', 
+        otree_server_url=otree_server_url, otree_rest_key=otree_rest_key
+    )
 
 def init_otree_session(
         config_name, npart, nhumans = 0, 
@@ -95,18 +149,6 @@ def init_otree_session(
     and the URLs for the human and bot participants.
     """
 
-    def call_api(method, *path_parts, **params) -> dict:
-        path_parts = '/'.join(path_parts)
-        url = f'{otree_server_url}/api/{path_parts}'
-        resp = method(url, json=params, headers={'otree-rest-key': otree_rest_key})
-        if not resp.ok:
-            msg = (
-                f'Request to "{url}" failed '
-                f'with status code {resp.status_code}: {resp.text}'
-            )
-            raise Exception(msg)
-        return resp.json()
-
     if nhumans > 0 and is_human is not None: raise(Exception(
         "Provide either nhumans or is_human, but not both."
     ))
@@ -123,18 +165,19 @@ def init_otree_session(
     if is_human is None and nhumans == 0: is_human = [False]*npart
 
     if botex_db is None: botex_db = environ.get('BOTEX_DB')
-    if otree_server_url is None:
-        otree_server_url = environ.get('OTREE_SERVER_URL')
-    if otree_rest_key is None:
-        otree_rest_key = environ.get('OTREE_REST_KEY')
     
-    session_id = call_api(
-        requests.post, 'sessions', session_config_name=config_name, 
+    session_id = call_otree_api(
+        requests.post, 'sessions', 
+        otree_server_url=otree_server_url, otree_rest_key=otree_rest_key, 
+        session_config_name=config_name, 
         num_participants=npart, room_name=room_name,
         modified_session_config_fields=modified_session_config_fields
     )['code']
     part_data = sorted(
-        call_api(requests.get, 'sessions', session_id)['participants'],
+        call_otree_api(
+            requests.get, 'sessions', session_id,
+            otree_server_url=otree_server_url, otree_rest_key=otree_rest_key 
+        )['participants'],
         key=lambda d: d['id_in_session']
     )
     part_codes = [pd['code'] for pd in part_data]

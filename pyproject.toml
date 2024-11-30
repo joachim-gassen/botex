@@ -39,6 +39,9 @@ dependencies = [
 Homepage = "https://github.com/joachim-gassen/botex"
 Issues = "https://github.com/joachim-gassen/botex/issues"
 
+[project.scripts]
+botex = "botex.cli:run_botex"
+
 [tool.setuptools.packages.find]
 where = ["src"]
 

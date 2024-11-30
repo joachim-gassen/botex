@@ -23,9 +23,78 @@ If you want to use botex to create LLM participants for your own oTree experimen
 - Access to an oTree server that you can start sessions on or at least an URL of an oTree participant link. The server can be local or remote.
 - Access to an LLM model for inference. See next section.
 
-Then install the botex package: `pip install botex`. If you are courageous and want to use the most current development version, you can also install it directly from this repository: `pip install git+https://github.com/joachim-gassen/botex.git`.
+Then install the stable PyPi version of the botex package: `pip install botex`. However, if you are courageous and want to use the current development version that is described in this README, you need to install it directly from this repository: `pip install git+https://github.com/joachim-gassen/botex.git`.
 
-After that, you should be able to start botex on an existing oTree participant link by running the following code snippet
+
+## Using the botex command line interface
+
+The botex package comes with a command line interface that allows you to start botex on a running oTree instance. To set one up you can do the following in your virtual environment:
+
+```bash
+pip install otree
+otree startproject otree # Say yes for examples
+cd otree 
+otree devserver
+```
+
+Then start the botex command line interface by running `botex` in your virtual environment. You should see the following output:
+
+```text
+Botex database file not provided. Defaulting to 'botex.db'
+oTree server URL not provided. Defaulting to 'http://localhost:8000'
+No LLM provided. Enter your litellm model string here or press enter
+to accept the default ('gemini/gemini-1.5-flash'):
+```
+
+After accepting the default Gemini model you need to enter an API key. If you do not have on, you can get a free one from the [Google AI Studio](https://ai.google.dev). After entering the key, you can select an oTree experiment from the examples offered by the fresh oTree installation:
+
+```text
+Enter the API key for your LLM model (for the Gemini model,
+you can get a free API key at https://aistudio.google.com/apikey):***
+Available session configurations:
+1: guess_two_thirds
+2: survey
+Select a configuration by number: 
+```
+
+We suggest that you choose the Guess two Thirds game. 
+
+```text
+Selected session configuration: guess_two_thirds
+Number of participants: 3
+Number of human participants: 0
+Session 'ouwx1xnb' initialized
+You can monitor its progress at http://localhost:8000/SessionMonitor/ouwx1xnb
+Starting bots on session...
+```
+
+You can monitor how the three bots complete the experiment. After they are done, you can store the botex data from the run.
+
+```text
+Session complete. You can view the oTree data at http://localhost:8000/SessionData/ouwx1xnb
+Download the oTree data at: http://localhost:8000/export
+Enter CSV file name to export botex data to or press Enter to skip: 
+```
+
+The resulting CSV file will contain data similar to the following table
+
+| session_id   | participant_id   |   round | question_id   |   answer | reason                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+|--------------|------------------|---------|---------------|----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ouwx1xnb     | j14kfulq         |       1 | id_guess      |       67 | I will start by choosing a number above 0.  In this game, the goal is to get as close as possible to two-thirds of the average of all numbers submitted by players.  Since it is the first round and I do not know what other people will do, I choose a number which is roughly in the middle.                                                                                                                                                                                 |
+| ouwx1xnb     | j14kfulq         |       2 | id_guess      |        0 | In the first round, two-thirds of the average was 36.89, and the closest guess was 33.  In the second round, if everyone plays the same strategy again, the average of 33, 33, and 33 would be 33, and two-thirds of the average would still be 33.  To win, I should pick 0 to try and get close to that two-thirds value.  If the other players also realize this, then the average will be lower and the two-thirds average will be even lower, and 0 will be a safe choice. |
+| ouwx1xnb     | j14kfulq         |       3 | id_guess      |        0 | Following the iterative reasoning from the previous rounds, if all players continue to use the same logic, the average should approach zero. Therefore, choosing 0 is the most strategically sound choice.                                                                                                                                                                                                                                                                      |
+| ouwx1xnb     | 8o1f9cf9         |       1 | id_guess      |       66 | I will start with a number close to 2/3 of 100                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| ouwx1xnb     | 8o1f9cf9         |       2 | id_guess      |       33 | In the first round, the average was 52, two thirds of the average is 34.67, and the closest guess was 33. I will guess 33 again, hoping others also guess 33.                                                                                                                                                                                                                                                                                                                   |
+| ouwx1xnb     | 8o1f9cf9         |       3 | id_guess      |        0 | Given the pattern of previous rounds, it's likely that players will try to anticipate each other's moves, potentially leading to a convergence toward lower numbers.  I will choose 0, hoping to be closest to two-thirds of the average.                                                                                                                                                                                                                                       |
+| ouwx1xnb     | 1xctv42x         |       1 | id_guess      |       33 | I will start by guessing 33.  This is a common starting point in this type of game, based on iterative reasoning and assuming other players will also use a similar strategy.                                                                                                                                                                                                                                                                                                   |
+| ouwx1xnb     | 1xctv42x         |       2 | id_guess      |       30 | In the first round, two-thirds of the average was close to 37. I believe that many players will expect this, and thus will choose a number around this value. I will go slightly lower, to account for the fact that many others will choose around 37.                                                                                                                                                                                                                         |
+| ouwx1xnb     | 1xctv42x         |       3 | id_guess      |       10 | Given the previous rounds' two-thirds averages of 36.89 and 14.0, there is a clear downward trend.  I anticipate other players will also recognize this pattern and adjust their guesses accordingly.  To avoid being too close to the average, I will choose a relatively low number hoping to beat any average that will be close to 0.                                                                                                                                       |
+
+If you are interested in the additional options that the command line interface offers, we suggest you take a peek by running `botex -h`.
+
+## Running botex in your own code
+
+After installing botex, you should be able to start botex on an existing oTree participant link by running the following code snippet
 
 ```python
 # Enabling logging is a good idea if you want to see what is going on

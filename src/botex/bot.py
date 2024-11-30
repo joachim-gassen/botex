@@ -8,7 +8,10 @@ import csv
 from importlib.resources import files
 from random import random
 
-from litellm import completion
+import litellm
+litellm.suppress_debug_info = True
+litellm.set_verbose = False
+
 
 from pydantic import ValidationError
 from selenium import webdriver
@@ -260,7 +263,7 @@ def run_bot(
 
         @retry_with_exponential_backoff
         def completion_with_backoff(**kwargs):
-            return completion(**kwargs)
+            return litellm.completion(**kwargs)
 
         def append_message_to_conversation(message):
             nonlocal conversation
@@ -303,7 +306,7 @@ def run_bot(
                         **kwargs
                     )
                 else:
-                    resp =  completion(
+                    resp =  litellm.completion(
                         messages=[system_prompt] + conversation, 
                         model=model, response_format = response_format,
                         **kwargs
