@@ -40,13 +40,14 @@ otree devserver
 Then start the botex command line interface by running `botex` in your virtual environment. You should see the following output:
 
 ```text
+(.venv) user@host:~/github/project$ botex
 Botex database file not provided. Defaulting to 'botex.db'
 oTree server URL not provided. Defaulting to 'http://localhost:8000'
 No LLM provided. Enter your litellm model string here or press enter
 to accept the default ('gemini/gemini-1.5-flash'):
 ```
 
-After accepting the default Gemini model you need to enter an API key. If you do not have on, you can get a free one from the [Google AI Studio](https://ai.google.dev). After entering the key, you can select an oTree experiment from the examples offered by the fresh oTree installation:
+After accepting the default Gemini model you need to enter an API key. If you do not have one yet, you can get a free one from the [Google AI Studio](https://ai.google.dev). After entering the key, you can select an oTree experiment from the examples offered by the fresh oTree installation:
 
 ```text
 Enter the API key for your LLM model (for the Gemini model,
@@ -57,7 +58,7 @@ Available session configurations:
 Select a configuration by number: 
 ```
 
-We suggest that you choose the Guess two Thirds game. 
+We suggest that you choose the Guess two Thirds game.
 
 ```text
 Selected session configuration: guess_two_thirds
@@ -106,7 +107,7 @@ import botex
 # Running a botex bot on a specific oTree participant link
 botex.run_single_bot(
     botex_db = "path to a sqlite3 file that will store the bot data (does not have to exist)", 
-    session_id = "session config name of your oTree experiment (defaults to 'unknown')", 
+    session_name = "session config name of your oTree experiment (defaults to 'unknown')", 
     session_id = "session ID of your oTree experiment (defaults to 'unknown')", 
     url = "the URL of the participant link", 
     model = "The LLM model that you want to use (defaults to 'gpt-4o-2024-08-06')",
