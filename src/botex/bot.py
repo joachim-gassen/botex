@@ -96,11 +96,17 @@ def run_bot(
         dr.execute_script("arguments[0].click()", element)
 
     def set_id_value(dr, id, type, value, timeout = 3600):
-        if type != "radio":
+        if type == "button-radio":
+            resp = dr.find_elements(By.CLASS_NAME, "btn")
+            for r in resp:
+                if r.text == value:
+                    click_on_element(dr, r)
+                    break
+        elif type != "radio":
             WebDriverWait(dr, timeout).until(
                 lambda x: x.find_element(By.ID, id)
             ).send_keys(str(value))
-        else:
+        else :
             rb = dr.find_element(By.ID, id)
             resp = rb.find_elements(By.CLASS_NAME, "form-check")
             for r in resp:
@@ -153,13 +159,34 @@ def run_bot(
         question_id = []
         question_type = []
         answer_choices = []
+        question_label = []
+        btns = dr.find_elements(By.CLASS_NAME, 'btn')
+        for b in btns:
+            id = b.get_attribute('name')
+            if id is None or id == '': continue
+            else: id = "id_" + id
+            if id not in question_id:
+                question_id.append(id)
+                question_type.append("button-radio")
+                question_label.append('Select a button')
+                answer_choices.append([b.text])
+            else:
+                answer_choices[question_id.index(id)].append(b.text) 
         fe = dr.find_elements(By.CLASS_NAME, 'controls')
+        # We use a different element attribute now (see below)
+        # But I leave the old code in case that the new approach
+        # is not robust. 
+#       # labels = dr.find_elements(By.CLASS_NAME, "col-form-label")
+        lc = 0
         for i in range(len(fe)): 
             el = fe[i].find_elements(By.XPATH, ".//*")
             for j in range(len(el)):
                 id = el[j].get_attribute("id")
                 if id != '': 
                     question_id.append(id)
+                    # question_label.append(labels[lc].text)
+                    # lc += 1
+                    question_label.append(el[j].accessible_name)
                     type = el[j].get_attribute("type")
                     if type == 'text':
                         if el[j].get_attribute("inputmode") == 'decimal':
@@ -181,8 +208,6 @@ def run_bot(
                         answer_choices.append(None)
                     break
         if question_id != []:
-            labels = dr.find_elements(By.CLASS_NAME, "col-form-label")
-            question_label = [x.text for x in labels]
             questions = {}
             for id, qtype, label, answer_choices in zip(
                 question_id, question_type, question_label, answer_choices, 
@@ -655,7 +680,7 @@ def run_bot(
                 answer = 'Yes' if answer else 'No'
             set_id_value(dr, id_, qtype, answer)
 
-        if qtype is not None: click_on_element(dr, next_button)
+        if qtype is not None and next_button: click_on_element(dr, next_button)
     
     dr.close()
     dr.quit()

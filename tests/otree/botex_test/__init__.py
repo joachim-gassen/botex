@@ -55,7 +55,11 @@ class Group(BaseGroup):
 
 
 class Player(BasePlayer):
-    pass
+    button_radio = models.BooleanField(
+        choices=[[True, 'Blue Pill'], [False, 'Red Pill']],
+        label="Which pill do you choose?",
+        widget=widgets.RadioSelect,
+    )
 
 # --- Functions ----------------------------------------------------------------
 
@@ -71,6 +75,13 @@ class Introduction(Page):
     click next on
     """
     pass
+
+class ButtonSelection(Page):
+    """
+    Both players have to select a button
+    """
+    form_model = 'player'
+    form_fields = ['button_radio']
 
 class Questions1(Page):
     """
@@ -111,6 +122,7 @@ class Thanks(Page):
 
 page_sequence = [
     Introduction,
+    ButtonSelection,
     Questions1,
     Player1WaitPage,
     Questions2,

@@ -52,15 +52,15 @@ def create_answers_response_model(questions_json):
             answer_type = float
         elif qtype == 'number':
             answer_type = int
-        elif qtype in ['radio', 'select-one']:
+        elif qtype in ['radio', 'select-one', 'button-radio']:
             if not (answer_choices := question.get('answer_choices')):
-                raise ValueError(f"Question ID {id_} has no answer options, even though it is a 'radio' or 'select-one' question")
+                raise ValueError(f"Question ID {id_} has no answer options, even though it is a 'radio', 'select-one' or 'button-radio' question")
             enum_name = f"AnswerChoice_{id_}"
             options = {f"option_{i}": option for i, option in enumerate(answer_choices)}
             AnswerChoiceEnum = Enum(enum_name, options)
             answer_type = AnswerChoiceEnum
         else:
-            raise ValueError(f"Unsupported question type: {qtype}. At the moment Botex only supports 'text', 'textarea', 'float', 'number', 'radio', 'select-one' question types. Please consider raising an issue on the GitHub repository. https://github.com/joachim-gassen/botex/issues")
+            raise ValueError(f"Unsupported question type: {qtype}. At the moment Botex only supports 'text', 'textarea', 'float', 'number', 'radio', 'select-one', and 'button-radio' question types. Please consider raising an issue on the GitHub repository. https://github.com/joachim-gassen/botex/issues")
         
         field_type = create_model(
             f"Answer_{id_}",

@@ -1,12 +1,9 @@
-import csv
-import json
-from numbers import Number
 import os 
 import pytest
 
 import botex
 
-from tests.utils import start_otree, stop_otree, init_otree_test_session, delete_botex_db
+from tests.utils import *
 
 from dotenv import load_dotenv
 load_dotenv("secrets.env")
@@ -65,75 +62,5 @@ def test_can_conversation_data_be_obtained():
     name="conversations_complete", scope='session',
     depends=["conversations_db_local_bots"]
 )
-        
-def test_is_conversation_complete():
-    def add_answer_and_reason(qtext, id_, a):
-        for i,qst in enumerate(qtext):
-            if qst['id'] == id_:
-                qtext[i]['answer'] = a['answer']
-                qtext[i]['reason'] = a['reason']
-                break
-    
-    err_start = [
-        'I am sorry', 'Unfortunately', 'Your response was not valid'
-    ]
-    convs = botex.read_conversations_from_botex_db(botex_db="tests/botex.db")
-    with open("tests/questions.csv") as f:
-        qtexts = list(csv.DictReader(f))
-        qids = set([q['id'] for q in qtexts])
-    
-    answers = {}
-    for c in convs:
-        assert isinstance(c['id'], str)
-        assert isinstance(c['bot_parms'], str) 
-        assert isinstance(c['conversation'], str)
-        bot_parms = json.loads(c['bot_parms'])
-        assert isinstance(bot_parms, dict)
-        conv = json.loads(c['conversation'])
-        assert isinstance(conv, list)
-        for i, m in enumerate(conv):
-            if i+2 < len(conv) and conv[i+1]['role'] == 'user':
-                    if any(conv[i + 1]['content'].startswith(prefix) for prefix in err_start):
-                        continue
-            assert isinstance(m, dict)
-            assert isinstance(m['role'], str)
-            assert isinstance(m['content'], str)
-            if m['role'] == 'assistant':
-                try:
-                    r = m['content']
-                    start = r.find('{', 0)
-                    end = r.rfind('}', start)
-                    r = r[start:end+1]
-                    r = json.loads(r, strict=False)
-                except:
-                    break
-                if 'answers' in r:
-                    qs = r['answers']
-                    assert isinstance(qs, dict)
-                    for a in qs:
-                        answers.update({a: qs[a]})
-    ids = set()
-    for id_, a in answers.items():
-        assert isinstance(a, dict)
-        assert isinstance(id_, str)
-        assert isinstance(a['reason'], str)
-        assert a['answer'] is not None
-        ids = ids.union({id_})
-        if id_ == "id_integer_field": 
-            assert isinstance(a['answer'], str) or isinstance(a['answer'], int)
-        elif id_ == "id_float_field":
-            assert isinstance(a['answer'], str) or isinstance(a['answer'], Number)
-        elif id_ == "id_boolean_field":
-            assert isinstance(a['answer'], str) or isinstance(a['answer'], bool)
-        elif id_ in [
-            "id_string_field", "id_feedback",
-            "id_choice_integer_field"
-        ]:
-            assert isinstance(a['answer'], str)
-        add_answer_and_reason(qtexts, id_, a)
-        
-    assert ids == qids
-    with open("tests/questions_and_answers_local.csv", 'w') as f:
-        writer = csv.DictWriter(f, fieldnames=qtexts[0].keys())
-        writer.writeheader()
-        writer.writerows(qtexts)
+def test_conversation_complete():
+    check_conversation_and_export_answers('local')        

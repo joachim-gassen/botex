@@ -38,7 +38,7 @@ def test_export_response():
             resp = list(csv.DictReader(f))
     except:
         assert False
-    assert len(resp) == 7
+    assert len(resp) == 9
     for r in resp:
         assert r.keys() == {
             'session_id', 'participant_id', 'round', 

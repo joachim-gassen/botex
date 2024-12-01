@@ -155,7 +155,7 @@ class LocalLLM:
                 return None
             raise Exception(f"You have chosen to use an already running llama.cpp server but the server is not reachable. Please make sure that llama.cpp server is up and running on llama_server_url: {self.llama_server_url}")
 
-        if self.is_server_reachable(parsed_url.hostname, parsed_url.port):
+        if self.is_server_reachable(parsed_url.hostname, parsed_url.port, timeout=0):
             raise Exception("llama.cpp server is already running on %s, but you have indicated that you want botex to start the llama.cpp server. Please stop the server manually if you want botex to start the server or set start_llama_server to Fasle to work with an already running llama.cpp server.", self.llama_server_url)
 
         cmd = [
@@ -209,14 +209,14 @@ class LocalLLM:
         """
         url = f"http://{host}:{port}/health"
         start_time = time.time()
-        while time.time() - start_time < timeout:
+        while True:
             try:
                 response = requests.get(url)
                 if response.status_code == 200:
                     return True
             except requests.ConnectionError:
+                if time.time() - start_time > timeout: return False 
                 time.sleep(1)
-        return False
 
     def stop_server(self, process: subprocess.Popen | None):
         """
