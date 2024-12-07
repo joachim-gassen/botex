@@ -37,7 +37,7 @@ class ChatCompletionResponse(BaseModel):
 class LocalLLMConfig(BaseSettings):
     model_config = SettingsConfigDict(env_ignore_empty=True)
 
-    start_llama_server: bool = Field(default=True)
+    start_llama_server: bool = Field(default=False)
     llama_server_url: str = Field(default='http://localhost:8080')
     path_to_llama_server: str | None = Field(default=None)
     local_llm_path: str | None = Field(default=None)
@@ -107,6 +107,9 @@ class LocalLLM:
             self.num_slots = self.cfg.num_slots
         else:
             self.set_params_from_running_api()
+
+    def __str__(self):
+        return self.cfg.model_dump_json()
 
 
     def set_params_from_running_api(self) -> None:

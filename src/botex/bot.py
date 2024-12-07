@@ -33,8 +33,8 @@ MAX_NUM_OF_ATTEMPTS_TO_START_CHROME = 5
 
 def run_bot(
         botex_db, session_id, url, full_conv_history = False,
-        model = "gpt-4o-2024-08-06", openai_api_key = None,
-        local_llm: LocalLLM | None = None, user_prompts: dict | None = None,
+        model: str | LocalLLM = "gpt-4o-2024-08-06", openai_api_key = None,
+        user_prompts: dict | None = None,
         throttle = False, **kwargs
     ):
     """
@@ -49,6 +49,10 @@ def run_bot(
     full_conv_history (bool): Whether to keep the full conversation history.
         This will increase token use and only work with very short experiments.
         Default is False.
+    model (str or LocalLLM): The language model to use for the bot. This can be:
+        - A string representing the remote model name (e.g., "gpt-4o-2024-08-06" for OpenAI models).
+        - An instance of `LocalLLM` for using a local language model.
+        If using a remote model, ensure it supports structured outputs and that you have the necessary API key. Defaults to "gpt-4o-2024-08-06".
     model (str): The model to use for the bot. Default is "gpt-4o-2024-08-06"
         from OpenAI. It needs to be a model that supports structured outputs.
         For OpenAI, these are gpt-4o-mini-2024-07-18 and later or 
@@ -59,7 +63,6 @@ def run_bot(
         (the default), it will be obtained from the environment variable 
         OPENAI_API_KEY. You can also use the depreciated parameter 
         `openai_api_key` instead.
-    local_llm (LocalLLM): A LocalLLM object to use for the bot.
     user_prompts (dict): A dictionary of user prompts to override the default 
         prompts that the bot uses. The keys should be one or more of the 
         following: ['start', 'analyze_first_page_no_q', 'analyze_first_page_q', 
@@ -76,11 +79,16 @@ def run_bot(
     kwargs (dict): Additional keyword arguments to pass to litellm.completion().
 
     Returns: None (conversation is stored in the botex database)
+
+    Notes:
+        - This function should not be called directly in most cases. Use `run_single_bot` or `run_bots_on_session` instead.
+        - When using a local model, ensure that the `model` parameter is an instance of `LocalLLM`. The `LocalLLM` instance should be properly configured before passing it to this function.
     """
     bot_parms = dict(locals(), **kwargs)
     bot_parms.pop('kwargs')
-    if local_llm:
-        bot_parms['local_llm'] = local_llm.cfg.model_dump_json()
+    if isinstance(model, LocalLLM):
+        bot_parms['model'] = model.cfg.model_dump_json()
+
     if bot_parms['openai_api_key'] is not None: 
         bot_parms["openai_api_key"] = "******"       
     if 'api_key' in bot_parms: 
@@ -313,10 +321,9 @@ def run_bot(
                 logging.info(
                     f"Sending the following conversation to the llm to fix error:\n{json.dumps(conversation, indent=4)}"
                 )
-            if model == "local":
-                assert local_llm, "Model is local but local_llm is not set."
+            if isinstance(model, LocalLLM):
                 assert conversation, "Conversation is empty."
-                resp = local_llm.completion([system_prompt] + conversation, response_format)
+                resp = model.completion([system_prompt] + conversation, response_format)
             else:
                 if 'api_key' not in kwargs: kwargs['api_key'] = openai_api_key
                 if throttle: 
