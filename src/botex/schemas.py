@@ -3,6 +3,14 @@ from typing import Any
 
 from pydantic import BaseModel, create_model, Field, field_validator,  ValidationError
 
+def convert_string_to_boolean(value):
+    if isinstance(value, str):
+        value_lower = value.lower()
+        if value_lower == 'true':
+            return True
+        elif value_lower == 'false':
+            return False
+    return value 
 
 class Phase(Enum):
     start = 'start'
@@ -16,6 +24,11 @@ class StartSchema(BaseModelForbidExtra):
     task: str = Field(..., description="A concise summary of your task as you understand it.")
     understood: bool = Field(..., description="Whether you understood the task or not. Set to true if you understood the task, false otherwise.")
 
+    @field_validator('understood',  mode='before')
+    def validate_field1(cls, value):
+        return convert_string_to_boolean(value)
+
+
 class SummarySchema(BaseModelForbidExtra):
     summary: str = Field(..., description="Your summary of the content of the page and what you learn from it about the survey/experiment that you are participating in.")
     confused: bool = Field(..., description="Whether you are confused by your task or any part of the instructions. Set to true if you are confused, false otherwise.")
@@ -25,10 +38,18 @@ class SummarySchema(BaseModelForbidExtra):
         if not v.strip():
             raise ValueError("Summary must not be empty")
         return v
+    
+    @field_validator('confused', mode='before')
+    def validate_field1(cls, value):
+        return convert_string_to_boolean(value)
 
 class EndSchema(BaseModelForbidExtra):
     remarks: str = Field(..., description="Your final remarks")
     confused: bool = Field(..., description="Whether you are confused by your task or any part of the instructions. Set to true if you are confused, false otherwise.")
+
+    @field_validator('confused', mode='before')
+    def validate_field1(cls, value):
+        return convert_string_to_boolean(value)
 
 
 class AnswerBase(BaseModel):
@@ -92,11 +113,15 @@ def create_answers_response_model(questions_json):
         )
         confused: bool = Field(..., description="Whether you are confused by your task or any part of the instructions. Set to true if you are confused, false otherwise.")
 
-
         @field_validator('summary')
         def summary_must_not_be_empty(cls, v):
             if not v.strip():
                 raise ValueError("Summary must not be empty")
             return v
-    
+
+        @field_validator('confused', mode='before')
+        def validate_field1(cls, value):
+            return convert_string_to_boolean(value)
+
+
     return Response

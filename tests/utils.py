@@ -68,9 +68,20 @@ def init_otree_test_session(botex_db = "tests/botex.db"):
         config_name="botex_test", npart=2, 
         botex_db = botex_db, otree_server_url="http://localhost:8000"
     )
-    return botex_session    
+    return botex_session
+ 
+def get_model_provider(model):
+    if "llama.cpp" in model:
+        return "llamacpp"
+    if '/' in model:
+        return model.split('/')[0]
+    return "openai"
 
-def create_answer_message(type):
+def create_answer_message(model):
+    if model == "llamacpp":
+        type = model
+    else:
+        type = get_model_provider(model)
     csv_file = f"tests/questions_and_answers_{type}.csv"
     if not os.path.exists(csv_file):
         return ""
@@ -85,7 +96,8 @@ def create_answer_message(type):
         )
     return am[:-1]
 
-def check_conversation_and_export_answers(type):
+def check_conversation_and_export_answers(model, session_id):
+    type = get_model_provider(model)
     def add_answer_and_reason(qtext, id_, a):
         for i,qst in enumerate(qtext):
             if qst['id'] == id_ and 'answer' not in qst.keys():
@@ -96,7 +108,9 @@ def check_conversation_and_export_answers(type):
     err_start = [
         'I am sorry', 'Unfortunately', 'Your response was not valid'
     ]
-    convs = botex.read_conversations_from_botex_db(botex_db="tests/botex.db")
+    convs = botex.read_conversations_from_botex_db(
+        botex_db="tests/botex.db", session_id=session_id
+    )
     with open("tests/questions.csv") as f:
         qtexts = list(csv.DictReader(f))
         qids = [q['id'] for q in qtexts]

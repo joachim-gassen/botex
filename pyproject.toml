@@ -32,7 +32,8 @@ dependencies = [
     'psutil', 
     'selenium', 
     'litellm>=1.44.28',
-    'pydantic-settings'
+    'pydantic-settings',
+    'instructor'
 ]
 
 [project.urls]

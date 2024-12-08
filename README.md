@@ -19,11 +19,13 @@ The downside of this approach is that the scraping has to rely on some level of 
 If you want to use botex to create LLM participants for your own oTree experiments, you need the following:
 
 - A working python environment >= 3.10 and preferable a virtual environment.
-- [Google Chrome](https://www.google.com/chrome/) for scraping the oTree participant pages
+- [Google Chrome](https://www.google.com/chrome/) for scraping the oTree participant pages.
 - Access to an oTree server that you can start sessions on or at least an URL of an oTree participant link. The server can be local or remote.
-- Access to an LLM model for inference. See next section.
+- Access to an LLM model for inference. See [Verfied LLMs section](#verified-llms).
 
-Then install the stable PyPi version of the botex package: `pip install botex`. However, if you are courageous and want to use the current development version that is described in this README, you need to install it directly from this repository: `pip install git+https://github.com/joachim-gassen/botex.git`.
+Then, install the current development version of the package that is described in this README directly from this repository: `pip install git+https://github.com/joachim-gassen/botex.git`.
+
+If you rather want to play it safe and install the last stable PyPi version of the package, then you can install it the 'normal way' by running `pip install botex`. However, in this case, you should refer to the [readme available on Pypi](https://pypi.org/project/botex/) for pointers on how to get started.
 
 
 ## Using the botex command line interface

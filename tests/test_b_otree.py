@@ -49,3 +49,26 @@ def test_can_otree_session_be_initialized():
     assert len(botex_session["human_urls"]) == 0
     assert isinstance(botex_session["bot_urls"], list)
     assert len(botex_session["bot_urls"]) == 2
+
+@pytest.mark.dependency(
+    name="participants_db", scope='session',
+    depends=["botex_db", "botex_session"]
+)
+def test_session_is_recorded_in_botex_db():
+    delete_botex_db()
+    otree_proc = start_otree()
+    botex_session = init_otree_test_session()
+    participants = botex.read_participants_from_botex_db(botex_db="tests/botex.db")
+    assert isinstance(participants, list)
+    assert len(participants) == 2
+    p1 = participants[0]
+    assert isinstance(p1, dict)
+    assert isinstance(p1["participant_id"], str)
+    assert p1["session_id"] == botex_session["session_id"]
+    assert p1["is_human"] == 0
+    assert isinstance(p1["url"], str)
+    assert p1["time_in"] == None
+    assert p1["time_out"] == None
+    stop_otree(otree_proc)
+    delete_botex_db()
+
