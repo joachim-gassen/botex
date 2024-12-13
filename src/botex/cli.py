@@ -8,7 +8,7 @@ import sys
 
 from .otree import get_session_configs, init_otree_session, run_bots_on_session
 from .botex_db import export_response_data
-
+from .local_llm import is_llama_cpp_server_reachable
 DEFAULT_LLM = 'gemini/gemini-1.5-flash'
 
 def tqs(s):
@@ -64,6 +64,12 @@ def run_botex():
         Path to the LLM model to use for botex. Read from environment variable 
         LLM_MODEL if not provided. If environment variable is not set, you will be
         prompted for the model.
+        """)
+    )
+    parser.add_argument(
+        '-a', '--api-base', default=None, type=str,
+        help=tqs("""
+        Base URL for the LLM model. If not provided it will default to None for litellm and `http://localhost:8080` for llama.cpp.
         """)
     )
     parser.add_argument(
@@ -127,6 +133,7 @@ def run_botex():
     botex_db = args.botex_db
     model = args.model
     api_key = args.api_key
+    api_base = args.api_base
     nparticipants = args.nparticipants
     nhumans = args.nhumans
     throttle = not args.no_throttle
@@ -164,13 +171,24 @@ def run_botex():
     if not model:
         model = input(tqs(
             f"""
-            No LLM provided. Enter your litellm model string here or press enter 
+            No LLM provided. Enter your model string here or press enter 
             to accept the default ('{DEFAULT_LLM}'): """
         ))
         if not model: model = DEFAULT_LLM
-    if model == "local":
-        print("Local models not implemented yet. Sorry")
-        sys.exit(1)
+    if model in ["llama.cpp", "llamacpp"]:
+        if not api_base:
+            api_base = "http://localhost:8080"
+        if is_llama_cpp_server_reachable(api_base):
+            print(f"Using LLM model '{model}'")
+        else:
+            if api_base:
+                print(
+                    f"The llama.cpp server at {api_base} is not reachable. Are you sure the server is running at this URL? Botex can also start the server for you if you provide the path to the llama server cli in the environment variable PATH_TO_LLAMA_SERVER and the path to the local model in the environment variable LOCAL_LLM_PATH, however, this functionality is not yet implemented in the CLI."
+                )
+            else:
+                print(
+                    f"The llama.cpp server at http://localhost:8080 is not reachable. Are you sure the server is running at this URL? If you have started the server at a different URL, provide it with the -a or --api-base argument flag. Botex can also start the server for you if you provide the path to the llama server cli in the environment variable PATH_TO_LLAMA_SERVER and the path to the local model in the environment variable LOCAL_LLM_PATH, however, this functionality is not yet implemented in the CLI."
+                )
     else:
         print(f"Using LLM model '{model}'")
         if not api_key:
@@ -227,7 +245,7 @@ def run_botex():
         if nhumans > 0:
             print("Human URLs:", session['human_urls'])        
         print(f"You can monitor its progress at {otree_server_url}/SessionMonitor/{session['session_id']}")
-        if not throttle:
+        if not throttle and model not in ["llama.cpp", "llamacpp"]:
             print("Throttling is disabled. You might run into rate limiting issues")
 
         print(f"Starting bots on session...", )

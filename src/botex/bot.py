@@ -33,7 +33,7 @@ MAX_NUM_OF_ATTEMPTS_TO_START_CHROME = 5
 
 def run_bot(
         botex_db, session_id, url, full_conv_history = False,
-        model: str | LocalLLM = "gpt-4o-2024-08-06", openai_api_key = None,
+        model: str = "gpt-4o-2024-08-06", openai_api_key = None,
         user_prompts: dict | None = None,
         throttle = False, **kwargs
     ):
@@ -49,16 +49,11 @@ def run_bot(
     full_conv_history (bool): Whether to keep the full conversation history.
         This will increase token use and only work with very short experiments.
         Default is False.
-    model (str or LocalLLM): The language model to use for the bot. This can be:
-        - A string representing the remote model name (e.g., "gpt-4o-2024-08-06" for OpenAI models).
-        - An instance of `LocalLLM` for using a local language model.
-        If using a remote model, ensure it supports structured outputs and that you have the necessary API key. Defaults to "gpt-4o-2024-08-06".
     model (str): The model to use for the bot. Default is "gpt-4o-2024-08-06"
         from OpenAI. It needs to be a model that supports structured outputs.
         For OpenAI, these are gpt-4o-mini-2024-07-18 and later or 
         gpt-4o-2024-08-06 and later. You will need an OpenAI key and be 
-        prepared to pay to use this model. If set to "local", you need to
-        provide a LocalLLM object to local_llm.
+        prepared to pay to use this model. If you want to use local models, with llama.cpp, set this parameter to `llama.cpp` and start your llama.cpp server.
     api_key (str): The API key for the model. If None 
         (the default), it will be obtained from the environment variable 
         OPENAI_API_KEY. You can also use the depreciated parameter 
@@ -82,12 +77,14 @@ def run_bot(
 
     Notes:
         - This function should not be called directly in most cases. Use `run_single_bot` or `run_bots_on_session` instead.
-        - When using a local model, ensure that the `model` parameter is an instance of `LocalLLM`. The `LocalLLM` instance should be properly configured before passing it to this function.
     """
     bot_parms = dict(locals(), **kwargs)
     bot_parms.pop('kwargs')
-    if isinstance(model, LocalLLM):
-        bot_parms['model'] = model.cfg.model_dump_json()
+    if model in ["llama.cpp", "llamacpp"]:
+        local_llm = LocalLLM(kwargs.get("api_base"))
+        bot_parms['model'] = local_llm.json_dump_model_cfg()
+    else:
+        local_llm = None
 
     if bot_parms['openai_api_key'] is not None: 
         bot_parms["openai_api_key"] = "******"       
@@ -647,9 +644,3 @@ def run_bot(
     logging.info(f"Bot's final remarks about experiment:\n{json.dumps(resp, indent=4)}")
     logging.info("Bot finished.")
     store_data(botex_db, session_id, url, conv_hist_botex_db, bot_parms)
-
-
-
-
-
-

@@ -177,7 +177,9 @@ def completion(**kwargs):
     model = kwargs.get("model")
 
     if model.startswith("llama.cpp"):
-        raise "llama.cpp not implemented yet"
+        kwargs.pop("throttle", None)
+        return llamacpp_completion(**kwargs)
+        # raise "llama.cpp not implemented yet"
     
     if model == "local":
         kwargs.pop("throttle", None)

@@ -26,6 +26,25 @@ def test_secret_contains_openai_key(model):
     assert api_key
 
 
+# run only if the model is llama.cpp
+@pytest.mark.dependency(
+        name="start_llama_cpp_server",
+        scope='session'
+)
+def test_can_botex_start_llama_cpp_server(model):
+    if not model in ["llama.cpp", "llamacpp"]:
+        pytest.skip("This test is only for llama.cpp")
+    assert os.path.exists(os.environ.get("PATH_TO_LLAMA_SERVER")), "You are testing if botex can start the llama server, therefore you need to provide the path to the llama server PATH_TO_LLAMA_SERVER."
+    assert os.path.exists(os.environ.get("LOCAL_LLM_PATH")), "You are testing if botex can start the llama server, therefore you need to provide the path to the local model in the environment variable LOCAL_LLM_PATH."
+    
+    process = botex.start_llama_cpp_server({
+        "llama_server_url": "http://localhost:8081"
+    })
+
+    botex.stop_llama_cpp_server(process)
+    assert True
+
+
 @pytest.mark.dependency(
     name="run_bots", scope='session',
     depends=["participants_db", "api_key"]
@@ -55,7 +74,7 @@ def test_can_survey_be_completed_by_bots(model):
 def test_can_survey_be_completed_by_bots_full_hist(model):
     vendor = get_model_provider(model)
     # Ollama chokes on full history
-    if vendor == "llamacpp" or vendor == "ollama":
+    if vendor == "ollama":
         return
     global botex_session
     otree_proc = start_otree()
@@ -95,8 +114,8 @@ def test_is_open_ai_key_purged_from_db(model):
         botex_db="tests/botex.db", session_id=botex_session["session_id"]
     )
     bot_parms = json.loads(conv[0]['bot_parms'])
-    assert bot_parms['openai_api_key'] is None or bot_parms['openai_api_key'] == "******"
-    assert bot_parms['api_key'] is None or bot_parms['api_key'] == "******"
+    assert bot_parms.get('openai_api_key') is None or bot_parms['openai_api_key'] == "******"
+    assert bot_parms.get('api_key') is None or bot_parms['api_key'] == "******"
     assert len(conv) == 2
 
 @pytest.mark.dependency(
