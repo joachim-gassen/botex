@@ -168,30 +168,57 @@ If you have success running botex with other models, please let us know so that 
 The default model that botex uses is `gpt-4o-2024-08-06`. If you want to use a different model, you can specify it in the `run_single_bot()` or `run_bots_on_session()` call by providing the model string from the table above as `model` parameter. In any case, you have to provide the API key for the model that you want to use.
 
 
-## Use of local LLMs
+## Using Local Models with llama.cpp
 
-If you want to use a local LLM instead of commercial APIs via the litellm interface you need, in addition to the above:
+If you want to use a local LLM instead of commercial APIs via the litellm interface, llama.cpp is the most reliable and performant option. You will need to install llama.cpp on your system and start the llama-server with a local LLM model.
 
-1. **Set up `llama.cpp`**:
-   - Clone the `llama.cpp` repository from [this link](https://github.com/ggerganov/llama.cpp).
-   - Make sure to use commit [`cda0e4b`](https://github.com/ggerganov/llama.cpp/commit/cda0e4b648dde8fac162b3430b14a99597d3d74f), the latest release as of this writing (Oct 20, 2024), to ensure compatibility and smooth performance.
-   - Follow the instructions provided in the repository to build `llama.cpp`.
+### Installation
 
-2. **Download a Local LLM Model**:
-   - For optimal performance and compatibility, we recommend using the current leading model [Qwen2.5-7B-Instruct](https://huggingface.co/Qwen/Qwen2.5-7B-Instruct-GGUF) from Hugging Face, which is available in the GGUF format.
-   - You should refer to the model's documentation for specific instructions on which quantized model to download and how much memory it requires.
+- **MacOS/Linux**: Install `llama.cpp` via Homebrew for a straightforward setup:
+  ```bash
+  brew install llama.cpp
+  ```
+- **Windows**:
+  - The recommended approach is to download precompiled binaries from the [llama.cpp releases page](https://github.com/ggerganov/llama.cpp/releases).
+  - Alternatively, you can clone the repository and build it manually following the provided instructions.
 
-Then all that you need to do is to adjust the botex calls from above by specifying the model and its configuration. You do this by providing a dict that will become a `LocalLLM` object to the botex calls that start bots. For example, for `botex.run_bots_on_session()`, your call would look something like this
+#### Precompiled Binaries
+
+Download the appropriate binary for your system from the [llama.cpp releases page](https://github.com/ggerganov/llama.cpp/releases):
+
+- **MacOS**:
+  - `llama-b4324-bin-macos-arm64.zip`
+  - `llama-b4324-bin-macos-x64.zip`
+- **Linux**:
+  - `llama-b4324-bin-ubuntu-x64.zip`
+- **Windows**:
+  - `llama-b4324-bin-win-cu12.4-x64.zip` (CUDA 12.4 support)
+  - `llama-b4324-bin-win-avx2-x64.zip` (AVX2 support)
+  - Other variants for AVX, AVX512, OpenBLAS, Vulkan, and more.
+
+Refer to the release page to identify the binary suitable for your hardware and system.
+
+### Running llama-server
+
+After downloading and extracting the llama.cpp binary, you can start the llama-server with the desired LLM model from huggingface with the following command:
+
+```bash
+llama-server --model-url https://huggingface.co/bartowski/Meta-Llama-3.1-8B-Instruct-GGUF/resolve/main/Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf\?download\=true -c /the/context/length/you/want/to/use -n /the/maximum/number/of/tokens/you/want/to/generate/at/a/time
+
+# Additional options:
+# -ngl /number/of/layers/to/offload/to/gpu (if you have a GPU with a good amount of memory you should try to offload as many layers as possible)
+# -fa if you want to enable flash attention (recommended for performance)
+```
+
+### Running botex with a Local LLM
+
+Then all that you need to do is to adjust the botex calls from above by choosing `llama.cpp` as a model.
 
 ```python
 botex.run_bots_on_session(
     session_id = sdict['session_id'],  
     botex_db = "same path that you used for initializing the session", 
-    model = "local",
-    local_model_cfg = {
-        "path_to_llama_server": "the path to the llama.cpp llama-server",
-        "local_llm_path": "the path to your LLM model GGUF file"
-    }
+    model = "llama.cpp",
 )
 ```
 
@@ -207,10 +234,9 @@ If you want to take a deep-dive into botex and contribute to its development you
 4. Activate it `source .venv/bin/activate`
 5. Install the necessary packages `pip install -r requirements.txt`
 6. Install the botex package locally and editable `pip install -e .`
-7. Test whether everything works `pytest --remote`
-8. If you are using local LLMs, you need to provide the required configuration information in `secrets.env`. 
-9. Then you should be able to test the local LLM config by running `pytest --local`
-10. If you are interested in testing both the remote and local LLM you can run both tests with `pytest`.
+7. You can use pytest to test different litellm modesl, for example, by running `pytest --model gemini/gemini-1.5-flash`
+8. Alternatively, if you want to test local models with `llama.cpp`, you can run `pytest --model llama.cpp`. This will test wether botex can start a local llm and also run complete experiment with an already running llama-server. So be sure to include the necessary configuration information in `secrets.env` and to have a running llama-server on the default port 8080.
+9. You can also of course run test on multiple models at once by passing more than one model to pytest call, e.g., `pytest --model gemini/gemini-1.5-flash --model llama.cpp`.
 
 If it works you should see a test output similar to this one:
 
