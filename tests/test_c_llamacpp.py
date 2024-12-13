@@ -21,6 +21,7 @@ def test_can_survey_be_completed_by_local_bots_with_botex_starting_llama_cpp_ser
     assert os.path.exists(os.environ.get("LOCAL_LLM_PATH")), "You are testing local bots with botex starting the llama server, therefore you need to provide the path to the local model in the environment variable LOCAL_LLM_PATH."
     delete_botex_db()
     otree_proc = start_otree()
+    global botex_session
     botex_session = init_otree_test_session()
     urls = botex.get_bot_urls(
         botex_session["session_id"], "tests/botex.db"
@@ -68,7 +69,9 @@ def test_can_survey_be_completed_by_local_bots_already_running_llama_cpp_server(
     depends=["run_local_bots"]
 )
 def test_can_conversation_data_be_obtained():
-    conv = botex.read_conversations_from_botex_db(botex_db="tests/botex.db")
+    conv = botex.read_conversations_from_botex_db(
+        botex_db="tests/botex.db", session_id=botex_session["session_id"]
+    )
     assert isinstance(conv, list)
     assert len(conv) == 2
 
@@ -77,4 +80,4 @@ def test_can_conversation_data_be_obtained():
     depends=["conversations_db_local_bots"]
 )
 def test_conversation_complete():
-    check_conversation_and_export_answers('local')        
+    check_conversation_and_export_answers('llamacpp', botex_session['session_id'])        

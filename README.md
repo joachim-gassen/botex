@@ -9,7 +9,7 @@ This in-development Python package allows you to use large language models (LLMs
 
 While both approaches have been tested and found to work, currently, we have only used OpenAI's Chat GPT-4o model for our own research work. See further below for a list of commercial and open-source LLMs that we have verified to pass the package tests.
 
-botex has been inspired by [recent work](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4682602) but uses a different approach. Instead of using dedicated prompts, its bots consecutively scrape their respective oTree participant page and infer the experimental flow solely from the web page text content. This avoids the risk of misalignment between human (web page) and bot (LLM prompt) experimental designs and, besides facilitating the study of LLM "behavior", allows to use LLM participants to develop and pre-test oTree experiments that are designed (primarily) for human participants.
+botex has been inspired by recent work of Grossmann, Engel and Ockenfels ([paper](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4682602), [repo](https://github.com/mrpg/ego)) but uses a different approach. Instead of using dedicated prompts, botex bots consecutively scrape their respective oTree participant's webpage and infer the experimental flow solely from the webpage text content. This avoids the risk of misalignment between human (webpage) and bot (LLM prompt) experimental designs and, besides facilitating the study of LLM "behavior", allows to use LLM participants to develop and pre-test oTree experiments that are designed (primarily) for human participants.
 
 The downside of this approach is that the scraping has to rely on some level of standardization. Luckily, the oTree framework is relatively rigid, unless the user adds customized HTML forms to their experimental designs. Currently, all standard form models used by oTree are tested and verified to work. In the future, we plan to implement also customized HTML forms but likely this will require some standardization by the user implementing the experimental design.
 
@@ -19,11 +19,13 @@ The downside of this approach is that the scraping has to rely on some level of 
 If you want to use botex to create LLM participants for your own oTree experiments, you need the following:
 
 - A working python environment >= 3.10 and preferable a virtual environment.
-- [Google Chrome](https://www.google.com/chrome/) for scraping the oTree participant pages
+- [Google Chrome](https://www.google.com/chrome/) for scraping the oTree participant pages.
 - Access to an oTree server that you can start sessions on or at least an URL of an oTree participant link. The server can be local or remote.
-- Access to an LLM model for inference. See next section.
+- Access to an LLM model for inference. See [Verfied LLMs section](#verified-llms).
 
-Then install the stable PyPi version of the botex package: `pip install botex`. However, if you are courageous and want to use the current development version that is described in this README, you need to install it directly from this repository: `pip install git+https://github.com/joachim-gassen/botex.git`.
+Then, install the current development version of the package that is described in this README directly from this repository: `pip install git+https://github.com/joachim-gassen/botex.git`.
+
+If you rather want to play it safe and install the last stable PyPi version of the package, then you can install it the 'normal way' by running `pip install botex`. However, in this case, you should refer to the [readme available on Pypi](https://pypi.org/project/botex/) for pointers on how to get started.
 
 
 ## Using the botex command line interface
@@ -130,7 +132,7 @@ sdict = botex.init_otree_session(
     nhumans = 0, # set to non-zero if you want humans to play along
     botex_db = "path to a sqlite3 file (does not have to exist)",
     otree_server_url = "url of your server, e.g., http://localhost:8000]",
-    otree_rest_key = "your oTree API secret key, if set"
+    otree_rest_key = "your oTree API key, if set and needed"
 )
 
 # The returned dict will contain the oTree session ID, all participant codes, 
@@ -298,6 +300,6 @@ If you want to learn more about botex
 - take a look at our [botex examples repo](https://github.com/trr266/botex_examples), providing a code walk-through for an actual online experiment (in which you can also participate), or
 - read our current and somewhat preliminary [paper](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4891763).
 
-## Get in touch!
+## Get in touch
 
 If you are interested in this project or even have already tried it, we would love to hear from you. Simply shoot an email, comment on our linkedin post, or open an issue here on GitHub!

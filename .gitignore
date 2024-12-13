@@ -30,7 +30,7 @@ tests/botex_response.csv
 llama.cpp
 models
 dist
-pground.py
+pground*.py
 playground.py
 README_files
 README.html

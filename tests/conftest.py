@@ -1,4 +1,5 @@
 from utils import *
+import glob
 
 def pytest_configure(config):
     """
@@ -7,8 +8,8 @@ def pytest_configure(config):
     delete_botex_db()
     delete_otree_db()
     try:
-        os.remove("tests/questions_and_answers_local.csv")
-        os.remove("tests/questions_and_answers_openai.csv")
+        for f in glob.glob("tests/questions_and_answers_*.csv"):
+            os.remove(f)
         os.remove("tests/botex_participants.csv")
         os.remove("tests/botex_response.csv")
     except OSError:
@@ -16,41 +17,48 @@ def pytest_configure(config):
 
 def pytest_terminal_summary(terminalreporter, exitstatus, config):
     if exitstatus == 0:
-        local = config.getoption("--local")
-        remote = config.getoption("--remote")
-        if not local and not remote:
-            local = True
-            remote = True
+        models = config.getoption("--model")
         terminalreporter.ensure_newline()
-        if local:
-            terminalreporter.section('Local LLM answers', sep='-', blue=True, bold=True)
-            terminalreporter.line(create_answer_message("local"))
-        if remote:
-            terminalreporter.section('OpenAI answers', sep='-', blue=True, bold=True)
-            terminalreporter.line(create_answer_message("openai"))
+        for m in models:
+            terminalreporter.section(f"Answers from '{m}'", sep='-', blue=True, bold=True)
+            terminalreporter.line(create_answer_message(m))
+        terminalreporter.section(f"Answers from llama.cpp", sep='-', blue=True, bold=True)
+        terminalreporter.line(create_answer_message("local"))
 
 
 def pytest_addoption(parser):
-    parser.addoption("--local", action="store_true", help="Run local LLM workflow tests")
-    parser.addoption("--remote", action="store_true", help="Run GPT 4o Remote workflow tests")
+    parser.addoption(
+        "--model", action="append", 
+        default = ["gemini/gemini-1.5-flash"], 
+        # Add "ollama/llama3.1" for test of instructor pipeline. Requires ollama to run
+        help="Set the model string on which to run tests. You can specify multiple models."
+    )
+
+def pytest_generate_tests(metafunc):
+    if "model" in metafunc.fixturenames:
+        metafunc.parametrize("model", metafunc.config.getoption("model"))
 
 def pytest_collection_modifyitems(config, items):
-    local = config.getoption("--local")
-    remote = config.getoption("--remote")
+    models = config.getoption("--model")
 
-    if local and remote:
-        raise ValueError("Cannot use both --local and --remote flags together")
+    def sort_key(item):
+        for m in models:
+            if m in item.nodeid:
+                return models.index(m)
+        return len(m)  # Fallback for unmatched items
 
     selected_items = []
-    if local:
-        for item in items:
-            if any(test in item.nodeid for test in ["test_a_botex_db", "test_b_otree", "test_c_local_llm", "test_d_exports"]):
-                selected_items.append(item)
-    elif remote:
-        for item in items:
-            if any(test in item.nodeid for test in ["test_a_botex_db", "test_b_otree", "test_c_openai", "test_d_exports"]):
-                selected_items.append(item)
-    else:
-        selected_items = items  # Default to all tests
-
+    parameterized_items = []
+    for item in items:
+        if any(test in item.nodeid for test in ["test_a_botex_db", "test_b_otree"]):
+            selected_items.append(item)
+    for item in items:
+        if "test_c_litellm" in item.nodeid:
+            parameterized_items.append(item)
+    parameterized_items.sort(key=sort_key)
+    selected_items.extend(parameterized_items)
+    for item in items:
+        if any(test in item.nodeid for test in ["test_c_llamacpp", "test_d_exports"]):
+            selected_items.append(item)
+        
     items[:] = selected_items
