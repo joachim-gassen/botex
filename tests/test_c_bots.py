@@ -79,9 +79,9 @@ def test_can_survey_be_completed_by_bots(model):
     depends=["participants_db", "api_key"]
 )
 def test_can_survey_be_completed_by_bots_full_hist(model):
-    vendor = get_model_provider(model)
+    provider = get_model_provider(model)
     # Ollama chokes on full history
-    if vendor == "ollama":
+    if provider == "ollama":
         return
     global botex_session
     otree_proc = start_otree()
