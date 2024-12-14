@@ -2,16 +2,16 @@
 
 ## Idea
 
-This in-development Python package allows you to use large language models (LLMs) as bots in [oTree](https://www.otree.org) experiments. For interfacing with LLMs, it offers two options
+This in-development Python package allows you to use large language models (LLMs) as bots in [oTree](https://www.otree.org) experiments. It has been inspired by recent work of Grossmann, Engel and Ockenfels ([paper](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4682602), [repo](https://github.com/mrpg/ego)) but uses a different approach. Instead of using dedicated prompts, botex bots consecutively scrape their respective oTree participant's webpage and infer the experimental flow solely from the webpage text content. This avoids the risk of misalignment between human (webpage) and bot (LLM prompt) experimental designs and, besides facilitating the study of LLM "behavior", allows to use LLM participants to develop and pre-test oTree experiments that are designed (primarily) for human participants.
+
+The downside of this approach is that the scraping has to rely on some level of standardization. Luckily, the oTree framework is relatively rigid, unless the user adds customized HTML forms to their experimental designs. Currently, all standard form models used by oTree are tested and verified to work. In the future, we plan to implement also customized HTML forms but likely this will require some standardization by the user implementing the experimental design.
+
+For interfacing with LLMs, botex offers two options
 
 - [litellm](https://litellm.vercel.app): Allows the use of various commercial LLMs
 - [llama.cpp](https://github.com/ggerganov/llama.cpp): Allows the use of local (open source) LLMs  
 
 While both approaches have been tested and found to work, currently, we have only used OpenAI's Chat GPT-4o model for our own research work. See further below for a list of commercial and open-source LLMs that we have verified to pass the package tests.
-
-botex has been inspired by recent work of Grossmann, Engel and Ockenfels ([paper](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4682602), [repo](https://github.com/mrpg/ego)) but uses a different approach. Instead of using dedicated prompts, botex bots consecutively scrape their respective oTree participant's webpage and infer the experimental flow solely from the webpage text content. This avoids the risk of misalignment between human (webpage) and bot (LLM prompt) experimental designs and, besides facilitating the study of LLM "behavior", allows to use LLM participants to develop and pre-test oTree experiments that are designed (primarily) for human participants.
-
-The downside of this approach is that the scraping has to rely on some level of standardization. Luckily, the oTree framework is relatively rigid, unless the user adds customized HTML forms to their experimental designs. Currently, all standard form models used by oTree are tested and verified to work. In the future, we plan to implement also customized HTML forms but likely this will require some standardization by the user implementing the experimental design.
 
 
 ## Usage
@@ -168,30 +168,57 @@ If you have success running botex with other models, please let us know so that 
 The default model that botex uses is `gpt-4o-2024-08-06`. If you want to use a different model, you can specify it in the `run_single_bot()` or `run_bots_on_session()` call by providing the model string from the table above as `model` parameter. In any case, you have to provide the API key for the model that you want to use.
 
 
-## Use of local LLMs
+## Using Local Models with llama.cpp
 
-If you want to use a local LLM instead of commercial APIs via the litellm interface you need, in addition to the above:
+If you want to use a local LLM instead of commercial APIs via the litellm interface, llama.cpp is the most reliable and performant option. You will need to install llama.cpp on your system and start the llama-server with a local LLM model.
 
-1. **Set up `llama.cpp`**:
-   - Clone the `llama.cpp` repository from [this link](https://github.com/ggerganov/llama.cpp).
-   - Make sure to use commit [`cda0e4b`](https://github.com/ggerganov/llama.cpp/commit/cda0e4b648dde8fac162b3430b14a99597d3d74f), the latest release as of this writing (Oct 20, 2024), to ensure compatibility and smooth performance.
-   - Follow the instructions provided in the repository to build `llama.cpp`.
+### Installation
 
-2. **Download a Local LLM Model**:
-   - For optimal performance and compatibility, we recommend using the current leading model [Qwen2.5-7B-Instruct](https://huggingface.co/Qwen/Qwen2.5-7B-Instruct-GGUF) from Hugging Face, which is available in the GGUF format.
-   - You should refer to the model's documentation for specific instructions on which quantized model to download and how much memory it requires.
+- **MacOS/Linux**: Install `llama.cpp` via Homebrew for a straightforward setup:
+  ```bash
+  brew install llama.cpp
+  ```
+- **Windows**:
+  - The recommended approach is to download precompiled binaries from the [llama.cpp releases page](https://github.com/ggerganov/llama.cpp/releases).
+  - Alternatively, you can clone the repository and build it manually following the provided instructions.
 
-Then all that you need to do is to adjust the botex calls from above by specifying the model and its configuration. You do this by providing a dict that will become a `LocalLLM` object to the botex calls that start bots. For example, for `botex.run_bots_on_session()`, your call would look something like this
+#### Precompiled Binaries
+
+Download the appropriate binary for your system from the [llama.cpp releases page](https://github.com/ggerganov/llama.cpp/releases):
+
+- **MacOS**:
+  - `llama-b4324-bin-macos-arm64.zip`
+  - `llama-b4324-bin-macos-x64.zip`
+- **Linux**:
+  - `llama-b4324-bin-ubuntu-x64.zip`
+- **Windows**:
+  - `llama-b4324-bin-win-cu12.4-x64.zip` (CUDA 12.4 support)
+  - `llama-b4324-bin-win-avx2-x64.zip` (AVX2 support)
+  - Other variants for AVX, AVX512, OpenBLAS, Vulkan, and more.
+
+Refer to the release page to identify the binary suitable for your hardware and system.
+
+### Running llama-server
+
+After downloading and extracting the llama.cpp binary, you can start the llama-server with the desired LLM model from huggingface with the following command:
+
+```bash
+llama-server --model-url https://huggingface.co/bartowski/Meta-Llama-3.1-8B-Instruct-GGUF/resolve/main/Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf\?download\=true -c /the/context/length/you/want/to/use -n /the/maximum/number/of/tokens/you/want/to/generate/at/a/time
+
+# Additional options:
+# -ngl /number/of/layers/to/offload/to/gpu (if you have a GPU with a good amount of memory you should try to offload as many layers as possible)
+# -fa if you want to enable flash attention (recommended for performance)
+```
+
+### Running botex with a Local LLM
+
+Then all that you need to do is to adjust the botex calls from above by choosing `llama.cpp` as a model.
 
 ```python
 botex.run_bots_on_session(
     session_id = sdict['session_id'],  
     botex_db = "same path that you used for initializing the session", 
-    model = "local",
-    local_model_cfg = {
-        "path_to_llama_server": "the path to the llama.cpp llama-server",
-        "local_llm_path": "the path to your LLM model GGUF file"
-    }
+    model = "llama.cpp",
 )
 ```
 
@@ -207,87 +234,122 @@ If you want to take a deep-dive into botex and contribute to its development you
 4. Activate it `source .venv/bin/activate`
 5. Install the necessary packages `pip install -r requirements.txt`
 6. Install the botex package locally and editable `pip install -e .`
-7. Test whether everything works `pytest --remote`
-8. If you are using local LLMs, you need to provide the required configuration information in `secrets.env`. 
-9. Then you should be able to test the local LLM config by running `pytest --local`
-10. If you are interested in testing both the remote and local LLM you can run both tests with `pytest`.
+7. Run the tests with `pytest`. By dfault it runs test using the default OpenAI model and the a llama.cpp model. For both models, you need to make sure that you provide the necessary configuration in `secrets.env`
+8. If you want to test other models, you can pass the model name as an argument to pytest, e.g., `pytest --model gemini/gemini-1.5-flash`. You can provide multiple models if you like, e.g., `pytest --model gemini/gemini-1.5-flash llamacpp`.
 
 If it works you should see a test output similar to this one:
 
 ```
+(.venv) joachim@JoachimsMBP729 botex % pytest
 =========================== test session starts ================================
-platform darwin -- Python 3.12.2, pytest-8.1.1, pluggy-1.4.0
+platform darwin -- Python 3.12.7, pytest-8.1.1, pluggy-1.4.0
 rootdir: /Users/joachim/github/botex
 configfile: pyproject.toml
+testpaths: tests
 plugins: anyio-4.3.0, cov-4.1.0, dependency-0.6.0
-collected 20 items                                                                                                                                                                          
+collected 49 items                                                                                 
 
-tests/test_a_botex_db.py .
-tests/test_b_otree.py ....
-tests/test_c_local_llm.py ......
-tests/test_c_openai.py ......
-tests/test_d_exports.py ..
+tests/test_a_botex_db.py .                                               [  4%]
+tests/test_b_otree.py ......                                             [ 28%]
+tests/test_c_bots.py ................                                    [ 92%]
+tests/test_d_exports.py ..                                               [100%]
 
------------------------------- Local LLM answers -------------------------------
-Question: What is your favorite color?'
-Answer: 'blue'
-Rationale: 'As a human, I perceive colors visually and my favorite color is blue.'.
+------------------------- Answers from 'gpt-4o-2024-08-06' ---------------------
+Question: 'Select a button'
+Answer: 'Blue Pill'
+Rationale: 'I am not given any additional context or information that 
+differentiates between the options. Therefore, I will select the 'Blue Pill'
+randomly.'
 
-Question: What is your favorite number?'
-Answer: '7'
-Rationale: 'I have no personal feelings towards numbers, but I will randomly select the number 7.'.
-
-Question: Do you like ice cream?'
-Answer: 'Yes'
-Rationale: 'Yes, I do like ice cream.'.
-
-Question: Which statement do you most agree with?'
-Answer: 'Humans are better than bots'
-Rationale: 'I believe that humans have unique qualities and capabilities that set them apart from bots, but I acknowledge that bots can be useful in many ways.'.
-
-Question: What do you enjoy doing most?'
-Answer: 'Reading'
-Rationale: 'I chose the activity I enjoy most'.
-
-Question: How many people live on the earth currently (in billions)?'
-Answer: '7.9'
-Rationale: 'I looked up the current population of Earth'.
-
-Question: Do you have any feedback that you want to share?'
-Answer: 'This survey was interesting and I hope it helps improve the functionality of the python package for Language Model Models to participate in oTree experiments.'
-Rationale: 'I have feedback to share'.
-
------------------------------- OpenAI answers ----------------------------------
-Question: What is your favorite color?'
+Question: 'What is your favorite color?'
 Answer: 'Blue'
-Rationale: 'Blue is generally calming and pleasant to me.'.
+Rationale: 'I like the tranquility and calmness it represents'
 
-Question: What is your favorite number?'
+Question: 'What is your favorite number?'
 Answer: '7'
-Rationale: '7 is considered a lucky number in many cultures and it's always been my favorite.'.
+Rationale: 'I always found it to be a powerful and balanced number'
 
-Question: Do you like ice cream?'
+Question: 'Do you like ice cream?'
 Answer: 'Yes'
-Rationale: 'I enjoy the taste and variety of flavors.'.
+Rationale: 'I enjoy the taste of ice cream and different flavors'
 
-Question: Which statement do you most agree with?'
+Question: 'Which statement do you most agree with?'
 Answer: 'Humans are better than bots'
-Rationale: 'As an AI, I recognize the value that both humans and bots bring, but I understand the statement that 'Humans are better than bots' as humans create and provide meaningful interpretations for information.'.
+Rationale: 'I believe humans have creativity and the capacity for emotional 
+understanding, which are important traits'
 
-Question: What do you enjoy doing most?'
+Question: 'Select a button'
+Answer: 'Blue Pill'
+Rationale: 'The page asks me to choose between two options: Blue Pill and Red 
+Pill, as part of a decision-making exercise. I will choose the Blue Pill as it 
+is often associated with staying in a familiar, stable reality.'
+
+Question: 'What do you enjoy doing most?'
 Answer: 'Reading'
-Rationale: 'I enjoy reading because it allows me to learn new things and relax.'.
+Rationale: 'The options provided cater to various activities. Based on random 
+selection, I'll choose 'Reading' as it is a common enjoyable activity for many 
+individuals.'
 
-Question: How many people live on the earth currently (in billions)?'
-Answer: '7.8'
-Rationale: 'Based on current estimates, the global population is about 7.8 billion.'.
+Question: 'How many people live on the earth currently (in billions)?'
+Answer: '8.0'
+Rationale: 'Current estimates of the global population are around 8 billion. 
+Therefore, I will answer with this figure.'
 
-Question: Do you have any feedback that you want to share?'
-Answer: 'This survey is well-structured and straightforward to follow.'
-Rationale: 'Providing constructive feedback can improve future surveys.'.
+Question: 'Do you have any feedback that you want to share?'
+Answer: 'No feedback at the moment.'
+Rationale: 'There is no specific feedback to provide as the process went
+ smoothly.'
 
-==================== 20 passed in 192.76s (0:03:12) ============================
+-------------------------- Answers from 'llamacpp' -----------------------------
+Question: 'Select a button'
+Answer: 'Blue Pill'
+Rationale: 'I have chosen the pill that appears more interesting or relevant 
+to me, in this case, I chose the Blue Pill.'
+
+Question: 'What is your favorite color?'
+Answer: 'blue'
+Rationale: 'My favorite color is blue, as it is calming and serene.'
+
+Question: 'What is your favorite number?'
+Answer: '7'
+Rationale: 'My favorite number is 7, as it is the number of days in a week.'
+
+Question: 'Do you like ice cream?'
+Answer: 'Yes'
+Rationale: 'I do enjoy ice cream, as it is a delicious and refreshing treat.'
+
+Question: 'Which statement do you most agree with?'
+Answer: 'Bots are better than humans'
+Rationale: 'While both statements have their merits, I lean towards the 
+perspective that bots and humans each have their own unique strengths and can 
+complement each other, rather than one being inherently better than the other.'
+
+Question: 'Select a button'
+Answer: 'Blue Pill'
+Rationale: 'I have chosen the Blue Pill, as it represents the choice to continue
+with the known and predictable, which aligns with the purpose of this survey.'
+
+Question: 'What do you enjoy doing most?'
+Answer: 'Reading'
+Rationale: 'I enjoy reading the most as it allows me to gain new knowledge and 
+perspectives.'
+
+Question: 'How many people live on the earth currently (in billions)?'
+Answer: '7.9'
+Rationale: 'I estimate the current population of the earth to be around 
+7.9 billion people.'
+
+Question: 'Do you have any feedback that you want to share?'
+Answer: 'Thank you for the opportunity to participate in this survey. I 
+appreciate the developers' work and hope the results will be beneficial.'
+Rationale: 'I appreciate the opportunity to participate in this survey and test 
+the functionality of the python package. I hope the results will be useful for 
+the developers.'
+
+====================== 25 passed in 208.60s (0:03:28) ==========================
 ```
+
+If something goes wrong, you can repeat the test with logging (`pytest -o log_cli=true`) to see what is going wrong.
 
 You see that it also contains some questions and answers. They are also accessible in `test/questions_and_answers.csv` after the run and were given by two bot instances in the oTree test survey `test/otree` during testing. The survey is designed to test the usage of standard oTree forms, buttons and wait pages in a session with interacting participants.
 
@@ -298,7 +360,7 @@ The costs of running the test on OpenAI using the "gpt-4o" model are roughly 0.1
 If you want to learn more about botex
 
 - take a look at our [botex examples repo](https://github.com/trr266/botex_examples), providing a code walk-through for an actual online experiment (in which you can also participate), or
-- read our current and somewhat preliminary [paper](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4891763).
+- read our current [paper](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4891763) using botex to explore the contexutalization effects in accounting experiments.
 
 ## Get in touch
 

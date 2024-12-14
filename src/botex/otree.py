@@ -6,7 +6,6 @@ from itertools import compress
 import requests
 
 from .bot import run_bot
-from .local_llm import LocalLLM
 
 
 def setup_botex_db(botex_db = None):
@@ -244,114 +243,140 @@ def get_bot_urls(session_id, botex_db = None, already_started = False):
 def run_bots_on_session(
         session_id, bot_urls = None, 
         botex_db = None, 
-        model = "gpt-4o-2024-08-06",
+        model: str = "gpt-4o-2024-08-06",
+        api_key = None,
+        api_base: str | None = None,
+        throttle = False,
         full_conv_history = False,
-        openai_api_key = None,
+        user_prompts: dict | None = None,
         already_started = False,
         wait = True,
-        local_model_cfg: dict | None = None,
-        user_prompts: dict | None = None,
-        throttle = False,
         **kwargs
     ):
     """
-    Run BotEx bots on an oTree session.
+    Run botex bots on an oTree session.
 
     Parameters:
     session_id (str): The ID of the oTree session.
     bots_urls (list): A list of URLs for the bot participants.
         Will be retrieved from the database if None (the default).
-    bot_db (str): The name of the SQLite database file for BotEx data.
+    botex_db (str): The name of the SQLite database file for BotEx data.
         If None (the default), it will be obtained from the environment 
         variable BOTEX_DB.
-    full_conv_history (bool): Whether to keep the full conversation history.
-        This will increase token use and only work with very short experiments.
-        Default is False.
     model (str): The model to use for the bot. Default is "gpt-4o-2024-08-06"
-        from OpenAI. It needs to be a model that supports structured outputs.
-        For OpenAI, these are gpt-4o-mini-2024-07-18 and later or 
-        gpt-4o-2024-08-06 and later. See the READNE file in the package GitHub
-        repo for a list of commercial models that have been verified to pass
-        the package tests. If set to "local", you need to provide a 
-        configuration for the local model in local_model_cfg.
+        from OpenAI vie LiteLLM. It needs to be a model that supports structured 
+        outputs. For OpenAI, these are gpt-4o-mini-2024-07-18 and later or 
+        gpt-4o-2024-08-06 and later. If you use a commercial model, You need to
+        provide an API key in the parameter 'api_key' and be 
+        prepared to pay to use this model. If you want to use local models, 
+        we suggest that you use llama.cpp, In this case, set this string
+        to "lamacpp" and set the URL of your llama.cpp server in
+        'api_base'. If you want botex to start the llama.cpp server for you,
+        run 'start_llamacpp_sever()' prior to running
+        run_bots_on_session().
     api_key (str): The API key for the model that you use. If None 
         (the default), it will be obtained from the environment variable 
         OPENAI_API_KEY. You can also use the depreciated parameter 
         `openai_api_key` instead.
-    already_started (bool): If True, the function will also run bots that have
-        already started but not yet finished. This is useful if bots did not 
-        startup properly because of network issues. Default is False.
-    wait (bool): If True (the default), the function will wait for the bots to 
-        finish.
-    local_model_cfg (dict): Configuration for the local model. If model is 
-        "local", as a bare minimum it should contain, 
-        the "path_to_llama_server", and "local_llm_path" keys. 
-        If these are not present, the function will
-        try to get them from the environment variables PATH_TO_LLAMA_SERVER
-        and LOCAL_LLM_PATH. The dictionary can contain any of the following 
-        keys:
-        
-        - start_llama_server (bool): Whether to start the llama cpp server, 
-          defaults to True. If False, the program will not start the server 
-          and will expect the server to be accessible under the URL provided by 
-          'llama_server_url'.
-        - path_to_llama_server (str): The path to the llama cpp server 
-          executable.
-        - local_llm_path (str): The path to the local language model.
-        - llama_server_url (str): The base URL for the llama cpp server, 
-          defaults to "http://localhost:8080".
-        - context_length (int): The context length for the model, defaults to 
-          None. If None, the program will try to get the context length from 
-          the local model metadata, if that is not possible defaults to 4096.
-        - number_of_layers_to_offload_to_gpu (int): The number of layers to 
-          offload to the GPU, defaults to 0.
-        - temperature (float): The temperature for the model, defaults to 0.5.
-        - maximum_tokens_to_predict (int): The maximum number of tokens to 
-          predict, defaults to 10000.
-        - top_p (float): The top p value for the model, defaults to 0.9.
-        - top_k (int): The top k value for the model, defaults to 40.
-        - num_slots (int): The number of slots for the model, defaults to 1.
-    
-        For all the keys, if not provided, the program will try to get the value 
-        from environment variables (in all capital letters), if that is not 
-        possible, it will use the default value. if start_llama_server is set 
-        to True (default), then path_to_llama_server and local_llm_path need 
-        to be provided either in the dictionary or as environment variables.
+    api_base (str): The base URL for the llm server. Default is None not to
+        interfere with the default LiteLLM behavior. If you want to use a local 
+        model with llama.cpp and if you have not explicitly set this parameter, 
+        it will default to `http://localhost:8080`, the default url for the
+        llama.cpp server.
+    throttle (bool): Whether to slow down the bot's requests.
+        Slowing done the requests can help to avoid rate limiting. Default is 
+        False. The bot will switch to 'throttle=True' when LiteLLM is used and 
+        completion requests raise exceptions.
+    full_conv_history (bool): Whether to keep the full conversation history.
+        This will increase token use and only work with very short experiments.
+        Default is False.
     user_prompts (dict): A dictionary of user prompts to override the default 
         prompts that the bot uses. The keys should be one or more of the 
         following: ['start', 'analyze_first_page_no_q', 'analyze_first_page_q', 
         'analyze_page_no_q', 'analyze_page_q', 'analyze_page_no_q_full_hist', 
         'analyze_page_q_full_hist', 'page_not_changed', 'system', 
-        'resp_too_long', 'json_error', 'end']. If a key is not present in the 
-        dictionary, the default prompt will be used. If a key that is not in 
-        the default prompts is present in the dictionary, then the bot will 
-        exit with a warning and not running to make sure that the user 
-        is aware of the issue.
-    throttle (bool): Whether to slow down the bot's requests to the OpenAI API.
-        Slowing done the requests can help to avoid rate limiting. Default is 
-        False.
+        'system_full_hist', 'resp_too_long', 'json_error', 'end', 
+        'end_full_hist']. If a key is not present in the dictionary, the default 
+        prompt will be used. If a key that is not in the default prompts is 
+        present in the dictionary, then the bot will exit with a warning and 
+        not run to make sure that the user is aware of the issue.
+    already_started (bool): If True, the function will also run bots that have
+        already started but not yet finished. This is useful if bots did not 
+        startup properly because of network issues. Default is False.
+    wait (bool): If True (the default), the function will wait for the bots to 
+        finish.
     kwargs (dict): Additional keyword arguments to pass on to 
         litellm.completion().
 
 
+        
     Returns: None (bot conversation logs are stored in database)
-    """
 
+    Notes:
+
+        -   When running local models via llama.cpp, if you would like 
+            botex to start the llama.cpp server for you, 
+            run `start_llamacpp_server()` to start up the server prior to
+            running `run_bots_on_session().
+
+    Example Usage:
+        # Running botex with the default model ("gpt-4o-2024-08-06")
+        run_bots_on_session(
+            session_id="your_session_id",
+            botex_db="path/to/botex.db",
+            api_key="your_openai_api_key",
+            # Other parameters if and as needed
+        )
+
+        # Using a specific model supported by LiteLLM
+        run_bots_on_session(
+            session_id="your_session_id",
+            botex_db="path/to/botex.db",
+            model="gemini/gemini-1.5-flash",
+            api_key="your_gemini_api_key",
+            # Other parameters if and as needed
+        )
+
+        # Using a local model with BotEx starting the llama.cpp server
+        llamacpp_config = {
+            "server_path": "/path/to/llama/server",
+            "local_llm_path": "/path/to/local/model",
+            # Additional configuration parameters if and as needed
+        }
+        process_id = start_llamacpp_server(llamacpp_config)
+        run_bots_on_session(
+            session_id="your_session_id",
+            botex_db="path/to/botex.db",
+            model="llamacpp",
+            # Other parameters if and as needed
+        )
+        stop_llamacpp_server(process_id)
+
+        # Using a local model with an already running llama.cpp server
+        # that uses an URL different from the default (if you are using
+        # the default http://localhost:8080", you can simply omit the
+        # `api_base` parameter)
+        run_bots_on_session(
+            session_id="your_session_id",
+            botex_db="path/to/botex.db",
+            model = "llamacpp",
+            api_base = http://yourserver:port"},
+            # Other parameters if and as needed
+        )
+
+    """
     if botex_db is None: botex_db = environ.get('BOTEX_DB')
-    if openai_api_key is None: openai_api_key = environ.get('OPENAI_API_KEY')
+    if api_key is None: api_key = environ.get('API_KEY')
+    if api_key is None: api_key = environ.get('OPENAI_API_KEY')
     if bot_urls is None: 
         bot_urls = get_bot_urls(session_id, botex_db, already_started)
-    if model == "local":
-        local_model_cfg = local_model_cfg or {}
-        local_llm = LocalLLM(local_model_cfg)
-        llm_server = local_llm.start_server()
-    else:
-        local_llm = None 
+    
     thread_kwargs = {
         'botex_db': botex_db, 'session_id': session_id, 
         'full_conv_history': full_conv_history, 
-        'model': model, 'openai_api_key': openai_api_key, 
-        'local_llm': local_llm, 'user_prompts': user_prompts,
+        'model': model, 'api_key': api_key,
+        'api_base': api_base,
+        'user_prompts': user_prompts,
         'throttle': throttle
     }
     thread_kwargs.update(kwargs)
@@ -364,19 +389,20 @@ def run_bots_on_session(
     for t in threads: t.start()
     if wait: 
         for t in threads: t.join()
-    
-    if local_llm and local_llm.start_llama_server:
-        assert llm_server, "Local LLM server not started, but should have been."
-        local_llm.stop_server(llm_server)
-
 
 def run_single_bot(
-    url, session_name = "unknown", session_id = "unknown", 
+    url,
+    session_name = "unknown",
+    session_id = "unknown", 
     participant_id = "unknown",
-    botex_db = None, full_conv_history = False,
-    model = "gpt-4o-2024-08-06", openai_api_key = None,
-    local_model_cfg: dict | None = None, user_prompts: dict | None = None,
-    throttle = False, **kwargs
+    botex_db = None,
+    model: str = "gpt-4o-2024-08-06",
+    api_key = None,
+    api_base: str | None = None,
+    throttle = False, 
+    full_conv_history = False,
+    user_prompts: dict | None = None,
+    **kwargs
 ):
     """
     Runs a single botex bot manually.
@@ -391,60 +417,90 @@ def run_single_bot(
         This will increase token use and only work with very short experiments.
         Default is False.
     model (str): The model to use for the bot. Default is "gpt-4o-2024-08-06"
-        from OpenAI. It needs to be a model that supports structured outputs.
-        For OpenAI, these are gpt-4o-mini-2024-07-18 and later or 
-        gpt-4o-2024-08-06 and later. See the READNE file in the package GitHub
-        repo for a list of commercial models that have been verified to pass
-        the package tests. If set to "local", you need to provide a 
-        configuration for the local model in local_model_cfg.
-    api_key (str): The API key for the OpenAI service. If None 
+        from OpenAI vie LiteLLM. It needs to be a model that supports structured 
+        outputs. For OpenAI, these are gpt-4o-mini-2024-07-18 and later or 
+        gpt-4o-2024-08-06 and later. If you use a commercial model, You need to
+        provide an API key in the parameter 'api_key' and be 
+        prepared to pay to use this model. If you want to use local models, 
+        we suggest that you use llama.cpp, In this case, set this string
+        to "lamacpp" and set the URL of your llama.cpp server in
+        'api_base'. If you want botex to start the llama.cpp server for you,
+        run 'start_llamacpp_sever()' prior to running
+        run_single_bot().
+    api_key (str): The API key for the model that you use. If None 
         (the default), it will be obtained from the environment variable 
         OPENAI_API_KEY. You can also use the depreciated parameter 
         `openai_api_key` instead.
-    local_model_cfg (dict): A dictionary containing the configuration for the 
-        local language model. The dictionary can contain any of the following keys:
-        
-        - start_llama_server (bool): Whether to start the llama cpp server, defaults to True. If False, the program will not start the server and will expect the server to be accessible under the URL provided by 'llama_server_url'.
-        - path_to_llama_server (str): The path to the llama cpp server executable.
-        - local_llm_path (str): The path to the local language model.
-        - llama_server_url (str): The base URL for the llama cpp server, defaults to "http://localhost:8080".
-        - context_length (int): The context length for the model, defaults to None. If None, the program will try to get the context length from the local model metadata, if that is not possible defaults to 4096.
-        - number_of_layers_to_offload_to_gpu (int): The number of layers to offload to the GPU, defaults to 0.
-        - temperature (float): The temperature for the model, defaults to 0.5.
-        - maximum_tokens_to_predict (int): The maximum number of tokens to predict, defaults to 10000.
-        - top_p (float): The top p value for the model, defaults to 0.9.
-        - top_k (int): The top k value for the model, defaults to 40.
-        - num_slots (int): The number of slots for the model, defaults to 1.
-    
-        For all the keys, if not provided, the program will try to get the value from environment variables (in all capital letters), if that is not possible, it will use the default value. if start_llama_server is set to True (default), then path_to_llama_server and local_llm_path need to be provided either in the dictionary or as environment variables.
+    api_base (str): The base URL for the llm server. Default is None not to
+        interfere with the default LiteLLM behavior. If you want to use a local 
+        model with llama.cpp and if you have not explicitly set this parameter, 
+        it will default to `http://localhost:8080`, the default url for the
+        llama.cpp server.
+    throttle (bool): Whether to slow down the bot's requests.
+        Slowing done the requests can help to avoid rate limiting. Default is 
+        False. The bot will switch to 'throttle=True' when LiteLLM is used and 
+        completion requests raise exceptions.
     user_prompts (dict): A dictionary of user prompts to override the default 
         prompts that the bot uses. The keys should be one or more of the 
         following: ['start', 'analyze_first_page_no_q', 'analyze_first_page_q', 
         'analyze_page_no_q', 'analyze_page_q', 'analyze_page_no_q_full_hist', 
         'analyze_page_q_full_hist', 'page_not_changed', 'system', 
-        'resp_too_long', 'json_error', 'end'.] If a key is not present in the 
-        dictionary, the default prompt will be used. If a key that is not in 
-        the default prompts is present in the dictionary, then the bot will 
-        exit with a warning and not running to make sure that the user 
-        is aware of the issue.
-    throttle (bool): Whether to slow down the bot's requests to the OpenAI API.
-        Slowing done the requests can help to avoid rate limiting. Default is 
-        False.
+        'system_full_hist', 'resp_too_long', 'json_error', 'end', 
+        'end_full_hist']. If a key is not present in the dictionary, the default 
+        prompt will be used. If a key that is not in the default prompts is 
+        present in the dictionary, then the bot will exit with a warning and 
+        not run to make sure that the user is aware of the issue.
     kwargs (dict): Additional keyword arguments to pass on to 
         litellm.completion().
     
     Returns: None (conversation is stored in the botex database)
-    """
-    if botex_db is None: botex_db = environ.get('BOTEX_DB')
-    if openai_api_key is None: openai_api_key = environ.get('OPENAI_API_KEY')
-    if model == "local":
-        local_model_cfg = local_model_cfg or {} 
-        local_llm = LocalLLM(local_model_cfg)
-        llm_server = local_llm.start_server()
-    else:
-        local_llm = None 
-    
 
+    Notes:
+
+    -   When running local models via llama.cpp, if you would like 
+        botex to start the llama.cpp server for you, 
+        run `start_llamacpp_server()` to start up the server prior to
+        running `run_bots_on_session().
+    
+    Example Usage:
+
+    # Using a model via LiteLLM
+    run_single_bot(
+        url="your_participant_url",
+        session_name="your_session_name",
+        session_id="your_session_id",
+        participant_id="your_participant_id",
+        botex_db="path/to/botex.db",
+        model="a LiteLLM model string, e.g. 'gemini/gemini-1.5-flash'",
+        api_key="the API key for your model provide",
+        # Other parameters if and as needed
+    )
+
+
+    # Using a local model with an already running llama.cpp server
+    # If you want botex to start the llama.cpp server, you need
+    # to run `start_llamacpp_server()` prior to running this.
+    run_single_bot(
+        url="your_participant_url",
+        session_name="your_session_name",
+        session_id="your_session_id",
+        participant_id="your_participant_id",
+        botex_db="path/to/botex.db",
+        model="llamacpp",
+        api_base="http://yourhost:port" # defaults to http://localhost:8080
+        # Other parameters if and as needed
+    )
+    """
+    if api_base is not None:
+        kwargs['api_base'] = api_base
+
+    if botex_db is None: botex_db = environ.get('BOTEX_DB')
+    if api_key is None and 'openai_api_key' in kwargs: 
+        api_key = kwargs['openai_api_key']
+    
+    if api_key is None: api_key = environ.get('API_KEY')
+    if api_key is None: api_key = environ.get('OPENAI_API_KEY')
+    kwargs['api_key'] = api_key
     is_human = 0
 
     conn = setup_botex_db(botex_db)
@@ -458,13 +514,13 @@ def run_single_bot(
     )
     conn.commit()
     cursor.close()
-    
     run_bot(
-        botex_db, session_id, url, full_conv_history,
-        model, openai_api_key, local_llm, user_prompts,
-        throttle, **kwargs
+        botex_db = botex_db, 
+        session_id = session_id, 
+        url = url, 
+        model = model, 
+        throttle = throttle, 
+        full_conv_history = full_conv_history,
+        user_prompts = user_prompts,
+        **kwargs
     )
-
-    if local_llm and local_llm.start_llama_server:
-        assert llm_server, "Local LLM server not started, but should have been."
-        local_llm.stop_server(llm_server)
