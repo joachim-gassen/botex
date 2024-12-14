@@ -165,6 +165,9 @@ def init_otree_session(
 
     if botex_db is None: botex_db = environ.get('BOTEX_DB')
     
+    if otree_server_url is None:
+        otree_server_url = environ.get('OTREE_SERVER_URL')
+    
     session_id = call_otree_api(
         requests.post, 'sessions', 
         otree_server_url=otree_server_url, otree_rest_key=otree_rest_key, 
