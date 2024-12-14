@@ -11,11 +11,11 @@ from dotenv import load_dotenv
 load_dotenv("secrets.env")
 
 @pytest.mark.dependency(name="api_key", depends=["secrets"], scope='session')
-def test_secret_contains_openai_key(model):
+def test_secret_contains_api_key(model):
     global api_key 
     api_key = None
     provider = get_model_provider(model)
-    if provider == "llamacpp" or provider == "ollama":
+    if provider == "llamacpp" or "ollama" in provider:
         assert True
         return
     if provider == "openai":
@@ -28,26 +28,33 @@ def test_secret_contains_openai_key(model):
 
 # run only if the model is llama.cpp
 @pytest.mark.dependency(
-        name="start_llama_cpp_server",
+        name="start_llamacpp_server",
         scope='session'
 )
-def test_can_botex_start_llama_cpp_server(model):
-    if not model in ["llama.cpp", "llamacpp"]:
-        pytest.skip("This test is only for llama.cpp")
-    assert os.path.exists(os.environ.get("PATH_TO_LLAMA_SERVER")), "You are testing if botex can start the llama server, therefore you need to provide the path to the llama server PATH_TO_LLAMA_SERVER."
-    assert os.path.exists(os.environ.get("LOCAL_LLM_PATH")), "You are testing if botex can start the llama server, therefore you need to provide the path to the local model in the environment variable LOCAL_LLM_PATH."
+def test_can_botex_start_llamacpp_server(model):
+    provider = get_model_provider(model)
+    if provider != "llamacpp":
+        assert True
+        return
+    assert os.path.exists(
+        os.environ.get("LLAMACPP_SERVER_PATH")), \
+    "You are testing if botex can start the llama.cpp server, therefore you "
+    "need to provide the path to the llama server LLAMACPP_SERVER_PATH."
     
-    process = botex.start_llama_cpp_server({
-        "llama_server_url": "http://localhost:8081"
-    })
-
-    botex.stop_llama_cpp_server(process)
+    assert os.path.exists(os.environ.get("LLAMACPP_LOCAL_LLM_PATH")), \
+    "You are testing if botex can start the llama.cpp server, therefore you "
+    "need to provide the path to the local model in the environment variable "
+    "LLAMACPP_LOCAL_LLM_PATH."
+    
+    global llamacpp_server_process_id
+    llamacpp_server_process_id = botex.start_llamacpp_server()
     assert True
+
 
 
 @pytest.mark.dependency(
     name="run_bots", scope='session',
-    depends=["participants_db", "api_key"]
+    depends=["participants_db", "api_key", "start_llamacpp_server"]
 )
 def test_can_survey_be_completed_by_bots(model):
     otree_proc = start_otree()
@@ -95,6 +102,18 @@ def test_can_survey_be_completed_by_bots_full_hist(model):
     assert True
 
 @pytest.mark.dependency(
+    name="stop_llamacpp_server", scope='session',
+    depends=["run_bots"]
+)
+def test_can_botex_stop_llamacpp_server(model):
+    provider = get_model_provider(model)
+    if provider != "llamacpp":
+        assert True
+        return
+    botex.stop_llamacpp_server(llamacpp_server_process_id)
+    assert True
+
+@pytest.mark.dependency(
     name="conversations_db", scope='session',
     depends=["run_bots"]
 )
@@ -124,4 +143,3 @@ def test_is_open_ai_key_purged_from_db(model):
 )
 def test_conversation_complete(model):
     check_conversation_and_export_answers(model, botex_session['session_id'])
-

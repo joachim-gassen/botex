@@ -71,7 +71,7 @@ def init_otree_test_session(botex_db = "tests/botex.db"):
     return botex_session
  
 def get_model_provider(model):
-    if "llama.cpp" in model:
+    if "llamacpp" in model:
         return "llamacpp"
     if '/' in model:
         return model.split('/')[0]

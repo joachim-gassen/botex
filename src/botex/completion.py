@@ -1,5 +1,3 @@
-from .local_llm import LocalLLM
-
 import litellm
 import instructor
 from instructor.exceptions import InstructorRetryException
@@ -7,11 +5,10 @@ from instructor.exceptions import InstructorRetryException
 import logging
 from random import random
 import time
-from types import SimpleNamespace
 
 instructor_client = instructor.from_litellm(litellm.completion)
 
-def does_model_support_response_schema(
+def model_supports_response_schema(
         model: str, custom_llm_provider: str = None
     ) -> bool:
     """
@@ -24,6 +21,7 @@ def does_model_support_response_schema(
     Returns:
         bool: True if the model supports response schema, False otherwise.
     """
+    if model == "llamacpp": return True 
     if custom_llm_provider is None or not custom_llm_provider:
         if "/" not in model:
             custom_llm_provider = "openai"
@@ -76,7 +74,7 @@ def instructor_completion(**kwargs):
 
 def litellm_completion(**kwargs):
     """
-    Wrapper function for litellm completion.
+    Wrapper function for LiteLLM completion.
 
     Args:
         **kwargs: The keyword arguments.
@@ -112,10 +110,10 @@ def llamacpp_completion(**kwargs):
         dict: The response JSON string and finish reason.
     """
 
-    local_llm = kwargs.get("local_llm")
+    llamacpp = kwargs.get("llamacpp")
     messages = kwargs.get("messages")
     response_format = kwargs.get("response_format")
-    resp_llamacpp = local_llm.completion(messages, response_format)
+    resp_llamacpp = llamacpp.completion(messages, response_format)
     resp = {
         'resp_str': resp_llamacpp.choices[0].message.content,
         'finish_reason': resp_llamacpp.choices[0].finish_reason
@@ -176,18 +174,13 @@ def instructor_completion_with_backoff(**kwargs):
 def completion(**kwargs):
     model = kwargs.get("model")
 
-    if model.startswith("llama.cpp"):
-        kwargs.pop("throttle", None)
-        return llamacpp_completion(**kwargs)
-        # raise "llama.cpp not implemented yet"
-    
-    if model == "local":
+    if model == "llamacpp":
         kwargs.pop("throttle", None)
         return llamacpp_completion(**kwargs)
     
-    kwargs.pop("local_llm", None)
+    kwargs.pop("llamacpp", None)
     
-    if does_model_support_response_schema(model):
+    if model_supports_response_schema(model):
         if kwargs.get("throttle"):
             return litellm_completion_with_backoff(
                 num_retries = 0, max_retries = 0, **kwargs

@@ -20,9 +20,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
-from .local_llm import LocalLLM
+from .llamacpp import LlamaCpp
 from .schemas import create_answers_response_model, EndSchema, Phase, StartSchema, SummarySchema
-from .completion import does_model_support_response_schema, completion
+from .completion import model_supports_response_schema, completion
 
 logging.getLogger("LiteLLM").setLevel(logging.ERROR)
 
@@ -30,71 +30,65 @@ MAX_NUM_OF_ANSWER_ATTEMPTS = 3
 MAX_NUM_OF_SCRAPE_ATTEMPTS = 5
 MAX_NUM_OF_ATTEMPTS_TO_START_CHROME = 5
 
+def create_prompts(user_prompts):
+    with open(
+        files('botex').joinpath('bot_prompts.csv'), 
+        'r', newline='', encoding='utf-8'
+    ) as f:
+        rv = csv.reader(f)
+        next(rv)
+        prompts = {row[0]:row[1].replace(r'\n', '\n') for row in rv}
+    
+    if user_prompts:
+        for key in user_prompts:
+            if key not in prompts.keys():
+                logging.error(f"The bot is exiting because the user prompt that you provided has a key: '{key}' that is not expected by the bot. Please make sure that any default prompts that you want to override are given with the exact same key as the default prompt.")
+                return
+            else:
+                prompts[key] = user_prompts[key]
+    return prompts
 
-def run_bot(
-        botex_db, session_id, url, full_conv_history = False,
-        model: str = "gpt-4o-2024-08-06", openai_api_key = None,
-        user_prompts: dict | None = None,
-        throttle = False, **kwargs
-    ):
+def run_bot(**kwargs):
     """
     Run a bot on an oTree session. You should not call this function
-    directly, but only through the run_single_bot or run_bots_on_session 
-    functions.
+    directly, but only through the `run_single_bot()` or 
+    `run_bots_on_session()` functions.
 
     Parameters:
-    botex_db (str): The name of the SQLite database file to store BotEx data.
-    session_id (str): The ID of the oTree session.
-    url (str): The participant URL of the bot instance.
-    full_conv_history (bool): Whether to keep the full conversation history.
-        This will increase token use and only work with very short experiments.
-        Default is False.
-    model (str): The model to use for the bot. Default is "gpt-4o-2024-08-06"
-        from OpenAI. It needs to be a model that supports structured outputs.
-        For OpenAI, these are gpt-4o-mini-2024-07-18 and later or 
-        gpt-4o-2024-08-06 and later. You will need an OpenAI key and be 
-        prepared to pay to use this model. If you want to use local models, with llama.cpp, set this parameter to `llama.cpp` and start your llama.cpp server.
-    api_key (str): The API key for the model. If None 
-        (the default), it will be obtained from the environment variable 
-        OPENAI_API_KEY. You can also use the depreciated parameter 
-        `openai_api_key` instead.
-    user_prompts (dict): A dictionary of user prompts to override the default 
-        prompts that the bot uses. The keys should be one or more of the 
-        following: ['start', 'analyze_first_page_no_q', 'analyze_first_page_q', 
-        'analyze_page_no_q', 'analyze_page_q', 'analyze_page_no_q_full_hist', 
-        'analyze_page_q_full_hist', 'page_not_changed', 'system', 
-        'resp_too_long', 'json_error', 'end'.] If a key is not present in the 
-        dictionary, the default prompt will be used. If a key that is not in 
-        the default prompts is present in the dictionary, then the bot will 
-        exit with a warning and not running to make sure that the user is aware 
-        of the issue.
-    throttle (bool): Whether to slow down the bot's requests to the OpenAI API.
-        Slowing done the requests can help to avoid rate limiting. Default is 
-        False.
-    kwargs (dict): Additional keyword arguments to pass to litellm.completion().
+    kwargs (dict): Additional keyword arguments as provided by 
+    `run_single_bot()` or `run_bots_on_session()`.
 
     Returns: None (conversation is stored in the botex database)
-
-    Notes:
-        - This function should not be called directly in most cases. Use `run_single_bot` or `run_bots_on_session` instead.
     """
     bot_parms = dict(locals(), **kwargs)
     bot_parms.pop('kwargs')
-    if model in ["llama.cpp", "llamacpp"]:
-        local_llm = LocalLLM(kwargs.get("api_base"))
-        bot_parms['model'] = local_llm.json_dump_model_cfg()
-    else:
-        local_llm = None
 
-    if bot_parms['openai_api_key'] is not None: 
-        bot_parms["openai_api_key"] = "******"       
-    if 'api_key' in bot_parms: 
-        if bot_parms['api_key'] is not None: bot_parms["api_key"] = "******"       
+    # The upstream functions will ensure that the following required parameters 
+    # are always present in kwargs.
+    botex_db = kwargs.pop('botex_db')
+    session_id = kwargs.pop('session_id')
+    url = kwargs.pop('url')
+    model = kwargs.pop('model')
+    full_conv_history = kwargs.pop('full_conv_history')
+    user_prompts = kwargs.pop('user_prompts')
+    prompts = create_prompts(user_prompts)
+
+    if model == "llamacpp":
+        llamacpp = LlamaCpp(kwargs.get("api_base"))
+        bot_parms['model'] = llamacpp.json_dump_model_cfg()
+    else:
+        llamacpp = None
+
+    if bot_parms['api_key'] is not None: 
+        bot_parms['api_key'] = "******"       
+    if 'openai_api_key' in bot_parms: 
+        if bot_parms['openai_api_key'] is not None: 
+            bot_parms['openai_api_key'] = "******"       
     bot_parms = json.dumps(bot_parms)
     logging.info(f"Running bot with parameters: {bot_parms}")
-    if not local_llm and not does_model_support_response_schema(model):
+    if not model_supports_response_schema(model):
         logging.warning(
-            f"litellm reports that model '{model}' does not support " +
+            f"LiteLLM reports that model '{model}' does not support " +
             "response schema. Will try to use the 'instructor' package " +
             "for response validation. This is alpha and likely to fail."
         )
@@ -187,7 +181,7 @@ def run_bot(
         # We use a different element attribute now (see below)
         # But I leave the old code in case that the new approach
         # is not robust. 
-#       # labels = dr.find_elements(By.CLASS_NAME, "col-form-label")
+        # labels = dr.find_elements(By.CLASS_NAME, "col-form-label")
         lc = 0
         for i in range(len(fe)): 
             el = fe[i].find_elements(By.XPATH, ".//*")
@@ -236,7 +230,8 @@ def run_bot(
         )
     
     def llm_send_message(
-            message, phase: Phase, check_response = None, model = model, questions = None
+            message, phase: Phase, check_response = None, model = model, 
+            questions = None
         ):
         conversation = []
         nonlocal conv_hist_botex_db
@@ -278,16 +273,12 @@ def run_bot(
                 logging.info(
                     f"Sending the following conversation to the llm to fix error:\n{json.dumps(conversation, indent=4)}"
                 )
-            if isinstance(model, LocalLLM):
-                assert conversation, "Conversation is empty."
-            else:
-                if 'api_key' not in kwargs: kwargs['api_key'] = openai_api_key
             
             resp = completion(
-                local_llm=local_llm, model=model,
+                llamacpp=llamacpp, model=model,
                 messages=[system_prompt] + conversation, 
                 response_format=response_format,
-                throttle=throttle, **kwargs
+                **kwargs
             )
             resp_str = resp['resp_str']
 
@@ -451,24 +442,6 @@ def run_bot(
     cursor.close()
     conn.close()
 
-
-    with open(
-            files('botex').joinpath('bot_prompts.csv'), 
-            'r', newline='', encoding='utf-8'
-        ) as f:
-        rv = csv.reader(f)
-        next(rv)
-        prompts = {row[0]:row[1].replace(r'\n', '\n') for row in rv}
-    
-
-    if user_prompts:
-        for key in user_prompts:
-            if key not in prompts.keys():
-                logging.error(f"The bot is exiting because the user prompt that you provided has a key: '{key}' that is not expected by the bot. Please make sure that any default prompts that you want to override are given with the exact same key as the default prompt.")
-                return
-            else:
-                prompts[key] = user_prompts[key]
-    
     if full_conv_history:
         system_prompt = {
             "role": "system",
