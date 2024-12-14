@@ -234,7 +234,7 @@ If you want to take a deep-dive into botex and contribute to its development you
 4. Activate it `source .venv/bin/activate`
 5. Install the necessary packages `pip install -r requirements.txt`
 6. Install the botex package locally and editable `pip install -e .`
-7. Run the tests with `pytest`. By dfault it runs test using the default OpenAI model and the a llama.cpp model. For both models, you need to make sure that you provide the necessary configuration in `secrets.env`
+7. Run the tests with `pytest`. By default it runs tests using the default OpenAI model and the llama.cpp model. For both models, you need to make sure that you provide the necessary configuration in `secrets.env`
 8. If you want to test other models, you can pass the model name as an argument to pytest, e.g., `pytest --model gemini/gemini-1.5-flash`. You can provide multiple models if you like, e.g., `pytest --model gemini/gemini-1.5-flash llamacpp`.
 
 If it works you should see a test output similar to this one:
