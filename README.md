@@ -184,41 +184,29 @@ If you want to use a local LLM instead of commercial APIs via the litellm interf
 
 #### Precompiled Binaries
 
-Download the appropriate binary for your system from the [llama.cpp releases page](https://github.com/ggerganov/llama.cpp/releases):
-
-- **MacOS**:
-  - `llama-b4324-bin-macos-arm64.zip`
-  - `llama-b4324-bin-macos-x64.zip`
-- **Linux**:
-  - `llama-b4324-bin-ubuntu-x64.zip`
-- **Windows**:
-  - `llama-b4324-bin-win-cu12.4-x64.zip` (CUDA 12.4 support)
-  - `llama-b4324-bin-win-avx2-x64.zip` (AVX2 support)
-  - Other variants for AVX, AVX512, OpenBLAS, Vulkan, and more.
-
-Refer to the release page to identify the binary suitable for your hardware and system.
+Download the appropriate binary for your system from the [llama.cpp releases page](https://github.com/ggerganov/llama.cpp/releases). Refer to the release page to identify the binary suitable for your hardware and system.
 
 ### Running llama-server
 
 After downloading and extracting the llama.cpp binary, you can start the llama-server with the desired LLM model from huggingface with the following command:
 
 ```bash
-llama-server --model-url https://huggingface.co/bartowski/Meta-Llama-3.1-8B-Instruct-GGUF/resolve/main/Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf\?download\=true -c /the/context/length/you/want/to/use -n /the/maximum/number/of/tokens/you/want/to/generate/at/a/time
+llama-server --model-url https://huggingface.co/bartowski/Meta-Llama-3.1-8B-Instruct-GGUF/resolve/main/Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf\?download\=true -c context length you want to use -n maximum number of tokens you want to generate at a time
 
 # Additional options:
-# -ngl /number/of/layers/to/offload/to/gpu (if you have a GPU with a good amount of memory you should try to offload as many layers as possible)
+# -ngl number of layers to offload to gpu (if you have a GPU with a good amount of memory you should try to offload as many layers as possible)
 # -fa if you want to enable flash attention (recommended for performance)
 ```
 
 ### Running botex with a Local LLM
 
-Then all that you need to do is to adjust the botex calls from above by choosing `llama.cpp` as a model.
+Then all that you need to do is to adjust the botex calls from above by choosing `llamacpp` as a model.
 
 ```python
 botex.run_bots_on_session(
     session_id = sdict['session_id'],  
     botex_db = "same path that you used for initializing the session", 
-    model = "llama.cpp",
+    model = "llamacpp",
 )
 ```
 
