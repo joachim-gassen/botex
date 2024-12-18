@@ -30,6 +30,8 @@ MAX_NUM_OF_ANSWER_ATTEMPTS = 3
 MAX_NUM_OF_SCRAPE_ATTEMPTS = 5
 MAX_NUM_OF_ATTEMPTS_TO_START_CHROME = 5
 
+TEST_FORM_VALIDATION_ERRORS = False
+
 def create_prompts(user_prompts):
     with open(
         files('botex').joinpath('bot_prompts.csv'), 
@@ -93,12 +95,25 @@ def run_bot(**kwargs):
             "for response validation. This is alpha and likely to fail."
         )
 
-    def click_on_element(dr, element, timeout = 3600):
+    def click_on_element(dr, element, timeout = 3600, check_errors = False):
         dr.execute_script("arguments[0].scrollIntoView(true)", element)
         element = WebDriverWait(dr, timeout).until(
             EC.element_to_be_clickable(element)
         )
         dr.execute_script("arguments[0].click()", element)
+        if not check_errors: return 
+        # Find all field validation errors
+        validation_errors = {}
+        errors = dr.find_elements(By.CSS_SELECTOR, "input:invalid")
+        for e in errors:
+            if e.get_attribute("validationMessage"): 
+                # Is there any way to also get the value entered by the user?
+                # e.get_attribute("value") returns an empty string.
+                validation_errors[e.get_attribute("id")] = {
+                    "label": e.accessible_name,
+                    "error": e.get_attribute("validationMessage")
+                }
+        return validation_errors
 
     def set_id_value(dr, id, type, value, timeout = 3600):
         if type == "button-radio":
@@ -486,6 +501,8 @@ def run_bot(**kwargs):
     summary = None
     text = ""
     answer_attempts = 0
+    validation_errors = {}
+    if TEST_FORM_VALIDATION_ERRORS: first_try = True
     while True:
         old_text = text
         attempts = 0
@@ -544,7 +561,6 @@ def run_bot(**kwargs):
                 )
         
         if old_text == text:
-            logging.warning("Bot's answers were likely erroneous. Trying again.")
             if answer_attempts > MAX_NUM_OF_ANSWER_ATTEMPTS:
                 logging.error(
                     f"Bot could not provide valid answers after {MAX_NUM_OF_ANSWER_ATTEMPTS} attempts. Stopping."
@@ -553,14 +569,30 @@ def run_bot(**kwargs):
                 return
             answer_attempts += 1
             if questions == None:
-                logging.warning("""
-                    This should only happen with pages containing questions.
-                    Most likely something is seriously wrong here.
-                """)
-            message = prompts['page_not_changed'] + message
-            
+                logging.warning(
+                    "Same page encountered twice. "
+                    "This should only happen with pages containing questions. "
+                    "Most likely something is seriously wrong here."
+                )
+                message = prompts['page_not_changed_no_vm'] + message
+            else:
+                if validation_errors:
+                    logging.info("Informing bot about validation errors.")
+                    message = prompts['page_not_changed_vm'].format(
+                        validation_errors_json = json.dumps(validation_errors)
+                    ) + message
+                    validation_errors = {}
+                else: 
+                    logging.warning(
+                        "Bot's answers were likely erroneous, but no validation "
+                        "errors were found. This should not happen."
+                        "Most likely something is seriously wrong here."
+                    )
+                    message = prompts['page_not_changed_no_vm'] + message
+
         resp = llm_send_message(
-            message, Phase.middle, check_response, questions=questions)
+            message, Phase.middle, check_response, questions=questions
+        )
         if resp == 'Maximum number of attempts reached.':
             gracefully_exit_failed_bot("middle")
             return
@@ -603,9 +635,26 @@ def run_bot(**kwargs):
                 answer = floats[0]
             if qtype == 'radio' and isinstance(answer, bool):
                 answer = 'Yes' if answer else 'No'
+            
+            if TEST_FORM_VALIDATION_ERRORS and id_ == 'id_integer_field': 
+                if first_try:
+                    logging.info(
+                        f"Answering question {id_} with 'blue' instead of {answer} "
+                        "to test form validation errors."
+                    )
+                    answer = "blue"
+                    first_try = False
             set_id_value(dr, id_, qtype, answer)
 
-        if qtype is not None and next_button: click_on_element(dr, next_button)
+        if qtype is not None and next_button: 
+            validation_errors = click_on_element(
+                dr, next_button, check_errors=True
+            )
+            if validation_errors:
+                logging.warning(
+                    f"oTree returned validation errors: {validation_errors}"
+                )
+         
     
     dr.close()
     dr.quit()

@@ -80,7 +80,7 @@ def test_can_survey_be_completed_by_bots(model):
 )
 def test_can_survey_be_completed_by_bots_full_hist(model):
     provider = get_model_provider(model)
-    # Ollama chokes on full history
+    # Ollama chokes on full history "ollama_chat" seems to work, though
     if provider == "ollama":
         return
     global botex_session
@@ -143,3 +143,11 @@ def test_is_open_ai_key_purged_from_db(model):
 )
 def test_conversation_complete(model):
     check_conversation_and_export_answers(model, botex_session['session_id'])
+
+# To ease debugging, source this file
+if __name__ == "__main__":
+    import logging
+    logging.basicConfig(level=logging.INFO)
+    model="gemini/gemini-1.5-flash"
+    test_secret_contains_api_key(model)
+    test_can_survey_be_completed_by_bots(model)
