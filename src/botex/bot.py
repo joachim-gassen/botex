@@ -96,6 +96,7 @@ def run_bot(**kwargs):
         )
 
     def click_on_element(dr, element, timeout = 3600, check_errors = False):
+        old_page_source = dr.page_source
         dr.execute_script("arguments[0].scrollIntoView(true)", element)
         element = WebDriverWait(dr, timeout).until(
             EC.element_to_be_clickable(element)
@@ -105,17 +106,19 @@ def run_bot(**kwargs):
         # Find all field validation errors 
         validation_errors = {}
         errors = dr.find_elements(By.CSS_SELECTOR, "input:invalid")
-        try:
-            still_there = dr.find_element(By.ID, element.id)
-        except:
-            # We are on the next page - no validation errors
-            return validation_errors
+        if len(errors) == 0: return validation_errors
         for e in errors:
             if e.get_attribute("validationMessage"): 
                 validation_errors[e.get_attribute("id")] = {
                     "label": e.accessible_name,
                     "validation_message": e.get_attribute("validationMessage")
                 }
+        if len(validation_errors) == 0: return validation_errors
+        url = dr.current_url
+        dr.get(url)
+        if not (dr.page_source == old_page_source):
+            # We are on the next page - no validation errors
+            return {}
         return validation_errors
 
     def set_id_value(dr, id, type, value, timeout = 3600):
