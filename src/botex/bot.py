@@ -107,11 +107,9 @@ def run_bot(**kwargs):
         errors = dr.find_elements(By.CSS_SELECTOR, "input:invalid")
         for e in errors:
             if e.get_attribute("validationMessage"): 
-                # Is there any way to also get the value entered by the user?
-                # e.get_attribute("value") returns an empty string.
                 validation_errors[e.get_attribute("id")] = {
                     "label": e.accessible_name,
-                    "error": e.get_attribute("validationMessage")
+                    "validation_message": e.get_attribute("validationMessage")
                 }
         return validation_errors
 
@@ -643,6 +641,7 @@ def run_bot(**kwargs):
                         "to test form validation errors."
                     )
                     answer = "blue"
+                    resp['answers'][id_]['answer'] = answer
                     first_try = False
             set_id_value(dr, id_, qtype, answer)
 
@@ -651,6 +650,8 @@ def run_bot(**kwargs):
                 dr, next_button, check_errors=True
             )
             if validation_errors:
+                for id_, v in validation_errors.items():
+                    validation_errors[id_]["invalid_answer"] = resp['answers'][id_]['answer']
                 logging.warning(
                     f"oTree returned validation errors: {validation_errors}"
                 )
