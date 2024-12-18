@@ -102,9 +102,14 @@ def run_bot(**kwargs):
         )
         dr.execute_script("arguments[0].click()", element)
         if not check_errors: return 
-        # Find all field validation errors
+        # Find all field validation errors 
         validation_errors = {}
         errors = dr.find_elements(By.CSS_SELECTOR, "input:invalid")
+        try:
+            still_there = dr.find_element(By.ID, element.id)
+        except:
+            # We are on the next page - no validation errors
+            return validation_errors
         for e in errors:
             if e.get_attribute("validationMessage"): 
                 validation_errors[e.get_attribute("id")] = {
@@ -650,11 +655,19 @@ def run_bot(**kwargs):
                 dr, next_button, check_errors=True
             )
             if validation_errors:
-                for id_, v in validation_errors.items():
-                    validation_errors[id_]["invalid_answer"] = resp['answers'][id_]['answer']
-                logging.warning(
-                    f"oTree returned validation errors: {validation_errors}"
-                )
+                if not set(validation_errors.keys()).issubset(resp['answers'].keys()):
+                    logging.warn(
+                        "The validation errors returned by oTree do not match the questions. "
+                        "This should not happen. "
+                        "Most likely something is seriously wrong here."
+                    )
+                    validation_errors = {}
+                else:
+                    for id_, v in validation_errors.items():
+                        validation_errors[id_]["invalid_answer"] = resp['answers'][id_]['answer']
+                    logging.warning(
+                        f"oTree returned validation errors: {validation_errors}"
+                    )
          
     
     dr.close()
