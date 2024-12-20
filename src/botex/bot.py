@@ -84,9 +84,6 @@ def run_bot(**kwargs):
 
     if bot_parms['api_key'] is not None: 
         bot_parms['api_key'] = "******"       
-    if 'openai_api_key' in bot_parms: 
-        if bot_parms['openai_api_key'] is not None: 
-            bot_parms['openai_api_key'] = "******"       
     bot_parms = json.dumps(bot_parms)
     logger.info(f"Running bot with parameters: {bot_parms}")
     if not model_supports_response_schema(model):

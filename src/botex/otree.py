@@ -278,9 +278,8 @@ def run_bots_on_session(
         run 'start_llamacpp_sever()' prior to running
         run_bots_on_session().
     api_key (str): The API key for the model that you use. If None 
-        (the default), it will be obtained from the environment variable 
-        OPENAI_API_KEY. You can also use the depreciated parameter 
-        `openai_api_key` instead.
+        (the default), it will be obtained from environment variables 
+        by liteLLM (e.g., OPENAI_API_KEY or GEMINI_API_KEY). 
     api_base (str): The base URL for the llm server. Default is None not to
         interfere with the default LiteLLM behavior. If you want to use a local 
         model with llama.cpp and if you have not explicitly set this parameter, 
@@ -310,10 +309,9 @@ def run_bots_on_session(
         finish.
     kwargs (dict): Additional keyword arguments to pass on to 
         litellm.completion().
-
-
         
-    Returns: None (bot conversation logs are stored in database)
+    Returns: None (bot conversation logs are stored in database) if wait is True.
+        A list of Threads running the bots if wait is False.
 
     Notes:
 
@@ -369,8 +367,8 @@ def run_bots_on_session(
 
     """
     if botex_db is None: botex_db = environ.get('BOTEX_DB')
-    if api_key is None: api_key = environ.get('API_KEY')
-    if api_key is None: api_key = environ.get('OPENAI_API_KEY')
+    if api_key is None and 'openai_api_key' in kwargs: 
+        api_key = kwargs.pop('openai_api_key')
     if bot_urls is None: 
         bot_urls = get_bot_urls(session_id, botex_db, already_started)
     
@@ -392,6 +390,8 @@ def run_bots_on_session(
     for t in threads: t.start()
     if wait: 
         for t in threads: t.join()
+    else:
+        return threads
 
 def run_single_bot(
     url,
@@ -405,6 +405,7 @@ def run_single_bot(
     throttle = False, 
     full_conv_history = False,
     user_prompts: dict | None = None,
+    wait = True,
     **kwargs
 ):
     """
@@ -431,9 +432,8 @@ def run_single_bot(
         run 'start_llamacpp_sever()' prior to running
         run_single_bot().
     api_key (str): The API key for the model that you use. If None 
-        (the default), it will be obtained from the environment variable 
-        OPENAI_API_KEY. You can also use the depreciated parameter 
-        `openai_api_key` instead.
+        (the default), it will be obtained from environment variables 
+        by liteLLM (e.g., OPENAI_API_KEY or GEMINI_API_KEY). 
     api_base (str): The base URL for the llm server. Default is None not to
         interfere with the default LiteLLM behavior. If you want to use a local 
         model with llama.cpp and if you have not explicitly set this parameter, 
@@ -453,10 +453,13 @@ def run_single_bot(
         prompt will be used. If a key that is not in the default prompts is 
         present in the dictionary, then the bot will exit with a warning and 
         not run to make sure that the user is aware of the issue.
+    wait (bool): If True (the default), the function will wait for the bots to 
+        finish.
     kwargs (dict): Additional keyword arguments to pass on to 
         litellm.completion().
     
-    Returns: None (conversation is stored in the botex database)
+    Returns: None (conversation is stored in the botex database) if wait is True.
+        The Thread running the bot if wait is False.
 
     Notes:
 
@@ -499,10 +502,8 @@ def run_single_bot(
 
     if botex_db is None: botex_db = environ.get('BOTEX_DB')
     if api_key is None and 'openai_api_key' in kwargs: 
-        api_key = kwargs['openai_api_key']
+        api_key = kwargs.pop('openai_api_key')
     
-    if api_key is None: api_key = environ.get('API_KEY')
-    if api_key is None: api_key = environ.get('OPENAI_API_KEY')
     kwargs['api_key'] = api_key
     is_human = 0
 
@@ -517,13 +518,28 @@ def run_single_bot(
     )
     conn.commit()
     cursor.close()
-    run_bot(
-        botex_db = botex_db, 
-        session_id = session_id, 
-        url = url, 
-        model = model, 
-        throttle = throttle, 
-        full_conv_history = full_conv_history,
-        user_prompts = user_prompts,
-        **kwargs
-    )
+    if wait:
+        run_bot(
+            botex_db = botex_db, 
+            session_id = session_id, 
+            url = url, 
+            model = model, 
+            throttle = throttle, 
+            full_conv_history = full_conv_history,
+            user_prompts = user_prompts,
+            **kwargs
+        )
+    else:
+        return Thread(
+            target = run_bot, 
+            kwargs = dict(
+                botex_db = botex_db, 
+                session_id = session_id, 
+                url = url, 
+                model = model, 
+                throttle = throttle, 
+                full_conv_history = full_conv_history,
+                user_prompts = user_prompts,
+                **kwargs
+            )
+        )
