@@ -1,0 +1,12 @@
+site_name: botex
+nav:
+    - Home: index.md
+    - Getting Started: getting_started.md
+    - API Reference: reference.md
+theme:
+    name: material
+
+plugins:
+    - search
+    - mkdocstrings
+
