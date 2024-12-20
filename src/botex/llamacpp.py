@@ -13,6 +13,8 @@ from pydantic import BaseModel, Field, model_validator, ValidationError
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import List, Optional
 
+logger = logging.getLogger("botex")
+
 class Message(BaseModel):
     role: str
     content: str
@@ -139,7 +141,7 @@ class LlamaCppServerManager:
             "-fa",
         ]
 
-        logging.info(
+        logger.info(
             f"Starting llama.cpp server '{self.config.server_path} "
             f"with model '{self.config.local_llm_path}' "
             f"listening to {self.config.server_url}... "
@@ -156,7 +158,7 @@ class LlamaCppServerManager:
                 "Failed to start llama.cpp server. Check the logs for details."
             )
 
-        logging.info(
+        logger.info(
             "llama.cpp server started successfully. "
             "Logging output to llama_cpp_server.log"
         )
@@ -166,15 +168,15 @@ class LlamaCppServerManager:
     @staticmethod
     def stop_server(process=None):
         if process:
-            logging.info("Stopping llama.cpp server...")
+            logger.info("Stopping llama.cpp server...")
             parent = psutil.Process(process.pid)
             for child in parent.children(recursive=True):
                 child.terminate()
             parent.terminate()
             process.wait()
-            logging.info("llama.cpp server stopped.")
+            logger.info("llama.cpp server stopped.")
         else:
-            logging.warning("No running llama.cpp server found to stop.")
+            logger.warning("No running llama.cpp server found to stop.")
 
     @staticmethod
     def terminate_process(process=None):
@@ -272,7 +274,7 @@ class LlamaCpp:
                 return ChatCompletionResponse(**response.json())
             except requests.RequestException as e:
                 attempts += 1
-                logging.error(
+                logger.error(
                     f"Error getting a response: {e}. Retrying... ({attempts}/3)"
                 )
                 if attempts == 3:

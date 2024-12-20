@@ -148,6 +148,7 @@ def test_conversation_complete(model):
 if __name__ == "__main__":
     import logging
     logging.basicConfig(level=logging.INFO)
-    model="gemini/gemini-1.5-flash"
+#    model="gemini/gemini-1.5-flash"
+    model="gpt-4o-2024-08-06"
     test_secret_contains_api_key(model)
     test_can_survey_be_completed_by_bots(model)

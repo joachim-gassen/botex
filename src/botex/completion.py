@@ -6,6 +6,8 @@ import logging
 from random import random
 import time
 
+logger = logging.getLogger("botex")
+
 instructor_client = instructor.from_litellm(litellm.completion)
 
 def model_supports_response_schema(
@@ -62,9 +64,9 @@ def instructor_completion(**kwargs):
             **kwargs
         )
     except InstructorRetryException as e:
-        logging.warning(f"Instructor Retry Exception after {e.n_attempts} attempts")
-        logging.warning(f"Last completion: {e.last_completion}")
-        logging.warning(f"Error: {e.messages[-1]["content"]}")
+        logger.warning(f"Instructor Retry Exception after {e.n_attempts} attempts")
+        logger.warning(f"Last completion: {e.last_completion}")
+        logger.warning(f"Error: {e.messages[-1]["content"]}")
         raise(e)
     resp = {
         'resp_str': resp_instructor.model_dump_json(),
@@ -86,8 +88,8 @@ def litellm_completion(**kwargs):
         try:
             resp_litellm = litellm.completion(**kwargs)
         except Exception as e:
-            logging.warning(f"Litellm completion failed, error: '{e}'")
-            logging.info("Retrying with throttling.")
+            logger.warning(f"Litellm completion failed, error: '{e}'")
+            logger.info("Retrying with throttling.")
             kwargs["throttle"] = True
             return litellm_completion_with_backoff(**kwargs)
     else:
@@ -140,7 +142,7 @@ def retry_with_exponential_backoff(
                     (wait_before_request_max-wait_before_request_min) *\
                     random()
                 if wait_before > 0 and num_retries == 0:
-                    logging.info(
+                    logger.info(
                         f"Throttling: Waiting for {wait_before:.1f} " + 
                         "seconds before sending completion request."
                     )
@@ -155,7 +157,7 @@ def retry_with_exponential_backoff(
                         f"({max_retries}) exceeded."
                     )
                 delay *= exponential_base * (1 + jitter * random())
-                logging.info(
+                logger.info(
                     f"Throttling: Request error: '{e}'. "+ 
                     f"Retrying in {delay:.2f} seconds."
                 )

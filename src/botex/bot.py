@@ -24,6 +24,7 @@ from .llamacpp import LlamaCpp
 from .schemas import create_answers_response_model, EndSchema, Phase, StartSchema, SummarySchema
 from .completion import model_supports_response_schema, completion
 
+logger = logging.getLogger("botex")
 logging.getLogger("LiteLLM").setLevel(logging.ERROR)
 
 MAX_NUM_OF_ANSWER_ATTEMPTS = 3
@@ -44,7 +45,7 @@ def create_prompts(user_prompts):
     if user_prompts:
         for key in user_prompts:
             if key not in prompts.keys():
-                logging.error(f"The bot is exiting because the user prompt that you provided has a key: '{key}' that is not expected by the bot. Please make sure that any default prompts that you want to override are given with the exact same key as the default prompt.")
+                logger.error(f"The bot is exiting because the user prompt that you provided has a key: '{key}' that is not expected by the bot. Please make sure that any default prompts that you want to override are given with the exact same key as the default prompt.")
                 return
             else:
                 prompts[key] = user_prompts[key]
@@ -87,9 +88,9 @@ def run_bot(**kwargs):
         if bot_parms['openai_api_key'] is not None: 
             bot_parms['openai_api_key'] = "******"       
     bot_parms = json.dumps(bot_parms)
-    logging.info(f"Running bot with parameters: {bot_parms}")
+    logger.info(f"Running bot with parameters: {bot_parms}")
     if not model_supports_response_schema(model):
-        logging.warning(
+        logger.warning(
             f"LiteLLM reports that model '{model}' does not support " +
             "response schema. Will try to use the 'instructor' package " +
             "for response validation. This is alpha and likely to fail."
@@ -154,12 +155,12 @@ def run_bot(**kwargs):
             except TimeoutException:
                 attempts += 1
                 if attempts % 60 == 0:
-                    logging.info(
+                    logger.info(
                         f"Waiting for page to load. Attempt {attempts}/{max_attempts}."
                     )
                 continue # Retry if a timeout occurs
         if attempts == max_attempts:
-            logging.error(f"Timeout on wait page after {max_attempts} attempts.")
+            logger.error(f"Timeout on wait page after {max_attempts} attempts.")
             return 'Timeout on wait page.'
 
         
@@ -286,12 +287,12 @@ def run_bot(**kwargs):
         append_message_to_conversation({"role": "user", "content": message})
         while resp_dict is None:
             if attempts > max_attempts:
-                logging.error("The llm did not return a valid response after %s attempts." % max_attempts)
+                logger.error("The llm did not return a valid response after %s attempts." % max_attempts)
                 return 'Maximum number of attempts reached.'
             attempts += 1
             if error:
                 append_message_to_conversation({"role": "user", "content": message})
-                logging.info(
+                logger.info(
                     f"Sending the following conversation to the llm to fix error:\n{json.dumps(conversation, indent=4)}"
                 )
             
@@ -309,7 +310,7 @@ def run_bot(**kwargs):
             append_message_to_conversation({"role": "assistant", "content": resp_str})
             
             if resp['finish_reason'] == "length":
-                logging.warning("Bot's response is too long. Trying again.")
+                logger.warning("Bot's response is too long. Trying again.")
                 error = True
                 message = prompts['resp_too_long']
                 continue
@@ -322,7 +323,7 @@ def run_bot(**kwargs):
                 resp_dict = json.loads(resp_str, strict = False)
                 error = False
             except (AssertionError, json.JSONDecodeError):
-                logging.warning("Bot's response is not a valid JSON.")
+                logger.warning("Bot's response is not a valid JSON.")
                 resp_dict = None
                 error = True
                 message = prompts['json_error']
@@ -333,7 +334,7 @@ def run_bot(**kwargs):
                 success, error_msgs, error_logs = check_response(resp_dict, response_format)
                 if not success:
                     error = True
-                    logging.warning(f"Detected an issue: {' '.join(error_logs)}.")
+                    logger.warning(f"Detected an issue: {' '.join(error_logs)}.")
                     message = ''
                     for i, error_msg in enumerate(error_msgs):
                         if ':' in error_msg:
@@ -410,7 +411,7 @@ def run_bot(**kwargs):
             result = "Bot could not provide a valid response. Exiting."        
         conv_hist_botex_db.append({"role": "system", "content": result})
         store_data(botex_db, session_id, url, conv_hist_botex_db, bot_parms)
-        logging.info("Gracefully exiting failed bot.")
+        logger.info("Gracefully exiting failed bot.")
         if failure_place != "start" and failure_place != "end":
             dr.close()
             dr.quit()
@@ -447,7 +448,7 @@ def run_bot(**kwargs):
         conn.commit()
         cursor.close()
         conn.close()
-        logging.info("Data stored in botex database.")
+        logger.info("Data stored in botex database.")
 
     
     conn = sqlite3.connect(botex_db)
@@ -482,7 +483,7 @@ def run_bot(**kwargs):
     if resp == 'Maximum number of attempts reached.':
         gracefully_exit_failed_bot("start")
         return
-    logging.info(f"Bot's response to start message:\n{json.dumps(resp, indent=4)}")
+    logger.info(f"Bot's response to start message:\n{json.dumps(resp, indent=4)}")
     
     options = Options()
     options.add_argument("--headless=new")
@@ -497,9 +498,9 @@ def run_bot(**kwargs):
             break
         except:
             attempts += 1
-            logging.warning("Could not start Chrome. Trying again.")
+            logger.warning("Could not start Chrome. Trying again.")
             if attempts == 5:
-                logging.error(f"Could not start Chrome after {MAX_NUM_OF_ATTEMPTS_TO_START_CHROME} attempts. Stopping.")
+                logger.error(f"Could not start Chrome after {MAX_NUM_OF_ATTEMPTS_TO_START_CHROME} attempts. Stopping.")
                 raise   
             time.sleep(1)
         
@@ -518,9 +519,9 @@ def run_bot(**kwargs):
                 break
             except:
                 attempts += 1
-                logging.warning("Failed to scrape my oTree URL. Trying again.")
+                logger.warning("Failed to scrape my oTree URL. Trying again.")
                 if attempts == 5:
-                    logging.error(f"Could not scrape my oTree URL after {MAX_NUM_OF_SCRAPE_ATTEMPTS} attempts. Stopping.")
+                    logger.error(f"Could not scrape my oTree URL after {MAX_NUM_OF_SCRAPE_ATTEMPTS} attempts. Stopping.")
                     gracefully_exit_failed_bot("middle")
                     return
                 time.sleep(1)
@@ -568,14 +569,14 @@ def run_bot(**kwargs):
         
         if old_text == text:
             if answer_attempts > MAX_NUM_OF_ANSWER_ATTEMPTS:
-                logging.error(
+                logger.error(
                     f"Bot could not provide valid answers after {MAX_NUM_OF_ANSWER_ATTEMPTS} attempts. Stopping."
                 )
                 gracefully_exit_failed_bot("middle")
                 return
             answer_attempts += 1
             if questions == None:
-                logging.warning(
+                logger.warning(
                     "Same page encountered twice. "
                     "This should only happen with pages containing questions. "
                     "Most likely something is seriously wrong here."
@@ -583,13 +584,13 @@ def run_bot(**kwargs):
                 message = prompts['page_not_changed_no_vm'] + message
             else:
                 if validation_errors:
-                    logging.info("Informing bot about validation errors.")
+                    logger.info("Informing bot about validation errors.")
                     message = prompts['page_not_changed_vm'].format(
                         validation_errors_json = json.dumps(validation_errors)
                     ) + message
                     validation_errors = {}
                 else: 
-                    logging.warning(
+                    logger.warning(
                         "Bot's answers were likely erroneous, but no validation "
                         "errors were found. This should not happen."
                         "Most likely something is seriously wrong here."
@@ -603,21 +604,21 @@ def run_bot(**kwargs):
             gracefully_exit_failed_bot("middle")
             return
 
-        logging.info(f"Bot's analysis of page:\n{json.dumps(resp, indent=4)}")
+        logger.info(f"Bot's analysis of page:\n{json.dumps(resp, indent=4)}")
         if not full_conv_history: summary = resp['summary']
         if questions is None and next_button is not None:
-            logging.info("Page has no question but next button. Clicking")
+            logger.info("Page has no question but next button. Clicking")
             click_on_element(dr, next_button)
             continue
         
         if questions is None and next_button is None:
-            logging.info("Page has no question and no next button. Stopping.")
+            logger.info("Page has no question and no next button. Stopping.")
             break
 
-        logging.info(f"Page has {len(questions)} question(s).")
+        logger.info(f"Page has {len(questions)} question(s).")
 
         for id_, a in resp['answers'].items(): 
-            logging.info(
+            logger.info(
                 "Bot has answered question " + 
                 f"'{id_}' with '{a['answer']}'."
             )
@@ -625,7 +626,7 @@ def run_bot(**kwargs):
             try:
                 qtype = questions[id_]['question_type']
             except:
-                logging.warning(f"Question '{id_}' not found in questions.")
+                logger.warning(f"Question '{id_}' not found in questions.")
                 qtype = None
                 break
 
@@ -644,7 +645,7 @@ def run_bot(**kwargs):
             
             if TEST_FORM_VALIDATION_ERRORS and id_ == 'id_integer_field': 
                 if first_try:
-                    logging.info(
+                    logger.info(
                         f"Answering question {id_} with 'blue' instead of {answer} "
                         "to test form validation errors."
                     )
@@ -659,7 +660,7 @@ def run_bot(**kwargs):
             )
             if validation_errors:
                 if not set(validation_errors.keys()).issubset(resp['answers'].keys()):
-                    logging.warn(
+                    logger.warn(
                         "The validation errors returned by oTree do not match the questions. "
                         "This should not happen. "
                         "Most likely something is seriously wrong here."
@@ -668,7 +669,7 @@ def run_bot(**kwargs):
                 else:
                     for id_, v in validation_errors.items():
                         validation_errors[id_]["invalid_answer"] = resp['answers'][id_]['answer']
-                    logging.warning(
+                    logger.warning(
                         f"oTree returned validation errors: {validation_errors}"
                     )
          
@@ -680,6 +681,6 @@ def run_bot(**kwargs):
     if resp == 'Maximum number of attempts reached.':
         gracefully_exit_failed_bot("end")
         return
-    logging.info(f"Bot's final remarks about experiment:\n{json.dumps(resp, indent=4)}")
-    logging.info("Bot finished.")
+    logger.info(f"Bot's final remarks about experiment:\n{json.dumps(resp, indent=4)}")
+    logger.info("Bot finished.")
     store_data(botex_db, session_id, url, conv_hist_botex_db, bot_parms)

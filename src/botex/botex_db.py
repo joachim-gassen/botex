@@ -4,6 +4,7 @@ import sqlite3
 import logging
 from os import environ
 
+logger = logging.getLogger("botex")
 
 def retrieve_responses(resp_str):
     try:
@@ -14,7 +15,7 @@ def retrieve_responses(resp_str):
         cont = json.loads(resp_str, strict = False)
         if 'answers' in cont: return cont['answers']
     except:
-        logging.info(
+        logger.info(
             f"message :'{resp_str}' failed to load as json"
         )
         return None
