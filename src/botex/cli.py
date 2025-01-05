@@ -1,6 +1,5 @@
 import argparse
 import os
-from dotenv import load_dotenv
 import logging
 import textwrap
 import sys
@@ -9,6 +8,7 @@ import textwrap
 from .otree import get_session_configs, init_otree_session, run_bots_on_session
 from .botex_db import export_response_data
 from .llamacpp import is_llamacpp_server_reachable, start_llamacpp_server, stop_llamacpp_server
+from .env import load_botex_env
 
 DEFAULT_LLM = 'gemini/gemini-1.5-flash'
 
@@ -145,7 +145,7 @@ def run_botex():
         )
         args = parser.parse_args()
 
-        if os.path.exists(args.config): load_dotenv(args.config)
+        if os.path.exists(args.config): load_botex_env(args.config)
 
         otree_server_url = args.otree_server_url
         otree_rest_key = args.otree_rest_key
@@ -178,7 +178,7 @@ def run_botex():
         if not api_key:
             api_key = os.getenv('API_KEY')
         if not api_base:
-            api_key = os.getenv('API_BASE')
+            api_base = os.getenv('API_BASE')
         if not nparticipants:
             nparticipants = os.getenv('OTREE_NPARTICIPANTS')
         if not nhumans:
@@ -312,7 +312,7 @@ def run_botex():
             botex_db=botex_db, throttle=throttle
         )
         if model == "llamacpp" and llamacpp_process:
-            print(f"Stopping llama.cpp server...", )
+            print("Stopping llama.cpp server...")
             stop_llamacpp_server(llamacpp_process)
         print("\n")
         print (

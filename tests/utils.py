@@ -1,6 +1,5 @@
 import subprocess
 import os
-import dotenv
 import time
 import csv
 import signal
@@ -26,7 +25,7 @@ def delete_otree_db():
         pass    
 
 def start_otree():
-    dotenv.load_dotenv("secrets.env")
+    botex.load_botex_env()
     if platform.system() == "Windows":
         otree_proc = subprocess.Popen(
             ["otree", "devserver"], cwd="tests/otree",

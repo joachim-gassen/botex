@@ -1,25 +1,24 @@
 import os
-import dotenv
 import time
 
 import pytest
 
+import botex
+
 from tests.utils import *
 
-@pytest.mark.dependency(name="secrets", scope='session')
-def test_secret_exists_in_project_root():
-    assert os.path.exists("secrets.env")
+@pytest.mark.dependency(name="botex_env", scope='session')
+def test_botex_env_exists_in_project_root():
+    assert os.path.exists("botex.env")
 
-@pytest.mark.dependency(name="otree_admin", scope='session', depends=["secrets"])
-def test_secret_has_otree_admin_password():
-    with open("secrets.env") as f:
-        for line in f:
-            if "OTREE_ADMIN_PASSWORD" in line:
-                assert line.split("=")[1]
+@pytest.mark.dependency(name="otree_admin", scope='session', depends=["botex_env"])
+def test_botex_env_has_otree_admin_password():
+    botex.load_botex_env()
+    assert os.getenv("OTREE_ADMIN_PASSWORD")
 
-@pytest.mark.dependency(name="otree_rest_key", scope='session', depends=["secrets"])
+@pytest.mark.dependency(name="otree_rest_key", scope='session', depends=["botex_env"])
 def test_secret_has_otree_rest_key():
-    with open("secrets.env") as f:
+    with open("botex.env") as f:
         for line in f:
             if "OTREE_REST_KEY" in line:
                 assert line.split("=")[1]
@@ -33,7 +32,7 @@ def test_does_otree_start():
 
 @pytest.mark.dependency(name="botex_session", scope='session', depends=["otree_starts"])
 def test_can_otree_session_be_initialized():
-    dotenv.load_dotenv("secrets.env")
+    botex.load_botex_env()
     otree_proc = start_otree()
     time.sleep(OTREE_STARTUP_WAIT)
     botex_session = init_otree_test_session()

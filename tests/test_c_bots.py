@@ -6,11 +6,9 @@ import botex
 
 from tests.utils import *
 
+botex.load_botex_env()
 
-from dotenv import load_dotenv
-load_dotenv("secrets.env")
-
-@pytest.mark.dependency(name="api_key", depends=["secrets"], scope='session')
+@pytest.mark.dependency(name="api_key", depends=["botex_env"], scope='session')
 def test_secret_contains_api_key(model):
     global api_key 
     api_key = None
@@ -38,13 +36,14 @@ def test_can_botex_start_llamacpp_server(model):
         return
     assert os.path.exists(
         os.environ.get("LLAMACPP_SERVER_PATH")), \
-    "You are testing if botex can start the llama.cpp server, therefore you "
-    "need to provide the path to the llama server LLAMACPP_SERVER_PATH."
+    "You are testing if botex can start a llama.cpp server, therefore you "
+    "need to provide the path to its executable in the environment variable "
+    "LLAMACPP_SERVER_PATH. Have you configured the 'botex.env' file?"
     
     assert os.path.exists(os.environ.get("LLAMACPP_LOCAL_LLM_PATH")), \
     "You are testing if botex can start the llama.cpp server, therefore you "
     "need to provide the path to the local model in the environment variable "
-    "LLAMACPP_LOCAL_LLM_PATH."
+    "LLAMACPP_LOCAL_LLM_PATH. Have you configured the 'botex.env' file?"
     
     global llamacpp_server_process_id
     llamacpp_server_process_id = botex.start_llamacpp_server()

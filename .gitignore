@@ -12,6 +12,8 @@ __pycache__/
 *.py[cod]
 .DS_Store
 secrets.env
+botex.env
+botex.db
 *.pdf
 .vscode
 .Rproj.user

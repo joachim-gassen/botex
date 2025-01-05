@@ -18,7 +18,7 @@ While both approaches have been tested and found to work, currently, we have onl
 
 If you want to use botex to create LLM participants for your own oTree experiments, you need the following:
 
-- A working python environment >= 3.10 and preferable a virtual environment.
+- A working python environment >= 3.10 and preferably a virtual environment.
 - [Google Chrome](https://www.google.com/chrome/) for scraping the oTree participant pages.
 - Access to an oTree server that you can start sessions on or at least an URL of an oTree participant link. The server can be local or remote.
 - Access to an LLM model for inference. See [Verfied LLMs section](#verified-llms).
@@ -95,7 +95,7 @@ The resulting CSV file will contain data similar to the following table
 
 If you are interested in the additional options that the command line interface offers, we suggest you take a peek by running `botex -h`.
 
-## Running botex in your own code
+## Using botex in your own code
 
 After installing botex, you should be able to start botex on an existing oTree participant link by running the following code snippet
 
@@ -165,7 +165,7 @@ The model that you use for inference has to support [structured outputs](https:/
 
 If you have success running botex with other models, please let us know so that we can add them to the list.
 
-The default model that botex uses is `gpt-4o-2024-08-06`. If you want to use a different model, you can specify it in the `run_single_bot()` or `run_bots_on_session()` call by providing the model string from the table above as `model` parameter. In any case, you have to provide the API key for the model that you want to use.
+The default model that botex uses is `gpt-4o-2024-08-06`. If you want to use a different model, you can specify it in the `run_single_bot()` or `run_bots_on_session()` call by providing the model name from the table above as `model` parameter. In any case, you have to provide the API key for the model that you want to use.
 
 
 ## Using Local Models with llama.cpp
@@ -217,13 +217,13 @@ Everything else from above remains the same. When starting local LLMs as bots ta
 If you want to take a deep-dive into botex and contribute to its development you can do the following
 
 1. Clone this repository: `git clone https://github.com/joachim-gassen/botex` 
-2. Copy `_secret.env` to `secret.env` and edit. Most importantly, you have to set your OpenAI key. As the otree instance will only be used for testing, you can set any password and rest key that you like.
+2. Copy `_botex.env` to `botex.env` and edit. Most importantly, you have to set your API key(s) and the configuration of the local llama.cpp instance that you want botex to start. See point 8 below if you only want to start pytest on a specific LLM setup. As the otree instance will only be used for testing, you can set any password and rest key that you like.
 3. Set up a virtural environment `python3 -m venv .venv`
 4. Activate it `source .venv/bin/activate`
 5. Install the necessary packages `pip install -r requirements.txt`
 6. Install the botex package locally and editable `pip install -e .`
-7. Run the tests with `pytest`. By default it runs tests using the default OpenAI model and the llama.cpp model. For both models, you need to make sure that you provide the necessary configuration in `secrets.env`
-8. If you want to test other models, you can pass the model name as an argument to pytest, e.g., `pytest --model gemini/gemini-1.5-flash`. You can provide multiple models if you like, e.g., `pytest --model gemini/gemini-1.5-flash llamacpp`.
+7. Run the tests with `pytest`. By default it runs tests using the default OpenAI model and the llama.cpp model. For both models, you need to make sure that you provide the necessary configuration in `botex.env`
+8. If you want to test specific LLM setups, you can pass the model name as an argument to pytest, e.g., `pytest --model gemini/gemini-1.5-flash`. You can provide multiple models if you like, e.g., `pytest --model gemini/gemini-1.5-flash llamacpp`. If you want to test a specific local model via llama.cpp make sure to set the model path in `botex.env`.
 
 If it works you should see a test output similar to this one:
 

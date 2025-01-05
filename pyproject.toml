@@ -33,7 +33,8 @@ dependencies = [
     'selenium', 
     'litellm>=1.44.28',
     'pydantic-settings',
-    'instructor'
+    'instructor',
+    'python-dotenv'
 ]
 
 [project.urls]
