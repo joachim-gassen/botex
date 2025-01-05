@@ -12,6 +12,8 @@ See https://keepachangelog.com/en/1.0.0/ for a description of the changelog form
 - oTree pages with multiple buttons but no next button are now handled correctly
 - Option to use an already existing llama.cpp endpoint
 - Parsing of botex environment file by calling 'load_botex_env()'
+- Convenience functions `start_otree_server()` and `stop_otree_server()` to facilitate starting oTree server from within Python
+- Function `export_otree_data()` to export oTree wide format data via the oTree web frontend
 
 ### Changed
 

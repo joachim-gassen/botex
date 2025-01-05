@@ -1,9 +1,24 @@
-from os import environ
+import subprocess
+import signal
+import platform
+import psutil
+import time
+import os 
+import tempfile
 import sqlite3
 from threading import Thread
 from random import shuffle
 from itertools import compress
 import requests
+
+import logging
+logger = logging.getLogger("botex")
+
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 from .bot import run_bot
 
@@ -18,7 +33,7 @@ def setup_botex_db(botex_db = None):
         By default, it will try to read the file name from 
         the environment variable BOTEX_DB.
     """
-    if botex_db is None: botex_db = environ.get('BOTEX_DB')
+    if botex_db is None: botex_db = os.environ.get('BOTEX_DB')
     conn = sqlite3.connect(botex_db)
     cursor = conn.cursor()
     cursor.execute(
@@ -52,6 +67,7 @@ def setup_botex_db(botex_db = None):
     cursor.close()
     return conn
 
+
 def call_otree_api(
         method, *path_parts, 
         otree_server_url = None, otree_rest_key = None, **params
@@ -73,9 +89,9 @@ def call_otree_api(
     """
 
     if otree_server_url is None:
-        otree_server_url = environ.get('OTREE_SERVER_URL')
+        otree_server_url = os.environ.get('OTREE_SERVER_URL')
     if otree_rest_key is None:
-        otree_rest_key = environ.get('OTREE_REST_KEY')
+        otree_rest_key = os.environ.get('OTREE_REST_KEY')
 
     path_parts = '/'.join(path_parts)
     url = f'{otree_server_url}/api/{path_parts}'
@@ -87,6 +103,131 @@ def call_otree_api(
         )
         raise Exception(msg)
     return resp.json()
+
+
+def start_otree_server(
+        project_path = None,
+        port = None, 
+        log_file = None,
+        auth_level = None, 
+        rest_key = None,
+        admin_password = None,
+        timeout = 5
+    ):
+    """
+    Start an oTree server in a subprocess.
+
+    Args:
+        project_path (str, optional): Path to your oTree project folder.
+            If None (the default), it will be obtained from the environment
+            variable OTREE_PROJECT_PATH.
+        port (int, optional): The port to run the server on. If None 
+            (the default), it will first try to read from the 
+            environment variable OTREE_PORT. It that is not set. it 
+            will default to 8000.
+        log_file (str, optional): Path to the log file. If None 
+            (the default), it will first be tried to read from the
+            environment variable OTREE_LOG_FILE. If that is not set,
+            it will default to 'otree.log'.
+        auth_level (str, optional): The authentication level for the oTree 
+            server. It is set by environment variable OTREE_AUTH_LEVEL. 
+            The default is None, which will leave this environment variable
+            unchanged. if you use 'DEMO' or 'STUDY', the environment variable
+            will be set accordingly and you need to provide a rest key
+            in the argument 'rest_key' below.
+        rest_key (str, optional): The API key for the oTree server.
+            If None (the default), it will be obtained from the environment
+            variable OTREE_REST_KEY.
+        admin_password (str, optional): The admin password for the oTree server.
+            For this to work, `settings.py` in the oTree project needs to read
+            the password from the environment variable OTREE_ADMIN_PASSWORD
+            (which is normally the case).
+        timeout (int, optional): Timeout in seconds to wait for the 
+            server. Defaults to 5.
+
+    Returns:
+        A subprocess object.
+    """
+    if project_path is None:
+        project_path = os.environ.get('OTREE_PROJECT_PATH')
+        if project_path is None:
+            raise Exception('No oTree project path provided.')
+    if port is None: port = os.environ.get('OTREE_PORT', 8000)
+    if log_file is None: log_file = os.environ.get('OTREE_LOG_FILE', 'otree.log')
+    otree_log = open(log_file, 'w')
+    if auth_level is not None: 
+        os.environ['OTREE_AUTH_LEVEL'] = auth_level
+        if rest_key is not None:
+            os.environ['OTREE_REST_KEY'] = rest_key
+        if admin_password is not None:
+            os.environ['OTREE_ADMIN_PASSWORD'] = admin_password 
+
+
+    if platform.system() == "Windows":
+        otree_server = subprocess.Popen(
+            ["otree", "devserver", str(port)], cwd=project_path,
+            stderr=otree_log, stdout=otree_log,
+            creationflags=subprocess.CREATE_NEW_PROCESS_GROUP
+        )
+    else:
+        otree_server = subprocess.Popen(
+            ["otree", "devserver", str(port)], cwd=project_path,
+            stderr=otree_log, stdout=otree_log
+        )
+    otree_server_url = f'http://localhost:{port}'
+    os.environ['OTREE_SERVER_URL'] = otree_server_url
+
+    # Access oTree API to check if server is running
+    time_out = time.time() + timeout
+    while True:
+        try: 
+            data = call_otree_api(
+                requests.get, 'otree_version', otree_rest_key=rest_key
+            )
+        except:
+            data = {'error': "No API response"}
+
+        if 'version' in data:
+            logging.info(
+                "oTree server started successfully "
+                f"with endpoint '{otree_server_url}'"
+            )
+            break
+        else:
+            if time.time() > time_out:
+                logging.error(
+                    f"oTree endpoint '{otree_server_url}' did not respond "
+                    f"within {timeout} seconds. Exiting."
+                )
+                raise Exception('oTree server did not start.')
+            time.sleep(1)
+    return otree_server
+
+
+def stop_otree_server(otree_server):
+    """
+    Stop an oTree server subprocess.
+
+    Args:
+        otree_server (subprocess): The subprocess object to be terminated.
+
+    Returns:
+        The return code of the oTree subprocess
+    """
+    otree_running = otree_server.poll() is None
+    if otree_running: 
+        proc = psutil.Process(otree_server.pid)
+        if platform.system() == "Windows":
+            proc.send_signal(signal.CTRL_BREAK_EVENT)
+            proc.wait()
+        else: 
+            proc.children()[0].send_signal(signal.SIGKILL)
+            otree_server.kill()
+            otree_server.wait()
+    else:
+        logging.warning('oTree server already stopped.')
+    return otree_server.poll()
+
  
 def get_session_configs(otree_server_url = None, otree_rest_key = None):
     """
@@ -163,10 +304,10 @@ def init_otree_session(
 
     if is_human is None and nhumans == 0: is_human = [False]*npart
 
-    if botex_db is None: botex_db = environ.get('BOTEX_DB')
+    if botex_db is None: botex_db = os.environ.get('BOTEX_DB')
     
     if otree_server_url is None:
-        otree_server_url = environ.get('OTREE_SERVER_URL')
+        otree_server_url = os.environ.get('OTREE_SERVER_URL')
     
     session_id = call_otree_api(
         requests.post, 'sessions', 
@@ -226,7 +367,7 @@ def get_bot_urls(session_id, botex_db = None, already_started = False):
     list: The URLs for the bot participants.
     """
 
-    if botex_db is None: botex_db = environ.get('BOTEX_DB')
+    if botex_db is None: botex_db = os.environ.get('BOTEX_DB')
     conn = sqlite3.connect(botex_db)
     cursor = conn.cursor()
     cursor.execute(
@@ -366,7 +507,7 @@ def run_bots_on_session(
         )
 
     """
-    if botex_db is None: botex_db = environ.get('BOTEX_DB')
+    if botex_db is None: botex_db = os.environ.get('BOTEX_DB')
     if api_key is None and 'openai_api_key' in kwargs: 
         api_key = kwargs.pop('openai_api_key')
     if bot_urls is None: 
@@ -500,7 +641,7 @@ def run_single_bot(
     if api_base is not None:
         kwargs['api_base'] = api_base
 
-    if botex_db is None: botex_db = environ.get('BOTEX_DB')
+    if botex_db is None: botex_db = os.environ.get('BOTEX_DB')
     if api_key is None and 'openai_api_key' in kwargs: 
         api_key = kwargs.pop('openai_api_key')
     
@@ -543,3 +684,81 @@ def run_single_bot(
                 **kwargs
             )
         )
+    
+
+def export_otree_data(
+        csv_file, server_url = None, 
+        admin_name = "admin", 
+        admin_password = None, time_out = 10
+    ):
+    """
+    Export wide data from an oTree server.
+
+    Args:
+        csv_file (str): Path to the CSV file where the data should be stored.
+        server_url (str, optional): URL of the oTree server. If None 
+            (the default), the function will try to use the oTree server URL 
+            from the environment variable OTREE_SERVER_URL.
+        admin_name (str, optional): Admin username. Defaults to "admin".
+        admin_password (str, optional): Admin password. If None (the default),
+            the function will try to use the oTree admin password from the 
+            environment variable OTREE_ADMIN_PASSWORD.
+        time_out (int, optional): Timeout in seconds to wait for the download. 
+            Defaults to 10.
+
+    Raises:
+        Exception: If the download does not succeed within the timeout.
+
+    Returns
+        None (data is stored in the CSV file).
+    
+    Detail:
+        The function uses Selenium and a headless Chrome browser to download 
+        the CSV file. Ideally, it would use an oTree API endpoint instead.
+    """
+
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--disable-gpu")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        prefs = {"download.default_directory": tmp_dir}
+        chrome_options.add_experimental_option("prefs", prefs)
+        driver = webdriver.Chrome(options=chrome_options)
+        if server_url is None:
+            server_url = os.getenv("OTREE_SERVER_URL")
+        if admin_password is None:
+            admin_password = os.getenv("OTREE_ADMIN_PASSWORD")
+
+        export_url = f"{server_url}/export"
+        driver.get(export_url)
+        current_url = driver.current_url
+        if "login" in current_url:
+            driver.find_element(By.ID, "id_username").send_keys(admin_name)
+            driver.find_element(By.ID, "id_password").send_keys(admin_password)
+            submit_button = WebDriverWait(driver, 10).until(
+                EC.element_to_be_clickable((By.ID, "btn-login"))
+            )
+            submit_button.click()
+            WebDriverWait(driver, 10).until(EC.url_changes(current_url))
+            driver.get(export_url)
+        
+        download_link = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.ID, "wide-csv"))
+        )
+        download_link.click()
+
+        time_out = time.time() + time_out
+        while True:            
+            time.sleep(1)
+            csv_files = [f for f in os.listdir(tmp_dir) if f.endswith(".csv")]
+            if len(csv_files) == 1:
+                os.rename(f"{tmp_dir}/{csv_files[0]}", csv_file)
+                logging.info("oTree CSV file downloaded.")
+                break
+            else:
+                if time.time() > time_out:
+                    logging.error("oTree CSV file download failed.")
+                    break
+        driver.quit()

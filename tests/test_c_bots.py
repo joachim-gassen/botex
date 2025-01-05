@@ -56,7 +56,7 @@ def test_can_botex_start_llamacpp_server(model):
     depends=["participants_db", "api_key", "start_llamacpp_server"]
 )
 def test_can_survey_be_completed_by_bots(model):
-    otree_proc = start_otree()
+    otree_proc = botex.start_otree_server()
     global botex_session
     botex_session = init_otree_test_session()
     urls = botex.get_bot_urls(
@@ -70,7 +70,8 @@ def test_can_survey_be_completed_by_bots(model):
         bot_urls=botex_session["bot_urls"],
         botex_db="tests/botex.db"
     )
-    stop_otree(otree_proc)
+    export_otree_data('tests/otree_data.csv')
+    botex.stop_otree_server(otree_proc)
     assert True
 
 @pytest.mark.dependency(
@@ -83,7 +84,7 @@ def test_can_survey_be_completed_by_bots_full_hist(model):
     if provider == "ollama":
         return
     global botex_session
-    otree_proc = start_otree()
+    otree_proc = botex.start_otree_server()
     botex_session = init_otree_test_session(botex_db="tests/botex_full_hist.db")
     urls = botex.get_bot_urls(
         botex_session["session_id"], botex_db="tests/botex_full_hist.db",
@@ -97,7 +98,8 @@ def test_can_survey_be_completed_by_bots_full_hist(model):
         botex_db="tests/botex.db",
         full_conv_history=True
     )
-    stop_otree(otree_proc)
+    export_otree_data('tests/otree_data_full_history.csv')
+    botex.stop_otree_server(otree_proc)
     assert True
 
 @pytest.mark.dependency(

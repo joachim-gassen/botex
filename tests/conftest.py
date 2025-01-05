@@ -15,6 +15,8 @@ def pytest_configure(config):
             os.remove(f)
         os.remove("tests/botex_participants.csv")
         os.remove("tests/botex_response.csv")
+        os.remove("tests/otree_data.csv")
+        os.remove("tests/otree_data_full_history.csv")
     except OSError:
         pass
 

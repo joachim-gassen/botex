@@ -27,6 +27,8 @@ tests/otree/db.sqlite3
 tests/questions_and_answers*.csv
 tests/botex_participants.csv
 tests/botex_response.csv
+tests/otree_data.csv
+tests/otree_data_full_history.csv
 .coverage
 *.log
 llama.cpp

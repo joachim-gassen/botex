@@ -1,13 +1,8 @@
-import subprocess
 import os
-import time
 import csv
-import signal
-import platform
 import json
 from numbers import Number
 
-import psutil
 import botex
 
 OTREE_STARTUP_WAIT = 3
@@ -24,51 +19,24 @@ def delete_otree_db():
     except OSError:
         pass    
 
-def start_otree():
-    botex.load_botex_env()
-    if platform.system() == "Windows":
-        otree_proc = subprocess.Popen(
-            ["otree", "devserver"], cwd="tests/otree",
-            stderr=subprocess.PIPE, stdout=subprocess.PIPE,
-            creationflags=subprocess.CREATE_NEW_PROCESS_GROUP
-        )
-    else:
-        otree_proc = subprocess.Popen(
-            ["otree", "devserver"], cwd="tests/otree",
-            stderr=subprocess.PIPE, stdout=subprocess.PIPE
-        )
-    time.sleep(OTREE_STARTUP_WAIT)
-    otree_running = otree_proc.poll() is None
-    if not otree_running:
-        raise Exception(
-            "otree devserver failed to start. " + 
-            "Maybe an old instance is still running?"
-        )
-    return otree_proc
-
-def stop_otree(otree_proc):
-    otree_running = otree_proc.poll() is None
-    if otree_running: 
-        proc = psutil.Process(otree_proc.pid)
-        if platform.system() == "Windows":
-            proc.send_signal(signal.CTRL_BREAK_EVENT)
-            proc.wait()
-        else: 
-            proc.children()[0].send_signal(signal.SIGKILL)
-            otree_proc.kill()
-            otree_proc.wait()
-    try:
-        os.remove("tests/otree/db.sqlite3")
-    except OSError:
-        pass
-
 def init_otree_test_session(botex_db = "tests/botex.db"):
     botex_session = botex.init_otree_session(
-        config_name="botex_test", npart=2, 
-        botex_db = botex_db, otree_server_url="http://localhost:8000"
+        config_name="botex_test", npart=2, botex_db = botex_db, 
     )
     return botex_session
- 
+
+def export_otree_data(csv_file):
+    botex.export_otree_data(csv_file)
+    assert os.path.exists(csv_file)
+    try:
+        with open(csv_file) as f:
+            participants = list(csv.DictReader(f))
+    except:
+        assert False
+    assert len(participants) == 2
+    for p in participants:
+        assert p['participant._current_page_name'] == 'Thanks'
+
 def get_model_provider(model):
     if "llamacpp" in model:
         return "llamacpp"
