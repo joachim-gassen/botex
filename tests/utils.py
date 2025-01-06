@@ -37,6 +37,34 @@ def export_otree_data(csv_file):
     for p in participants:
         assert p['participant._current_page_name'] == 'Thanks'
 
+def normalize_otree_data(csv_file):
+    dta = botex.normalize_otree_data(
+        csv_file, store_as_csv=True, data_exp_path= "tests",
+        exp_prefix="test"
+    )
+    df_names = ['participant', 'session', 'group', 'player']
+    csv_file_names = ["test_" + dfn + ".csv" for dfn in df_names]
+    for cfn in csv_file_names:
+        assert os.path.exists(f"tests/{cfn}")
+    assert isinstance(dta, dict)
+    assert len(dta) == 4
+    assert list(dta.keys()) == df_names
+    assert len(dta['participant']) == 2
+    assert list(dta['participant'][0].keys()) == \
+        ['participant_code', 'current_app', 'current_page', 'time_started_utc']
+    assert len(dta['session']) == 2
+    assert list(dta['session'][0].keys()) == ['session_code', 'participant_code']
+    assert len(dta['group']) == 1
+    assert list(dta['group'][0].keys()) == [
+        'session_code', 'round', 'string_field', 'integer_field', 
+        'boolean_field', 'choice_integer_field', 'radio_field', 
+        'float_field', 'feedback'
+    ]
+    assert len(dta['player']) == 2
+    assert list(dta['player'][0].keys()) == [
+        'participant_code', 'round', 'player_id', 'payoff', 'button_radio'
+    ]
+
 def get_model_provider(model):
     if "llamacpp" in model:
         return "llamacpp"

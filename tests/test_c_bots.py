@@ -72,6 +72,7 @@ def test_can_survey_be_completed_by_bots(model):
     )
     export_otree_data('tests/otree_data.csv')
     botex.stop_otree_server(otree_proc)
+    normalize_otree_data('tests/otree_data.csv')
     assert True
 
 @pytest.mark.dependency(
@@ -100,6 +101,7 @@ def test_can_survey_be_completed_by_bots_full_hist(model):
     )
     export_otree_data('tests/otree_data_full_history.csv')
     botex.stop_otree_server(otree_proc)
+    normalize_otree_data('tests/otree_data_full_history.csv')
     assert True
 
 @pytest.mark.dependency(
@@ -151,5 +153,7 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
 #    model="gemini/gemini-1.5-flash"
     model="gpt-4o-2024-08-06"
+    delete_botex_db()
+    delete_otree_db()
     test_secret_contains_api_key(model)
     test_can_survey_be_completed_by_bots(model)

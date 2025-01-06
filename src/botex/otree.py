@@ -4,6 +4,7 @@ import platform
 import psutil
 import time
 import os 
+import csv
 import tempfile
 import sqlite3
 from threading import Thread
@@ -188,14 +189,14 @@ def start_otree_server(
             data = {'error': "No API response"}
 
         if 'version' in data:
-            logging.info(
+            logger.info(
                 "oTree server started successfully "
                 f"with endpoint '{otree_server_url}'"
             )
             break
         else:
             if time.time() > time_out:
-                logging.error(
+                logger.error(
                     f"oTree endpoint '{otree_server_url}' did not respond "
                     f"within {timeout} seconds. Exiting."
                 )
@@ -225,7 +226,7 @@ def stop_otree_server(otree_server):
             otree_server.kill()
             otree_server.wait()
     else:
-        logging.warning('oTree server already stopped.')
+        logger.warning('oTree server already stopped.')
     return otree_server.poll()
 
  
@@ -755,10 +756,483 @@ def export_otree_data(
             csv_files = [f for f in os.listdir(tmp_dir) if f.endswith(".csv")]
             if len(csv_files) == 1:
                 os.rename(f"{tmp_dir}/{csv_files[0]}", csv_file)
-                logging.info("oTree CSV file downloaded.")
+                logger.info("oTree CSV file downloaded.")
                 break
             else:
                 if time.time() > time_out:
-                    logging.error("oTree CSV file download failed.")
+                    logger.error("oTree CSV file download failed.")
                     break
         driver.quit()
+
+
+def normalize_otree_data(
+    otree_csv_file, 
+    var_dict = {
+        'participant': {
+            'code': 'participant_code', 
+            'time_started_utc': 'time_started_utc',
+            '_current_app_name': 'current_app', 
+            '_current_page_name': 'current_page',
+        },
+        'session': {
+            'code': 'session_code'
+        }
+    },
+    store_as_csv = False,
+    data_exp_path = '.', 
+    exp_prefix = '',
+):
+    """
+    Normalize oTree data from wide to long format, then reshape it into a set 
+    of list-of-dicts structures. Optionally save it to a set of CSV files.
+
+    Args:
+        otree_csv_file (str): Path to a wide multi app oTree CSV file.
+        var_dict (dict, optional): A dict to customize the exported data. See
+            detail section.
+        store_as_csv (bool, optional): Whether to store the normalized data as
+            CSV files. Defaults to False.
+        data_exp_path (str, optional): Path to the folder where the normalized
+            CSV files should be stored. Defaults to '.' (current folder).
+        exp_prefix (str, optional): Prefix to be used for the CSV file names. 
+            Defaults to '' (no prefix).
+
+    Returns:
+        A dict whose keys are table names (e.g. 'session', 'participant', 
+        'myapp_group', 'myapp_player', etc.) and whose values are lists of 
+        dictionaries (i.e., row data).
+    
+    Detail:
+        The var_dict parameter is a dictionary that allows to customize the
+        exported data. The keys of the dictionary are the names of the oTree
+        apps. The values are dictionaries that map the original column names to
+        the desired column names. The keys of these inner dictionaries are the
+        original column names and the values are the desired column names. All
+        variables that are not included in the dict are omitted from the output.
+        The 'participant' and 'session' keys are reserved for the participant 
+        and session data, respectively.
+    """
+
+    # The function is based on the naming conventions of oTree CSV files.
+    # oTree uses multi-level headers in the CSV file, where each level is
+    # separated by a dot. 
+
+    # The general flow of the function is as follows:
+    # 1) Read the CSV file and extract the multi-level headers.
+    # 2) Pivot the data to long format by flattening wide columns into rows of   
+    #     [observation, level_1..4, value].
+    # 3) Extract participant and session data.
+    # 4) Separate the remaining long data by app and sub-level, pivoting each
+    #    resulting data set back into wide format and add the appropriate
+    #    keys from participant and session data.
+    #    - subsession (should be empty since subsessions seem to be equal to 
+    #      rounds, tbc)
+    #    - group (merge with session data on participant_code to create key, 
+    #      only keep if it contains data)
+    #    - player (rename id_in_group to player_id)  
+    # 5) Optionally store the data as CSV files.
+
+    # --------------------------------------------------------------------------
+    # Helper functions
+    # --------------------------------------------------------------------------
+
+    def extract_data(var, stacked_data, var_dict):
+        relevant = [
+            d for d in stacked_data
+            if d['level_1'] == var and d['level_2'] in var_dict[var].keys()
+        ]
+        # Remap level_2 column names
+        for item in relevant:
+            item['level_2'] = var_dict[var][item['level_2']]
+
+        # Build pivot result as dict {observation -> one row dict}
+        pivoted = {}
+        for item in relevant:
+            obs = item['observation']
+            col = item['level_2']
+            val = item['value']
+            if obs not in pivoted:
+                pivoted[obs] = {'observation': obs}
+            # Only keep first occurrence if duplicates exist
+            if col not in pivoted[obs]:
+                pivoted[obs][col] = val
+
+        return list(pivoted.values())
+
+    def index_to_participant_code(data_list, obs_to_pcode):
+        out = []
+        for row in data_list:
+            obs = row['observation']
+            new_row = dict(row)
+            new_row['participant_code'] = obs_to_pcode.get(obs, None)
+            del new_row['observation']
+            out.append(new_row)
+        return out
+
+    def try_convert_number(x):
+        if x is None:
+            return None
+        # Already a number? (in case we call this multiple times)
+        if isinstance(x, (int, float)):
+            return x
+        # Attempt int -> float -> fallback str
+        try:
+            return int(x)
+        except (ValueError, TypeError):
+            pass
+        try:
+            return float(x)
+        except (ValueError, TypeError):
+            pass
+        return str(x)
+
+    def convert_columns(data_list):
+        for row in data_list:
+            for k, v in row.items():
+                if k not in ("observation",):  # do not convert observation index
+                    row[k] = try_convert_number(v)
+        return data_list
+
+    def remove_all_empty_columns(rows):
+        keys = rows[0].keys() if rows else []
+        has_nonempty = {col: False for col in keys}
+        for r in rows:
+            for col in has_nonempty:
+                if r.get(col, None) not in (None, ''):
+                    has_nonempty[col] = True
+        for r in rows:
+            for col, is_nonempty in has_nonempty.items():
+                if not is_nonempty:
+                    r.pop(col)
+        return rows
+    
+    def unify_dict_keys(rows):
+        seen_keys = []
+        for d in rows:
+            for k in d.keys():
+                if k not in seen_keys:
+                    seen_keys.append(k)
+        new_rows = []
+        for d in rows:
+            new_d = {}
+            for k in seen_keys:
+                new_d[k] = d.get(k, '') 
+            new_rows.append(new_d)
+        return new_rows
+
+    def reorder_columns(data_list, first_cols):
+        out = []
+        for row in data_list:
+            new_row = {}
+            # keep track of which keys got placed
+            placed = set()
+            # place the "first_cols" in order
+            for c in first_cols:
+                if c in row:
+                    new_row[c] = row[c]
+                    placed.add(c)
+            # place remaining
+            for c in row:
+                if c not in placed:
+                    new_row[c] = row[c]
+            out.append(new_row)
+        return out
+
+    
+    def write_dicts_to_csv(dict_rows, file_path):
+        if not dict_rows:
+            # If empty, write just an empty file or possibly only headers
+            with open(file_path, 'w', newline='', encoding='utf-8') as f:
+                pass
+            return
+        fieldnames = list(dict_rows[0].keys())
+        with open(file_path, 'w', newline='', encoding='utf-8') as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(dict_rows)
+
+
+    # --------------------------------------------------------------------------
+    # Main code
+    # --------------------------------------------------------------------------
+
+    # --- 1) Read the CSV file and extract the multi-level headers -------------
+
+    with open(otree_csv_file, 'r', encoding='utf-8-sig') as f:
+        reader = csv.reader(f)
+        all_rows = list(reader)
+    if not all_rows:
+        raise ValueError(f"CSV file {otree_csv_file} is empty or invalid.")
+
+    headers = all_rows[0]
+    data_rows = all_rows[1:]
+    multi_headers = [tuple(h.split('.')) for h in headers]
+
+
+    # --- 2) Pivot the data to long format -------------------------------------
+
+    processed_rows = []
+    for row_idx, row in enumerate(data_rows):
+        row_dict = {}
+        for col_idx, val in enumerate(row):
+            key_tuple = list(multi_headers[col_idx])
+            while len(key_tuple) < 4:
+                key_tuple.append(None)
+            row_dict[tuple(key_tuple)] = val
+        processed_rows.append(row_dict)
+
+    stacked_data = []
+    for obs_idx, row_dict in enumerate(processed_rows):
+        for (lvl1, lvl2, lvl3, lvl4), val in row_dict.items():
+            stacked_data.append({
+                'observation': obs_idx,
+                'level_1': lvl1,
+                'level_2': lvl2,
+                'level_3': lvl3,
+                'level_4': lvl4,
+                'value': val
+            })
+
+    all_level1 = set(d['level_1'] for d in stacked_data if d['level_1'])
+    all_level1 = all_level1 - {'participant', 'session'}
+    apps = sorted(list(all_level1))
+
+    # Ensure var_dict has entries for each discovered app (even if empty).
+    for app in apps:
+        if app not in var_dict:
+            var_dict[app] = {}
+
+
+    # --- 3) Extract participant and session data ------------------------------
+
+    participant_data = extract_data('participant', stacked_data, var_dict)
+    participant_data = convert_columns(participant_data)
+
+    # Build a map: obs -> participant_code
+    obs_to_participant_code = {}
+    for row in participant_data:
+        # We expect 'participant_code' in these rows
+        if 'participant_code' in row:
+            obs_to_participant_code[row['observation']] = row['participant_code']
+
+    session_data = extract_data('session', stacked_data, var_dict)
+    session_data = convert_columns(session_data)
+    session_data = index_to_participant_code(session_data, obs_to_participant_code)
+    
+    for row in participant_data: row.pop('observation')
+    participant_data = reorder_columns(participant_data, ['participant_code'])
+    
+    final_tables = {
+        'participant': participant_data,
+        'session': session_data,
+    }
+
+    # --- 4) Separate the remaining long data by app and sub-level -------------
+
+    # For convenience, gather all unique level_3 for each (level_1 == app).
+    # Typically level_3 is 'subsession', 'group', 'player', etc.
+    for app in apps:
+        logger.info(f"Normalize data for oTree app: '{app}'")
+        app_level_3 = sorted(set(
+            d['level_3'] for d in stacked_data if d['level_1'] == app and d['level_3']
+        ))
+
+        for group_name in app_level_3:
+            # Filter data for this app & group
+            relevant = [
+                d for d in stacked_data
+                if d['level_1'] == app and d['level_3'] == group_name
+            ]
+            if not relevant:
+                continue
+
+            pivoted = {}
+            for item in relevant:
+                obs = item['observation']
+                try:
+                    rnd = int(item['level_2'])  # round number
+                except (ValueError, TypeError):
+                    rnd = None
+                if item['value'] not in (None, ''):
+                    col = item['level_4']
+                    val = item['value']
+                    key = (obs, rnd)
+
+                    if key not in pivoted:
+                        pivoted[key] = {
+                            'observation': obs,
+                            'round': rnd
+                        }
+                    if col and col not in pivoted[key]:
+                        pivoted[key][col] = val
+
+            pivoted_list = remove_all_empty_columns(
+                unify_dict_keys(list(pivoted.values()))
+            )
+            out_df_rows = convert_columns(pivoted_list)
+            out_df_rows = index_to_participant_code(
+                out_df_rows, obs_to_participant_code
+            )
+            table_name = f"{app}_{group_name}"  
+        
+            if group_name == 'subsession':
+                # This code assumes that subsesions are equal to rounds.
+                # This implies that round_number' and 'round' columns should 
+                # match and that the resulting data should have 3 columns.
+                col_names = out_df_rows[0].keys() if out_df_rows else []
+                if len(col_names) != 3:
+                    logger.error(
+                        f"Error {app} data extraction: app seems to contain "
+                        "more subsessions than rounds or subsession level data."
+                    )
+                    raise ValueError(
+                        f"Error in {app} data extraction: app seems to contain "
+                        "more subsessions than rounds."
+                    )
+                for row in out_df_rows:
+                    if 'round_number' in row and row['round_number'] != row['round']:
+                        logger.error(
+                            f"Error {app} data extraction: subsession round_number "
+                            "does not match inferred round."
+                        )
+                        raise ValueError(
+                            f"Error in {app} data extraction: subsession round_number "
+                            "does not match inferred round."
+                        )
+                # No data in subsession, so skip storing
+                continue
+            
+            elif group_name == 'group':
+                # group data might or might not have data
+                # (only if there's more than one group or if there are 
+                # group-level variables)
+
+                sess_index = {}
+                for srow in session_data:
+                    pcode = srow.get('participant_code', None)
+                    sess_index[pcode] = srow
+
+                merged_group = []
+                for row in out_df_rows:
+                    pcode = row.get('participant_code', None)
+                    newrow = dict(row)
+                    if pcode in sess_index:
+                        # merge session data into newrow
+                        for k, v in sess_index[pcode].items():
+                            # do not overwrite if we already have something
+                            if k not in ('participant_code', 'observation', 'round'):
+                                newrow[k] = v
+                    merged_group.append(newrow)
+                out_df_rows = merged_group
+
+                # Check if 'id_in_subsession' is all 1 - meaning there is only 
+                # one group per session
+                all_id1 = True
+                for row in out_df_rows:
+                    if row.get('id_in_subsession') != 1:
+                        all_id1 = False
+                        break
+
+                if all_id1:
+                    # drop ['id_in_subsession', 'participant_code']
+                    cleaned = []
+                    for row in out_df_rows:
+                        newrow = dict(row)
+                        newrow.pop('id_in_subsession', None)
+                        newrow.pop('participant_code', None)
+                        cleaned.append(newrow)
+                    out_df_rows = cleaned
+
+                    # If after dropping columns we are left with only 2 columns 
+                    # (session_code, round), there is no group level data
+                    if out_df_rows:
+                        col_count = len(out_df_rows[0])
+                        if col_count == 2:
+                            # skip storing
+                            continue
+                else:
+                    # rename id_in_subsession -> group_id
+                    # build a map of group_id to participant_code
+                    cleaned = []
+                    group_participant_map = []
+                    for row in out_df_rows:
+                        newrow = dict(row)
+                        newmap = dict()
+                        newrow['group_id'] = newrow.pop('id_in_subsession')
+                        newmap['participant_code'] = newrow.pop('participant_code')
+                        newmap['round'] = newrow['round']
+                        newmap['group_id'] = newrow['group_id']
+                        cleaned.append(newrow)
+                        group_participant_map.append(newmap)
+                    out_df_rows = cleaned
+
+                # reorder columns
+                col_order = ['session_code', 'round']
+                if not all_id1: col_order.append('group_id')
+                out_df_rows = reorder_columns(out_df_rows, col_order)
+
+                # Deduplicate
+                unique_rows = []
+                seen = set()
+                for row in out_df_rows:
+                    # convert to a tuple of items
+                    row_tup = tuple(sorted(row.items()))
+                    if row_tup not in seen:
+                        seen.add(row_tup)
+                        unique_rows.append(row)
+                out_df_rows = unique_rows
+
+                final_tables[table_name] = out_df_rows
+
+            elif group_name == 'player':
+                # rename id_in_group -> player_id
+                # and merge with group_participant_map if it exists
+                cleaned = []
+                for row in out_df_rows:
+                    newrow = dict(row)
+                    newrow['player_id'] = newrow.pop('id_in_group')
+                    if not all_id1:
+                        for m in group_participant_map:
+                            if  m['round'] == newrow['round'] and \
+                                m['participant_code'] == newrow['participant_code']:
+                                newrow['group_id'] = m['group_id']
+                                break
+                    cleaned.append(newrow)
+                out_df_rows = cleaned
+                # reorder
+                if not all_id1:
+                    col_order = ['participant_code', 'round', 'group_id', 'player_id']
+                else:
+                    col_order = ['participant_code', 'round', 'player_id']
+                out_df_rows = reorder_columns(
+                    out_df_rows, col_order
+                )
+                final_tables[table_name] = out_df_rows
+
+            else:
+                # This should not happen - but if it does, store the data as is
+                logger.warning(
+                    f"Unrecognized level name '{group_name}' in app '{app}'."
+                )
+                final_tables[table_name] = out_df_rows
+
+    # delete app names from table names if there is only one app
+    if len(apps) == 1:
+        for table_name in final_tables.keys():
+                if table_name.startswith(apps[0] + '_'):
+                    final_tables[table_name.split('_')[-1]] = \
+                        final_tables.pop(table_name)
+
+
+    # --- 5) Optionally store as CSV -------------------------------------------
+
+    if store_as_csv:
+        if exp_prefix: exp_prefix += '_'
+        for table_name, rows in final_tables.items():
+            out_csv = os.path.join(
+                data_exp_path, f"{exp_prefix}{table_name}.csv"
+            )
+            write_dicts_to_csv(rows, out_csv)
+
+    logger.info(f"Normalizing data completed")
+    return final_tables
