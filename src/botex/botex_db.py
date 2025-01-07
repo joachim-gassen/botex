@@ -3,6 +3,7 @@ import json
 import sqlite3
 import logging
 from os import environ
+from typing import List, Dict
 
 logger = logging.getLogger("botex")
 
@@ -52,18 +53,18 @@ def parse_conversation(c):
         'answers': parse_history(c['conversation'])
     }
 
-def read_participants_from_botex_db(session_id = None, botex_db = None):
+def read_participants_from_botex_db(session_id = None, botex_db = None) -> List[Dict]:
     """
     Read the participants table from the botex database.
 
-    Parameters:
+    Args:
         session_id (str, optional): A session ID to filter the results.
-        botex_db (str, optional): The name of a SQLite database file.
-        If not provided, it will try to read the file name from
-        the environment variable BOTEX_DB.
+        botex_db (str, optional): The name of a SQLite database file. If not 
+            provided, it will try to read the file name from the environment 
+            variable BOTEX_DB.
 
     Returns:
-        List of Dicts: A list of dictionaries with participant data.
+        A list of dictionaries with participant data.
     """
 
     if botex_db is None: botex_db = environ.get('BOTEX_DB')
@@ -84,13 +85,13 @@ def read_participants_from_botex_db(session_id = None, botex_db = None):
 
 def read_conversations_from_botex_db(
         participant_id = None, botex_db = None, session_id = None
-    ):
+    ) -> List[Dict]:
     """
     Reads the conversations table from the botex database. 
     The conversation table contains the messages exchanged 
     with the LLM underlying the bot.
 
-    Parameters:
+    Args:
         participant_id (str, optional): A Participant ID to filter the results.
         botex_db (str, optional): The name of a SQLite database file.
             If not provided, it will try to read the file name from
@@ -98,7 +99,7 @@ def read_conversations_from_botex_db(
         session_id (str, optional): A session ID to filter the results.
         
     Returns:
-        List of dicts: A list of dictionaries with the conversation data.
+        A list of dictionaries with the conversation data.
     """
     if botex_db is None: botex_db = environ.get('BOTEX_DB')
     conn = sqlite3.connect(botex_db)
@@ -120,7 +121,7 @@ def read_conversations_from_botex_db(
     conn.close()
     return conversations
 
-def read_responses_from_botex_db(botex_db = None, session_id = None):
+def read_responses_from_botex_db(botex_db = None, session_id = None) -> List[Dict]:
     """
     Extracts the responses and their rationales from the botex conversation data. 
 
@@ -131,7 +132,7 @@ def read_responses_from_botex_db(botex_db = None, session_id = None):
         session_id (str, optional): A session ID to filter the results.
 
     Returns:
-        List of dicts: A list of dictionaries with the rationale data.
+        A list of dictionaries with the rationale data.
     """
     
     cs = read_conversations_from_botex_db(botex_db = botex_db, session_id = session_id)
@@ -153,7 +154,7 @@ def read_responses_from_botex_db(botex_db = None, session_id = None):
 
 
 
-def export_participant_data(csv_file, botex_db = None):
+def export_participant_data(csv_file, botex_db = None) -> None:
     """
     Export the participants table from the botex database to a CSV file.
 
@@ -174,7 +175,7 @@ def export_participant_data(csv_file, botex_db = None):
 
 
 
-def export_response_data(csv_file, botex_db = None, session_id = None):
+def export_response_data(csv_file, botex_db = None, session_id = None) -> None:
     """
     Export the responses parsed from the bot conversations in the botex
     database to a CSV file.

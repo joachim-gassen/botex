@@ -3,10 +3,45 @@ nav:
     - Home: index.md
     - Getting Started: getting_started.md
     - API Reference: reference.md
+markdown_extensions:
+    - pymdownx.highlight:
+          use_pygments: true
+          pygments_style: monokai
+          noclasses: true
+          linenums: false
+          linenums_style: table
+          anchor_linenums: true
+          line_spans: __span
+          pygments_lang_class: true
+    - admonition
+    - pymdownx.details
+    - pymdownx.inlinehilite
+    - pymdownx.snippets
+    - pymdownx.superfences
+    - attr_list
+    - pymdownx.tabbed:
+          alternate_style: true
 theme:
     name: material
+    features:
+        - content.code.select
+        - content.code.copy
+        - navigation.tabs
+        - navigation.tabs.sticky
+    palette:
+        - media: '(prefers-color-scheme: light)'
+          scheme: default
+          toggle:
+              icon: material/brightness-7
+              name: Switch to dark mode
 
+        - media: '(prefers-color-scheme: dark)'
+          scheme: slate
+          toggle:
+              icon: material/brightness-4
+              name: Switch to light mode
 plugins:
     - search
     - mkdocstrings
-
+    - privacy
+use_directory_urls: false

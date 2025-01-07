@@ -11,6 +11,7 @@ from threading import Thread
 from random import shuffle
 from itertools import compress
 import requests
+from typing import List
 
 import logging
 logger = logging.getLogger("botex")
@@ -114,7 +115,7 @@ def start_otree_server(
         rest_key = None,
         admin_password = None,
         timeout = 5
-    ):
+    ) -> subprocess.Popen:
     """
     Start an oTree server in a subprocess.
 
@@ -148,6 +149,9 @@ def start_otree_server(
 
     Returns:
         A subprocess object.
+    
+    Raises:
+        Exception: If the oTree server does not start within the timeout.
     """
     if project_path is None:
         project_path = os.environ.get('OTREE_PROJECT_PATH')
@@ -205,7 +209,7 @@ def start_otree_server(
     return otree_server
 
 
-def stop_otree_server(otree_server):
+def stop_otree_server(otree_server: subprocess.Popen) -> int:
     """
     Stop an oTree server subprocess.
 
@@ -230,18 +234,21 @@ def stop_otree_server(otree_server):
     return otree_server.poll()
 
  
-def get_session_configs(otree_server_url = None, otree_rest_key = None):
+def get_session_configs(
+        otree_server_url: str | None = None,
+        otree_rest_key: str | None = None
+    ) -> dict:
     """
     Get the session configurations from an oTree server.
 
-    Parameters:
-    otree_server_url (str): The URL of the oTree server. Read from environment
-        variable OTREE_SERVER_URL if None (the default).
-    otree_rest_key (str): The API key for the oTree server. Read from environment
-        variable OTREE_REST_KEY if None (the default).
+    Args:
+        otree_server_url (str): The URL of the oTree server. Read from 
+            environment variable OTREE_SERVER_URL if None (the default).
+        otree_rest_key (str): The API key for the oTree server. Read from 
+            environment variable OTREE_REST_KEY if None (the default).
 
     Returns:
-    list: The session configurations.
+        dict: The session configurations.
     """
 
     return call_otree_api(
@@ -250,44 +257,46 @@ def get_session_configs(otree_server_url = None, otree_rest_key = None):
     )
 
 def init_otree_session(
-        config_name, npart, nhumans = 0, 
-        is_human = None,
-        room_name = None,
-        botex_db = None,
-        otree_server_url = None,
-        otree_rest_key = None,
-        modified_session_config_fields = None,
-    ):
+        config_name: str,
+        npart: int,
+        nhumans: int = 0, 
+        is_human: List[bool] | None = None,
+        room_name: str | None = None,
+        botex_db: str | None = None,
+        otree_server_url: str | None = None,
+        otree_rest_key: str | None = None,
+        modified_session_config_fields: dict | None = None,
+    ) -> dict:
     """
     Initialize an oTree session with a given number of participants.
 
-    Parameters:
-    config_name (str): The name of the oTree session configuration.
-    npart (int): The total number of participants.
-    nhumans (int): The number of human participants (defaults to zero). Provide
-        either nhumans or is_human, but not both.
-    is_human (list): A list of booleans indicating whether each participant is human.
-        Needs to be the same length as npart. If None (the default), humans 
-        (if present) will be randomly assigned.
-    room_name (str): The name of the oTree room for the session. If None (the default),
-        no room will be used.
-    botex_db (str): The name of the SQLite database file to store BotEx data.
-        If None (the default), it will be obtained from the environment variable 
-        BOTEX_DB. If the database does not exist, it will be created.
-    otree_server_url (str): The URL of the oTree server.
-        If None (the default), it will be obtained from the environment variable 
-        OTREE_SERVER_URL.
-    otree_rest_key (str): The API key for the oTree server.
-        If None (the default), it will be obtained from the environment variable 
-        OTREE_REST_KEY.
-    modified_session_config_fields (dict): A dictionary of fields to modify in the
-        the oTree session config. Default is None. 
+    Args:
+        config_name (str): The name of the oTree session configuration.
+        npart (int): The total number of participants.
+        nhumans (int): The number of human participants (defaults to zero.
+            Provide either nhumans or is_human, but not both.
+        is_human (list): A list of booleans indicating whether each participant 
+            is human. Needs to be the same length as npart. If None (the 
+            default), humans (if present) will be randomly assigned.
+        room_name (str): The name of the oTree room for the session. If None 
+            (the default), no room will be used.
+        botex_db (str): The name of the SQLite database file to store BotEx     
+            data. If None (the default), it will be obtained from the 
+            environment variable BOTEX_DB. If the database does not exist, it 
+            will be created.
+        otree_server_url (str): The URL of the oTree server. If None (the 
+            default), it will be obtained from the environment variable 
+            OTREE_SERVER_URL.
+        otree_rest_key (str): The API key for the oTree server. If None (the 
+            default), it will be obtained from the environment variable 
+            OTREE_REST_KEY.
+        modified_session_config_fields (dict): A dictionary of fields to modify 
+            in the the oTree session config. Default is None. 
 
     Returns:
-    dict with the keys 'session_id', 'participant_code', 'is_human', 
-    'bot_urls', and 'human_urls'
-    containing the session ID, participant codes, human indicators,
-    and the URLs for the human and bot participants.
+        dict with the keys 'session_id', 'participant_code', 'is_human', 
+        'bot_urls', and 'human_urls' containing the session ID, participant 
+        codes, human indicators, and the URLs for the human and bot participants.
     """
 
     if nhumans > 0 and is_human is not None: raise(Exception(
@@ -354,18 +363,26 @@ def init_otree_session(
     }
 
 
-def get_bot_urls(session_id, botex_db = None, already_started = False):
+def get_bot_urls(
+        session_id: str,
+        botex_db: str | None = None,
+        already_started: bool = False
+    ) -> List[str]:
     """
     Get the URLs for the bot participants in an oTree session.
 
-    Parameters:
-    session_id (str): The ID of the oTree session.
-    botex_db (str): The name of the SQLite database file to store BotEx data.
-        If None (the default), it will be obtained from the environment 
-        variable BOTEX_DB.
+    Args:
+        session_id (str): The ID of the oTree session.
+        botex_db (str): The name of the SQLite database file to store BotEx 
+            data. If None (the default), it will be obtained from the 
+            environment variable BOTEX_DB.
+        already_started (bool): If True, the function will also run bots that 
+            have already started but not yet finished. This is useful if bots 
+            did not startup properly because of network issues. Default is 
+            False.
 
     Returns:
-    list: The URLs for the bot participants.
+        List of URLs for the bot participants
     """
 
     if botex_db is None: botex_db = os.environ.get('BOTEX_DB')
@@ -386,92 +403,104 @@ def get_bot_urls(session_id, botex_db = None, already_started = False):
     return urls
 
 def run_bots_on_session(
-        session_id, bot_urls = None, 
-        botex_db = None, 
+        session_id: str,
+        bot_urls: List[str] | None = None, 
+        botex_db: str | None = None, 
         model: str = "gpt-4o-2024-08-06",
-        api_key = None,
+        api_key: str | None = None,
         api_base: str | None = None,
-        throttle = False,
-        full_conv_history = False,
+        throttle: bool = False,
+        full_conv_history: bool = False,
         user_prompts: dict | None = None,
-        already_started = False,
-        wait = True,
+        already_started: bool = False,
+        wait: bool = True,
         **kwargs
-    ):
+    ) -> None | List[Thread]:
     """
     Run botex bots on an oTree session.
 
-    Parameters:
-    session_id (str): The ID of the oTree session.
-    bots_urls (list): A list of URLs for the bot participants.
-        Will be retrieved from the database if None (the default).
-    botex_db (str): The name of the SQLite database file for BotEx data.
-        If None (the default), it will be obtained from the environment 
-        variable BOTEX_DB.
-    model (str): The model to use for the bot. Default is "gpt-4o-2024-08-06"
-        from OpenAI vie LiteLLM. It needs to be a model that supports structured 
-        outputs. For OpenAI, these are gpt-4o-mini-2024-07-18 and later or 
-        gpt-4o-2024-08-06 and later. If you use a commercial model, You need to
-        provide an API key in the parameter 'api_key' and be 
-        prepared to pay to use this model. If you want to use local models, 
-        we suggest that you use llama.cpp, In this case, set this string
-        to "lamacpp" and set the URL of your llama.cpp server in
-        'api_base'. If you want botex to start the llama.cpp server for you,
-        run 'start_llamacpp_sever()' prior to running
-        run_bots_on_session().
-    api_key (str): The API key for the model that you use. If None 
-        (the default), it will be obtained from environment variables 
-        by liteLLM (e.g., OPENAI_API_KEY or GEMINI_API_KEY). 
-    api_base (str): The base URL for the llm server. Default is None not to
-        interfere with the default LiteLLM behavior. If you want to use a local 
-        model with llama.cpp and if you have not explicitly set this parameter, 
-        it will default to `http://localhost:8080`, the default url for the
-        llama.cpp server.
-    throttle (bool): Whether to slow down the bot's requests.
-        Slowing done the requests can help to avoid rate limiting. Default is 
-        False. The bot will switch to 'throttle=True' when LiteLLM is used and 
-        completion requests raise exceptions.
-    full_conv_history (bool): Whether to keep the full conversation history.
-        This will increase token use and only work with very short experiments.
-        Default is False.
-    user_prompts (dict): A dictionary of user prompts to override the default 
-        prompts that the bot uses. The keys should be one or more of the 
-        following: ['start', 'analyze_first_page_no_q', 'analyze_first_page_q', 
-        'analyze_page_no_q', 'analyze_page_q', 'analyze_page_no_q_full_hist', 
-        'analyze_page_q_full_hist', 'page_not_changed', 'system', 
-        'system_full_hist', 'resp_too_long', 'json_error', 'end', 
-        'end_full_hist']. If a key is not present in the dictionary, the default 
-        prompt will be used. If a key that is not in the default prompts is 
-        present in the dictionary, then the bot will exit with a warning and 
-        not run to make sure that the user is aware of the issue.
-    already_started (bool): If True, the function will also run bots that have
-        already started but not yet finished. This is useful if bots did not 
-        startup properly because of network issues. Default is False.
-    wait (bool): If True (the default), the function will wait for the bots to 
-        finish.
-    kwargs (dict): Additional keyword arguments to pass on to 
-        litellm.completion().
+    Args:
+        session_id (str): The ID of the oTree session.
+        bot_urls (list): A list of URLs for the bot participants.
+            Will be retrieved from the database if None (the default).
+        botex_db (str): The name of the SQLite database file for BotEx data.
+            If None (the default), it will be obtained from the environment 
+            variable BOTEX_DB.
+        model (str): The model to use for the bot. Default is 
+            `gpt-4o-2024-08-06` from OpenAI vie LiteLLM. It needs to be a model 
+            that supports structured outputs. For OpenAI, these are 
+            gpt-4o-mini-2024-07-18 and later or gpt-4o-2024-08-06 and later. If 
+            you use a commercial model, You need to provide an API key in the 
+            parameter `api_key` and be prepared to pay to use this model.
+            
+            If you want to use local models, we suggest that you use llama.cpp, 
+            In this case, set this string to `lamacpp` and set the URL of your 
+            llama.cpp server in `api_base`. If you want botex to start the  llama.cpp server for you, run `start_llamacpp_sever()` prior to 
+            running run_bots_on_session().
+        api_key (str): The API key for the model that you use. If None (the 
+            default), it will be obtained from environment variables by liteLLM 
+            (e.g., OPENAI_API_KEY or GEMINI_API_KEY). 
+        api_base (str): The base URL for the llm server. Default is None not to
+            interfere with the default LiteLLM behavior. If you want to use a 
+            local model with llama.cpp and if you have not explicitly set this 
+            parameter, it will default to `http://localhost:8080`, the default 
+            url for the llama.cpp server.
+        throttle (bool): Whether to slow down the bot's requests. Slowing done 
+            the requests can help to avoid rate limiting. Default is False. The 
+            bot will switch to `throttle=True` when LiteLLM is used and 
+            completion requests raise exceptions.
+        full_conv_history (bool): Whether to keep the full conversation history.
+            This will increase token use and only work with very short 
+            experiments. Default is False.
+        user_prompts (dict): A dictionary of user prompts to override the 
+            default prompts that the bot uses. The keys should be one or more 
+            of the following:
+            
+            [`start`, `analyze_first_page_no_q`, `analyze_first_page_q`, 
+            `analyze_page_no_q`, `analyze_page_q`,
+            `analyze_page_no_q_full_hist`, `analyze_page_q_full_hist`, 
+            `page_not_changed`, `system`, `system_full_hist`, `resp_too_long`, 
+            `json_error`, `end`, `end_full_hist`].
+            
+            If a key is not present in  the dictionary, the default prompt will 
+            be used. If a key that is not in the default prompts is present in 
+            the dictionary, then the bot will exit with a warning and not run 
+            to make sure that the user is aware of the issue.
+        already_started (bool): If True, the function will also run bots that 
+            have already started but not yet finished. This is useful if bots 
+            did not startup properly because of network issues. Default is 
+            False.
+        wait (bool): If True (the default), the function will wait for the bots 
+            to finish.
+        kwargs (dict): Additional keyword arguments to pass on to
+            `litellm.completion()`.
         
-    Returns: None (bot conversation logs are stored in database) if wait is True.
-        A list of Threads running the bots if wait is False.
+    Returns:
+        None (bot conversation logs are stored in database) if wait is True. A list of Threads running the bots if wait is False.
 
     Notes:
 
         -   When running local models via llama.cpp, if you would like 
             botex to start the llama.cpp server for you, 
             run `start_llamacpp_server()` to start up the server prior to
-            running `run_bots_on_session().
+            running `run_bots_on_session()`.
 
-    Example Usage:
-        # Running botex with the default model ("gpt-4o-2024-08-06")
+    ??? example "Example Usage"
+    
+        - Running botex with the default model (`gpt-4o-2024-08-06`)
+        
+        ```python
         run_bots_on_session(
             session_id="your_session_id",
             botex_db="path/to/botex.db",
             api_key="your_openai_api_key",
             # Other parameters if and as needed
         )
+        ```
 
-        # Using a specific model supported by LiteLLM
+        - Using a specific model supported by LiteLLM
+
+        ```python    
         run_bots_on_session(
             session_id="your_session_id",
             botex_db="path/to/botex.db",
@@ -479,8 +508,11 @@ def run_bots_on_session(
             api_key="your_gemini_api_key",
             # Other parameters if and as needed
         )
+        ```
 
-        # Using a local model with BotEx starting the llama.cpp server
+        - Using a local model with BotEx starting the llama.cpp server
+    
+        ```python
         llamacpp_config = {
             "server_path": "/path/to/llama/server",
             "local_llm_path": "/path/to/local/model",
@@ -494,19 +526,22 @@ def run_bots_on_session(
             # Other parameters if and as needed
         )
         stop_llamacpp_server(process_id)
+        ```
 
-        # Using a local model with an already running llama.cpp server
-        # that uses an URL different from the default (if you are using
-        # the default http://localhost:8080", you can simply omit the
-        # `api_base` parameter)
+        - Using a local model with an already running llama.cpp server that 
+            uses a URL different from the default (if you are using the 
+            default "http://localhost:8080", you can simply omit the `api_base` 
+            parameter)
+    
+        ```python
         run_bots_on_session(
             session_id="your_session_id",
             botex_db="path/to/botex.db",
             model = "llamacpp",
-            api_base = http://yourserver:port"},
+            api_base = "http://yourserver:port"},
             # Other parameters if and as needed
         )
-
+        ```
     """
     if botex_db is None: botex_db = os.environ.get('BOTEX_DB')
     if api_key is None and 'openai_api_key' in kwargs: 
@@ -536,72 +571,83 @@ def run_bots_on_session(
         return threads
 
 def run_single_bot(
-    url,
-    session_name = "unknown",
-    session_id = "unknown", 
-    participant_id = "unknown",
-    botex_db = None,
+    url: str,
+    session_name: str = "unknown",
+    session_id: str = "unknown", 
+    participant_id: str = "unknown",
+    botex_db: str | None = None,
     model: str = "gpt-4o-2024-08-06",
-    api_key = None,
+    api_key: str | None = None,
     api_base: str | None = None,
-    throttle = False, 
-    full_conv_history = False,
+    throttle: bool = False, 
+    full_conv_history: bool = False,
     user_prompts: dict | None = None,
-    wait = True,
+    wait: bool = True,
     **kwargs
-):
+) -> None | Thread:
     """
     Runs a single botex bot manually.
 
-    Parameters:
-    url (str): The participant URL to start the bot on.
-    session_name (str): The name of the oTree session. Defaults to "unknown"
-    session_id (str): The oTree ID of the oTree session. Defaults to "unknown".
-    participant_id (str): The oTree ID of the participant. Defaults to "unknown".
-    botex_db (str): The name of the SQLite database file to store botex data.
-    full_conv_history (bool): Whether to keep the full conversation history.
-        This will increase token use and only work with very short experiments.
-        Default is False.
-    model (str): The model to use for the bot. Default is "gpt-4o-2024-08-06"
-        from OpenAI vie LiteLLM. It needs to be a model that supports structured 
-        outputs. For OpenAI, these are gpt-4o-mini-2024-07-18 and later or 
-        gpt-4o-2024-08-06 and later. If you use a commercial model, You need to
-        provide an API key in the parameter 'api_key' and be 
-        prepared to pay to use this model. If you want to use local models, 
-        we suggest that you use llama.cpp, In this case, set this string
-        to "lamacpp" and set the URL of your llama.cpp server in
-        'api_base'. If you want botex to start the llama.cpp server for you,
-        run 'start_llamacpp_sever()' prior to running
-        run_single_bot().
-    api_key (str): The API key for the model that you use. If None 
-        (the default), it will be obtained from environment variables 
-        by liteLLM (e.g., OPENAI_API_KEY or GEMINI_API_KEY). 
-    api_base (str): The base URL for the llm server. Default is None not to
-        interfere with the default LiteLLM behavior. If you want to use a local 
-        model with llama.cpp and if you have not explicitly set this parameter, 
-        it will default to `http://localhost:8080`, the default url for the
-        llama.cpp server.
-    throttle (bool): Whether to slow down the bot's requests.
-        Slowing done the requests can help to avoid rate limiting. Default is 
-        False. The bot will switch to 'throttle=True' when LiteLLM is used and 
-        completion requests raise exceptions.
-    user_prompts (dict): A dictionary of user prompts to override the default 
-        prompts that the bot uses. The keys should be one or more of the 
-        following: ['start', 'analyze_first_page_no_q', 'analyze_first_page_q', 
-        'analyze_page_no_q', 'analyze_page_q', 'analyze_page_no_q_full_hist', 
-        'analyze_page_q_full_hist', 'page_not_changed', 'system', 
-        'system_full_hist', 'resp_too_long', 'json_error', 'end', 
-        'end_full_hist']. If a key is not present in the dictionary, the default 
-        prompt will be used. If a key that is not in the default prompts is 
-        present in the dictionary, then the bot will exit with a warning and 
-        not run to make sure that the user is aware of the issue.
-    wait (bool): If True (the default), the function will wait for the bots to 
-        finish.
-    kwargs (dict): Additional keyword arguments to pass on to 
-        litellm.completion().
-    
-    Returns: None (conversation is stored in the botex database) if wait is True.
-        The Thread running the bot if wait is False.
+    Args:
+        url (str): The participant URL to start the bot on.
+        session_name (str): The name of the oTree session. Defaults to "unknown"
+        session_id (str): The oTree ID of the oTree session. Defaults to 
+            "unknown".
+        participant_id (str): The oTree ID of the participant. Defaults to 
+            "unknown".
+        botex_db (str): The name of the SQLite database file to store botex 
+            data.
+        full_conv_history (bool): Whether to keep the full conversation history.
+            This will increase token use and only work with very short 
+            experiments. Default is False.
+        model (str): The model to use for the bot. Default is 
+            `gpt-4o-2024-08-06` from OpenAI vie LiteLLM. It needs to be a model 
+            that supports structured outputs. For OpenAI, these are 
+            gpt-4o-mini-2024-07-18 and later or gpt-4o-2024-08-06 and later. If 
+            you use a commercial model, You need to provide an API key in the 
+            parameter `api_key` and be prepared to pay to use this model.
+            
+            If you want to use local models, we suggest that you use llama.cpp, 
+            In this case, set this string to `lamacpp` and set the URL of your 
+            llama.cpp server in `api_base`. If you want botex to start the  llama.cpp server for you, run `start_llamacpp_sever()` prior to 
+            running run_bots_on_session().
+        api_key (str): The API key for the model that you use. If None (the 
+            default), it will be obtained from environment variables by liteLLM 
+            (e.g., OPENAI_API_KEY or GEMINI_API_KEY). 
+        api_base (str): The base URL for the llm server. Default is None not to
+            interfere with the default LiteLLM behavior. If you want to use a 
+            local model with llama.cpp and if you have not explicitly set this 
+            parameter, it will default to `http://localhost:8080`, the default 
+            url for the llama.cpp server.
+        throttle (bool): Whether to slow down the bot's requests. Slowing done 
+            the requests can help to avoid rate limiting. Default is False. The 
+            bot will switch to `throttle=True` when LiteLLM is used and 
+            completion requests raise exceptions.
+        full_conv_history (bool): Whether to keep the full conversation history.
+            This will increase token use and only work with very short 
+            experiments. Default is False.
+        user_prompts (dict): A dictionary of user prompts to override the 
+            default prompts that the bot uses. The keys should be one or more 
+            of the following:
+            
+            [`start`, `analyze_first_page_no_q`, `analyze_first_page_q`, 
+            `analyze_page_no_q`, `analyze_page_q`,
+            `analyze_page_no_q_full_hist`, `analyze_page_q_full_hist`, 
+            `page_not_changed`, `system`, `system_full_hist`, `resp_too_long`, 
+            `json_error`, `end`, `end_full_hist`].
+            
+            If a key is not present in  the dictionary, the default prompt will 
+            be used. If a key that is not in the default prompts is present in 
+            the dictionary, then the bot will exit with a warning and not run 
+            to make sure that the user is aware of the issue.
+        wait (bool): If True (the default), the function will wait for the bots 
+            to finish.
+        kwargs (dict): Additional keyword arguments to pass on to
+            `litellm.completion()`.
+        
+    Returns:
+        None (conversation is stored in the botex database) if wait is True.
+            The Thread running the bot if wait is False.
 
     Notes:
 
@@ -610,34 +656,59 @@ def run_single_bot(
         run `start_llamacpp_server()` to start up the server prior to
         running `run_bots_on_session().
     
-    Example Usage:
+    ??? example "Example Usage"
 
-    # Using a model via LiteLLM
-    run_single_bot(
-        url="your_participant_url",
-        session_name="your_session_name",
-        session_id="your_session_id",
-        participant_id="your_participant_id",
-        botex_db="path/to/botex.db",
-        model="a LiteLLM model string, e.g. 'gemini/gemini-1.5-flash'",
-        api_key="the API key for your model provide",
-        # Other parameters if and as needed
-    )
+        - Using a model via LiteLLM
+
+        ```python
+        run_single_bot(
+            url="your_participant_url",
+            session_name="your_session_name",
+            session_id="your_session_id",
+            participant_id="your_participant_id",
+            botex_db="path/to/botex.db",
+            model="a LiteLLM model string, e.g. 'gemini/gemini-1.5-flash'",
+            api_key="the API key for your model provide",
+            # Other parameters if and as needed
+        )
+        ```
 
 
-    # Using a local model with an already running llama.cpp server
-    # If you want botex to start the llama.cpp server, you need
-    # to run `start_llamacpp_server()` prior to running this.
-    run_single_bot(
-        url="your_participant_url",
-        session_name="your_session_name",
-        session_id="your_session_id",
-        participant_id="your_participant_id",
-        botex_db="path/to/botex.db",
-        model="llamacpp",
-        api_base="http://yourhost:port" # defaults to http://localhost:8080
-        # Other parameters if and as needed
-    )
+        - Using a local model with an already running llama.cpp server
+        
+        ```python
+        run_single_bot(
+            url="your_participant_url",
+            session_name="your_session_name",
+            session_id="your_session_id",
+            participant_id="your_participant_id",
+            botex_db="path/to/botex.db",
+            model="llamacpp",
+            api_base="http://yourhost:port" # defaults to http://localhost:8080
+            # Other parameters if and as needed
+        )
+        ```
+
+        - Using a local model with BotEx starting the llama.cpp server
+
+        ```python
+        llamacpp_config = {
+            "server_path": "/path/to/llama/server",
+            "local_llm_path": "/path/to/local/model",
+            # Additional configuration parameters if and as needed
+        }
+        process_id = start_llamacpp_server(llamacpp_config)
+        run_single_bot(
+            url="your_participant_url",
+            session_name="your_session_name",
+            session_id="your_session_id",
+            participant_id="your_participant_id",
+            botex_db="path/to/botex.db",
+            model="llamacpp",
+            # Other parameters if and as needed
+        )
+        stop_llamacpp_server(process_id)
+        ```
     """
     if api_base is not None:
         kwargs['api_base'] = api_base
@@ -688,10 +759,12 @@ def run_single_bot(
     
 
 def export_otree_data(
-        csv_file, server_url = None, 
-        admin_name = "admin", 
-        admin_password = None, time_out = 10
-    ):
+        csv_file: str,
+        server_url: str | None = None, 
+        admin_name: str | None = "admin", 
+        admin_password: str | None = None,
+        time_out: int | None = 10
+    ) -> None:
     """
     Export wide data from an oTree server.
 
@@ -766,8 +839,8 @@ def export_otree_data(
 
 
 def normalize_otree_data(
-    otree_csv_file, 
-    var_dict = {
+    otree_csv_file: str, 
+    var_dict: dict | None = {
         'participant': {
             'code': 'participant_code', 
             'time_started_utc': 'time_started_utc',
@@ -778,10 +851,10 @@ def normalize_otree_data(
             'code': 'session_code'
         }
     },
-    store_as_csv = False,
-    data_exp_path = '.', 
-    exp_prefix = '',
-):
+    store_as_csv: bool = False,
+    data_exp_path: str | None = '.', 
+    exp_prefix: str | None = '',
+) -> dict:
     """
     Normalize oTree data from wide to long format, then reshape it into a set 
     of list-of-dicts structures. Optionally save it to a set of CSV files.

@@ -118,7 +118,7 @@ class LlamaCppServerManager:
         config = {k: v for k, v in config.items() if v is not None}
         self.config = LlamaCppConfig(**config)
 
-    def start_server(self):
+    def start_server(self) -> subprocess.Popen:
         if is_llamacpp_server_reachable(self.config.server_url):
             raise Exception(
                 "A llama.cpp server is already running at " 
@@ -166,7 +166,7 @@ class LlamaCppServerManager:
 
         
     @staticmethod
-    def stop_server(process=None):
+    def stop_server(process: subprocess.Popen):
         if process:
             logger.info("Stopping llama.cpp server...")
             parent = psutil.Process(process.pid)
@@ -280,65 +280,93 @@ class LlamaCpp:
                 if attempts == 3:
                     raise Exception("Request failed after 3 attempts.")
 
-def start_llamacpp_server(config: dict | None = None):
+def start_llamacpp_server(config: dict | None = None) -> subprocess.Popen:
     """
     Starts a llama.cpp server instance.
 
     Args:
         config (dict | None, optional): A dict containing to the least
-            the keys 'llamacpp_server_path' (the path to the llama.coo 
-            executable) and `local_llm_path' (the path to the LLM model that you 
+            the keys `llamacpp_server_path` (the path to the llama.cpp 
+            executable) and `local_llm_path` (the path to the LLM model that you
             want llama.cpp to use). If None (the default), then these parameters
-            are read from the environment variables 'LLAMACPP_SERVER_PATH' and 
-            'LLAMACPP_LOCAL_LLM_PATH'. See notes below for additional
+            are read from the environment variables `LLAMACPP_SERVER_PATH` and 
+            `LLAMACPP_LOCAL_LLM_PATH`. See notes below for additional
             configuration parameters
 
     Returns:
         The process of the running llama.cpp sever if start was
-        successful. Raises an exception if starting the server fails.
+            successful.
 
-    Notes:
-        The configuration for starting the llama.cpp needs at a minimum, 
-        you will also need to provide the path to the llama.cpp server 
-        executable (`server_path`) and the path to the local language 
-        model (`local_llm_path`) in the model configuration dictionary.
-        
-        Additionally, you can provide other configuration parameters for the 
+    Raises:
+        Exception: If the server is already running or if starting the server 
+            fails.            
+
+    ??? tip "Additional details"
+        You can provide other configuration parameters for the 
         local model in the model configuration dictionary. These include:
 
-                -   `server_url` (str): The base URL for the llama.cpp 
-                    server, defaults to `"http://localhost:8080"`.
+            -   `server_url` (str): The base URL for the llama.cpp 
+                server, defaults to `"http://localhost:8080"`.
 
-                -   `context_length` (int): The context length for the model. 
-                    If `None`, BotEx will try to get the context length from the 
-                    local model metadata; if that is not possible, it defaults 
-                    to `4096`.
+            -   `context_length` (int): The context length for the model. 
+                If `None`, BotEx will try to get the context length from the 
+                local model metadata; if that is not possible, it defaults 
+                to `4096`.
 
-                -   `number_of_layers_to_offload_to_gpu` (int): The number of 
-                    layers to offload to the GPU, defaults to `0`.
+            -   `number_of_layers_to_offload_to_gpu` (int): The number of 
+                layers to offload to the GPU, defaults to `0`.
 
-                - ` temperature` (float): The temperature for the model, 
-                    defaults to `0.5`.
+            - ` temperature` (float): The temperature for the model, 
+                defaults to `0.5`.
 
-                -   `maximum_tokens_to_predict` (int): The maximum number of 
-                    tokens to predict, defaults to `10000`.
+            -   `maximum_tokens_to_predict` (int): The maximum number of 
+                tokens to predict, defaults to `10000`.
 
-                -   `top_p` (float): The top-p value for the model, 
-                    defaults to `0.9`.
+            -   `top_p` (float): The top-p value for the model, 
+                defaults to `0.9`.
 
-                -   `top_k` (int): The top-k value for the model, 
-                    defaults to `40`.
+            -   `top_k` (int): The top-k value for the model, 
+                defaults to `40`.
 
-                -   `num_slots` (int): The number of slots for the model, 
-                    defaults to `1`.
+            -   `num_slots` (int): The number of slots for the model, 
+                defaults to `1`.
 
-            For all these keys, if not provided in the configuration dictionary, 
-            botex will try to get the value from environment variables 
-            (in all capital letters, prefixed by LLAMACPP_); if that is not 
-            possible, it will use the default value.
+
+        For all these keys, if not provided in the configuration dictionary, 
+        botex will try to get the value from environment variables (in all 
+        capital letters, prefixed by LLAMACPP_); if that is not possible, it 
+        will use the default value.
+    
+
+    ??? example "Example"
+        ```python
+        from botex.llamacpp import start_llamacpp_server
+
+        config = {
+            "server_path": "/path/to/llama.cpp",
+            "local_llm_path": "/path/to/local/model",
+            "server_url": "http://localhost:8080",
+            "context_length": 4096,
+            "number_of_layers_to_offload_to_gpu": 0,
+            "temperature": 0.8,
+            "maximum_tokens_to_predict": 10000,
+            "top_p": 0.9,
+            "top_k": 40,
+            "num_slots": 1
+        }
+        ```
     """
     manager = LlamaCppServerManager(config)
     return manager.start_server()
 
-def stop_llamacpp_server(process=None):
+def stop_llamacpp_server(process: subprocess.Popen) -> None:
+    """
+    Stops a running llama.cpp server instance.
+
+    Args:
+        process (subprocess.Popen): The process of the running llama.cpp server.
+
+    Returns:
+        None (stops the running llama.cpp server)
+    """
     LlamaCppServerManager.stop_server(process)

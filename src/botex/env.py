@@ -4,7 +4,7 @@ logger = logging.getLogger("botex")
 
 from dotenv import load_dotenv
 
-def load_botex_env(env_file = "botex.env"):
+def load_botex_env(env_file = "botex.env") -> bool:
     """
     Load botex environment variables from a file.
 
