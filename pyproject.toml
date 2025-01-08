@@ -28,6 +28,7 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Artificial Intelligence"
 ]
 dependencies = [
+    'click',
     'requests', 
     'psutil', 
     'selenium', 

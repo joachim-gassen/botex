@@ -1066,9 +1066,7 @@ def normalize_otree_data(
                     if col and col not in pivoted[key]:
                         pivoted[key][col] = val
 
-            pivoted_list = remove_all_empty_columns(
-                unify_dict_keys(list(pivoted.values()))
-            )
+            pivoted_list = unify_dict_keys(list(pivoted.values()))
             out_df_rows = convert_columns(pivoted_list)
             out_df_rows = index_to_participant_code(
                 out_df_rows, obs_to_participant_code
