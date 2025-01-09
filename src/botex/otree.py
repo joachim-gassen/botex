@@ -295,8 +295,9 @@ def init_otree_session(
 
     Returns:
         dict with the keys 'session_id', 'participant_code', 'is_human', 
-        'bot_urls', and 'human_urls' containing the session ID, participant 
-        codes, human indicators, and the URLs for the human and bot participants.
+            'bot_urls', and 'human_urls' containing the session ID, participant 
+            codes, human indicators, and the URLs for the human and bot 
+            participants.
     """
 
     if nhumans > 0 and is_human is not None: raise(Exception(
@@ -478,9 +479,9 @@ def run_bots_on_session(
     Returns:
         None (bot conversation logs are stored in database) if wait is True. A list of Threads running the bots if wait is False.
 
-    Notes:
-
-        -   When running local models via llama.cpp, if you would like 
+    ??? tip "Additional details"
+    
+        When running local models via llama.cpp, if you would like 
             botex to start the llama.cpp server for you, 
             run `start_llamacpp_server()` to start up the server prior to
             running `run_bots_on_session()`.
@@ -872,10 +873,10 @@ def normalize_otree_data(
 
     Returns:
         A dict whose keys are table names (e.g. 'session', 'participant', 
-        'myapp_group', 'myapp_player', etc.) and whose values are lists of 
-        dictionaries (i.e., row data).
+            'myapp_group', 'myapp_player', etc.) and whose values are lists of 
+            dictionaries (i.e., row data).
     
-    Detail:
+    ??? tip "Additional details"
         The var_dict parameter is a dictionary that allows to customize the
         exported data. The keys of the dictionary are the names of the oTree
         apps. The values are dictionaries that map the original column names to
