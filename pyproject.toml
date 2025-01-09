@@ -63,4 +63,9 @@ dev = [
     "mkdocs-material>=9.5.49",
     "mkdocstrings[python]>=0.27.0",
     "pytest",
+    "pytest-dependency",
+    "otree>=5.11.1"
 ]
+
+[tool.uv]
+override-dependencies = ["markupsafe==1.1.1"]
