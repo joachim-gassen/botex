@@ -9,8 +9,10 @@
       
       
       
+        <link rel="prev" href="getting_started.html">
       
-        <link rel="next" href="getting_started.html">
+      
+        <link rel="next" href="reference.html">
       
       
       <link rel="icon" href="assets/images/favicon.png">
@@ -18,7 +20,7 @@
     
     
       
-        <title>botex</title>
+        <title>Tutorials - botex</title>
       
     
     
@@ -72,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#botex-using-llms-as-experimental-participants-in-otree" class="md-skip">
+        <a href="#tutorials" class="md-skip">
           Skip to content
         </a>
       
@@ -108,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Home
+              Tutorials
             
           </span>
         </div>
@@ -195,10 +197,8 @@
         
   
   
-    
   
-  
-    <li class="md-tabs__item md-tabs__item--active">
+    <li class="md-tabs__item">
       <a href="index.html" class="md-tabs__link">
         
   
@@ -231,8 +231,10 @@
         
   
   
+    
   
-    <li class="md-tabs__item">
+  
+    <li class="md-tabs__item md-tabs__item--active">
       <a href="tutorials.html" class="md-tabs__link">
         
   
@@ -305,19 +307,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="index.html" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="index.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -326,7 +319,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -355,10 +347,19 @@
       
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="tutorials.html" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="tutorials.html" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -367,6 +368,7 @@
   
 
       </a>
+      
     </li>
   
 
@@ -424,15 +426,7 @@
                   
 
 
-<h1 id="botex-using-llms-as-experimental-participants-in-otree">botex: Using LLMs as Experimental Participants in oTree</h1>
-<p>This in-development Python package allows you to use large language models (LLMs) as bots in <a href="https://www.otree.org">oTree</a> experiments. It has been inspired by recent work of Grossmann, Engel and Ockenfels (<a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4682602">paper</a>, <a href="https://github.com/mrpg/ego">repo</a>) but uses a different approach. Instead of using dedicated prompts, botex bots consecutively scrape their respective oTree participant's webpage and infer the experimental flow solely from the webpage text content. This avoids the risk of misalignment between human (webpage) and bot (LLM prompt) experimental designs and, besides facilitating the study of LLM "behavior", allows to use LLM participants to develop and pre-test oTree experiments that are designed (primarily) for human participants.</p>
-<p>The downside of this approach is that the scraping has to rely on some level of standardization. Luckily, the oTree framework is relatively rigid, unless the user adds customized HTML forms to their experimental designs. Currently, all standard form models used by oTree are tested and verified to work. In the future, we plan to implement also customized HTML forms but likely this will require some standardization by the user implementing the experimental design.</p>
-<p>For interfacing with LLMs, botex offers two options</p>
-<ul>
-<li><a href="https://litellm.vercel.app">litellm</a>: Allows the use of various commercial LLMs</li>
-<li><a href="https://github.com/ggerganov/llama.cpp">llama.cpp</a>: Allows the use of local (open source) LLMs  </li>
-</ul>
-<p>While both approaches have been tested and found to work, currently, we have only used OpenAI's Chat GPT-4o model for our own research work. See further below for a list of commercial and open-source LLMs that we have verified to pass the package tests.</p>
+<h1 id="tutorials">Tutorials</h1>
 
 
 
