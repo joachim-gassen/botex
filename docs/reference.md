@@ -8,7 +8,6 @@
       show_root_heading: false
       show_root_toc_entry: false
 
-
 ### `start_llamacpp_server`
 ::: botex.llamacpp.start_llamacpp_server
     options:
@@ -20,6 +19,8 @@
     options:
       show_root_heading: false
       show_root_toc_entry: false
+
+## oTree Interface
 
 ### `start_otree_server`
 ::: botex.otree.start_otree_server
@@ -33,8 +34,6 @@
       show_root_heading: false
       show_root_toc_entry: false
 
-## init Otree session
-
 ### `get_session_configs`
 ::: botex.otree.get_session_configs
     options:
@@ -47,13 +46,11 @@
       show_root_heading: false
       show_root_toc_entry: false
 
-
 ### `get_bot_urls`
 ::: botex.otree.get_bot_urls
     options:
       show_root_heading: false
       show_root_toc_entry: false
-
 
 ### `run_bots_on_session`
 ::: botex.otree.run_bots_on_session
