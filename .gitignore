@@ -42,3 +42,8 @@ pground*.py
 playground.py
 README_files
 README.html
+site/
+.cache/
+otree
+mybotex.env
+*.sqlite*

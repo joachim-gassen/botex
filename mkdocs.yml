@@ -1,0 +1,78 @@
+# Project information
+site_name: botex - LLM Bots for oTree Experiments
+site_url: https://joachim-gassen.github.io/botex/
+site_author: Fikir Worku Edossa and Joachim Gassen
+site_description: >-
+  A Python Package for using LLMs as Participants in oTree Experiments
+
+# Repository
+repo_name: joachim-gassen/botex
+repo_url: https://github.com/joachim-gassen/botex
+
+# Copyright
+copyright: Copyright &copy; 2024 - 2025 Fikir Worku Edossa and Joachim Gassen
+nav:
+    - Home: index.md
+    - Getting Started: getting_started.md
+    - Tutorials: 
+        - Run an oTree experiment with botex: tutorials/running_an_experiment.md
+        - Using botex to benchmark LLM performance in oTree experiments: tutorials/exp_3llms.md
+    - API Reference: reference.md
+markdown_extensions:
+    - pymdownx.highlight:
+          use_pygments: true
+          pygments_style: friendly
+          noclasses: true
+          linenums: false
+          linenums_style: table
+          anchor_linenums: true
+          line_spans: __span
+          pygments_lang_class: true
+    - admonition
+    - pymdownx.details
+    - pymdownx.inlinehilite
+    - pymdownx.snippets
+    - pymdownx.superfences
+    - attr_list
+    - mkdocs-click
+    - pymdownx.tabbed:
+          alternate_style: true
+theme:
+    name: material
+    features:
+        - content.code.select
+        - content.code.copy
+        - navigation.tabs
+        - navigation.sections
+        - navigation.expand
+        - toc.integrate
+    palette:
+        - media: '(prefers-color-scheme: light)'
+          scheme: default
+          primary: teal 
+          accent: teal
+          toggle:
+              icon: material/brightness-7
+              name: Switch to dark mode
+
+        - media: '(prefers-color-scheme: dark)'
+          scheme: slate
+          primary: teal
+          accent: teal
+          toggle:
+              icon: material/brightness-4
+              name: Switch to light mode
+plugins:
+    - search
+    - mkdocstrings
+    - privacy
+use_directory_urls: false
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/joachim-gassen/botex
+      name: Source Code
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/botex/
+    - icon: fontawesome/brands/bluesky
+      link: https://bsky.app/profile/jgassen.bsky.social

@@ -25,7 +25,7 @@ def tqs(s):
 @click.command(help=tqs("""
     Run an oTree session with botex. All necessary arguments can be provided
     either as command line arguments, in the environment file referenced by the
-    '-c' argument, or as environment variables.
+    `-c` argument, or as environment variables.
 """))
 @click.option(
     '-c', '--config', type=str, default='botex.env',
