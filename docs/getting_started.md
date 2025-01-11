@@ -2,7 +2,7 @@
 
 If you want to use botex to create LLM participants for your own oTree experiments, you need the following:
 
-- A working python environment >= 3.10 and preferably a virtual environment.
+- A working [python](https://www.python.org/downloads/) environment >= 3.10, [pip](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/) and preferably a [virtual environment](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/).
 - [Google Chrome](https://www.google.com/chrome/) for scraping the oTree participant pages.
 
 Then, activate the virtual environment and install the current development version of the package in it:
@@ -11,11 +11,11 @@ Then, activate the virtual environment and install the current development versi
 pip install git+https://github.com/joachim-gassen/botex.git
 ```
 
-The easiest way to get botex up and running is to use its [command line interface](reference.md#command-line-interface). It guides you through the process to start botex on a running oTree instance. To set oTree up, you can run the following in the same virtual environment that your set up botex in:
+The easiest way to get botex up and running is to use its [command line interface](reference.md#command-line-interface). It guides you through the process to start botex on a running oTree instance. To set oTree up, you can run the following in the same virtual environment that you set up botex in:
 
 ```bash
-pip install otree
-otree startproject otree # Say yes for examples
+pip install otree #you might obseve a pip dependency error, but you can ignore it
+otree startproject otree # Say yes for sample games
 cd otree 
 otree devserver
 ```
@@ -95,4 +95,4 @@ Take a look at the resulting CSV file. It contains the responses from the two bo
 
 You see that, in this run, our LLM bots were not particularly smart in the first round but then quickly adapted their strategies in the later rounds.
 
-If you are interested in learning how to use Python API of botex in your own code, we suggest that you continue with the tutorial ['Run an oTree experiment with botex via Python'](tutorial.md). If you are interested in how different LLMs perform in the Guess Two Thirds game, you can continue with the tutorial ['Using botex to benchmark LLM performance in oTree experiments'](tutorial_compare_llms.md).
+If you are interested in learning how to use Python API of botex in your own code, we suggest that you continue with the tutorial ['Run an oTree experiment with botex'](tutorials/running_an_experiment.md). If you are interested in how different LLMs perform in the Guess Two Thirds game, you can continue with the tutorial ['Using botex to benchmark LLM performance in oTree experiments'](tutorials/compare_llms.md).

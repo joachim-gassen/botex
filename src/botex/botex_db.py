@@ -158,7 +158,7 @@ def read_responses_from_botex_db(botex_db = None, session_id = None) -> List[Dic
 
 
 
-def export_participant_data(csv_file, botex_db = None) -> None:
+def export_participant_data(csv_file, botex_db = None, session_id = None) -> None:
     """
     Export the participants table from the botex database, retrieved by calling
     `read_participants_from_botex_db()`, to a CSV file.
@@ -168,11 +168,14 @@ def export_participant_data(csv_file, botex_db = None) -> None:
         botex_db (str, optional): The file path to the botex sqlite3 file. 
             If not provided, it will try to read the file name from
             the environment variable BOTEX_DB.
+        session_id (str, optional): A session ID to filter the results.
 
     Returns:
         None (saves the CSV to the specified file path)
     """
-    p = read_participants_from_botex_db(botex_db = botex_db)
+    p = read_participants_from_botex_db(
+        session_id = session_id, botex_db = botex_db
+    )
     with open(csv_file, 'w') as f:
         w = csv.DictWriter(f, p[0].keys())
         w.writeheader()

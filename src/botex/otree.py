@@ -229,6 +229,7 @@ def stop_otree_server(otree_server: subprocess.Popen) -> int:
             proc.children()[0].send_signal(signal.SIGKILL)
             otree_server.kill()
             otree_server.wait()
+        logger.info("oTree server stopped.")
     else:
         logger.warning('oTree server already stopped.')
     return otree_server.poll()
@@ -550,6 +551,11 @@ def run_bots_on_session(
     if bot_urls is None: 
         bot_urls = get_bot_urls(session_id, botex_db, already_started)
     
+    otree_url = bot_urls[0].split('/InitializeParticipant/')[0]
+    logger.info(
+        f"Running bots on session {session_id}. "
+        f"You can monitor the session at {otree_url}/SessionMonitor/{session_id}"
+    )
     thread_kwargs = {
         'botex_db': botex_db, 'session_id': session_id, 
         'full_conv_history': full_conv_history, 
