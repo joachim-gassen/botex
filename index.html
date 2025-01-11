@@ -432,7 +432,70 @@
 <li><a href="https://litellm.vercel.app">litellm</a>: Allows the use of various commercial LLMs</li>
 <li><a href="https://github.com/ggerganov/llama.cpp">llama.cpp</a>: Allows the use of local (open source) LLMs  </li>
 </ul>
-<p>While both approaches have been tested and found to work, currently, we have only used OpenAI's Chat GPT-4o model for our own research work. See further below for a list of commercial and open-source LLMs that we have verified to pass the package tests.</p>
+<p>The model that you use for inference has to support <a href="https://openai.com/index/introducing-structured-outputs-in-the-api/">structured outputs</a>. We have tested botex with the following LLMs:</p>
+<table>
+<thead>
+<tr>
+<th>Vendor</th>
+<th>Model</th>
+<th>Link</th>
+<th>Status</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OpenAI</td>
+<td>gpt-4o-2024-08-06 and later</td>
+<td><a href="https://openai.com/api/">OpenAI API</a></td>
+<td>OK</td>
+<td>Requires at least paid user tier 1</td>
+</tr>
+<tr>
+<td>OpenAI</td>
+<td>gpt-4o-mini-2024-07-18 and later</td>
+<td><a href="https://openai.com/api/">OpenAI API</a></td>
+<td>OK</td>
+<td>Requires at least paid user tier 1</td>
+</tr>
+<tr>
+<td>Google</td>
+<td>gemini/gemini-1.5-flash-8b</td>
+<td><a href="https://ai.google.dev">Google AI Studio</a></td>
+<td>OK</td>
+<td>1,500 requests per day are free</td>
+</tr>
+<tr>
+<td>Google</td>
+<td>gemini/gemini-1.5-flash</td>
+<td><a href="https://ai.google.dev">Google AI Studio</a></td>
+<td>OK</td>
+<td>1,500 requests per day are free</td>
+</tr>
+<tr>
+<td>Google</td>
+<td>gemini/gemini-1.5-pro</td>
+<td><a href="https://ai.google.dev">Google AI Studio</a></td>
+<td>OK</td>
+<td>50 requests per day are free (not usable for larger experiments in the free tier)</td>
+</tr>
+<tr>
+<td>Open Source</td>
+<td>Mistral-7B-Instruct-v0.3.Q4_K_M.gguf</td>
+<td><a href="https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.3">Hugging Face</a></td>
+<td>OK</td>
+<td>Run with llama.cpp</td>
+</tr>
+<tr>
+<td>Open Source</td>
+<td>qwen2.5-7b-instruct-q4_k_m.gguf</td>
+<td><a href="https://huggingface.co/Qwen/Qwen2.5-7B-Instruct-GGUF">Hugging Face</a></td>
+<td>OK</td>
+<td>Run with llama.cpp</td>
+</tr>
+</tbody>
+</table>
+<p>If you have success running botex with other models, please let us know so that we can add them to the list.</p>
 
 
 
