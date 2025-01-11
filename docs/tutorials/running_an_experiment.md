@@ -301,4 +301,4 @@ To silence botex, we now set the logging level to `WARNING`. Also, we set `throt
 
 The code now starts an oTree server, initializes a session, runs the bots on the session, and exports the data. The data is exported in CSV format. The botex data is exported in two files: one containing the participant data and one containing the responses. The oTree data is exported in wide format and then normalized. The normalized data is stored in a set of CSV files with the prefix `two_thirds_otree`. You should see all files in your project directory after the code has been run.
 
-This concludes this tutorial. If you want to learn how to run single botex bots using different LLM models to benchmark their performance with oTree experiments and how to evaluate the results, please refer to the [next tutorial](compare_llms.md).
+This concludes this tutorial. If you want to learn how to run single botex bots using different LLM models to benchmark their performance with oTree experiments and how to evaluate the results, please refer to the [next tutorial](exp_3llms.md).
