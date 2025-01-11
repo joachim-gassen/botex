@@ -55,7 +55,8 @@ def parse_conversation(c):
 
 def read_participants_from_botex_db(session_id = None, botex_db = None) -> List[Dict]:
     """
-    Read the participants table from the botex database.
+    Read the participants table from the botex database and return it as a list 
+    of dicts.
 
     Args:
         session_id (str, optional): A session ID to filter the results.
@@ -89,7 +90,9 @@ def read_conversations_from_botex_db(
     """
     Reads the conversations table from the botex database. 
     The conversation table contains the messages exchanged 
-    with the LLM underlying the bot.
+    with the LLM underlying the bot. Each conversation is
+    returned as a dictionary containing a JSON string with the 
+    message sequence.
 
     Args:
         participant_id (str, optional): A Participant ID to filter the results.
@@ -123,7 +126,8 @@ def read_conversations_from_botex_db(
 
 def read_responses_from_botex_db(botex_db = None, session_id = None) -> List[Dict]:
     """
-    Extracts the responses and their rationales from the botex conversation data. 
+    Extracts the responses and their rationales from the botex conversation data
+    and returns them as a list of dicts. 
 
     Parameters:
         botex_db (str, optional): The name of a SQLite database file.
@@ -156,7 +160,8 @@ def read_responses_from_botex_db(botex_db = None, session_id = None) -> List[Dic
 
 def export_participant_data(csv_file, botex_db = None) -> None:
     """
-    Export the participants table from the botex database to a CSV file.
+    Export the participants table from the botex database, retrieved by calling
+    `read_participants_from_botex_db()`, to a CSV file.
 
     Parameters:
         csv_file (str): The file path to save the CSV file.
@@ -178,7 +183,8 @@ def export_participant_data(csv_file, botex_db = None) -> None:
 def export_response_data(csv_file, botex_db = None, session_id = None) -> None:
     """
     Export the responses parsed from the bot conversations in the botex
-    database to a CSV file.
+    database, retrieved by calling `read_responses_from_botex_db()`, 
+    to a CSV file.
 
     Parameters:
         csv_file (str): The file path to save the CSV file.

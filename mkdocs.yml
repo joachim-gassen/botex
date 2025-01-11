@@ -20,6 +20,7 @@ markdown_extensions:
     - pymdownx.snippets
     - pymdownx.superfences
     - attr_list
+    - mkdocs-click
     - pymdownx.tabbed:
           alternate_style: true
 theme:

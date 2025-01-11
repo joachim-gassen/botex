@@ -655,7 +655,7 @@ def run_single_bot(
     -   When running local models via llama.cpp, if you would like 
         botex to start the llama.cpp server for you, 
         run `start_llamacpp_server()` to start up the server prior to
-        running `run_bots_on_session().
+        running `run_bots_on_session()`.
     
     ??? example "Example Usage"
 
