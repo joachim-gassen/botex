@@ -450,6 +450,21 @@
   
 </li>
         
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#otree-interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      oTree Interface
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="oTree Interface">
+      <ul class="md-nav__list">
+        
           <li class="md-nav__item">
   <a href="#start_otree_server" class="md-nav__link">
     <span class="md-ellipsis">
@@ -467,21 +482,6 @@
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#init-otree-session" class="md-nav__link">
-    <span class="md-ellipsis">
-      init Otree session
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="init Otree session">
-      <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#get_session_configs" class="md-nav__link">
@@ -682,6 +682,21 @@
   
 </li>
         
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#otree-interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      oTree Interface
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="oTree Interface">
+      <ul class="md-nav__list">
+        
           <li class="md-nav__item">
   <a href="#start_otree_server" class="md-nav__link">
     <span class="md-ellipsis">
@@ -699,21 +714,6 @@
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#init-otree-session" class="md-nav__link">
-    <span class="md-ellipsis">
-      init Otree session
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="init Otree session">
-      <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#get_session_configs" class="md-nav__link">
@@ -1392,7 +1392,8 @@ will use the default value.</p>
             </details>
     </div>
 
-</div><h3 id="start_otree_server"><code>start_otree_server</code></h3>
+</div><h2 id="otree-interface">oTree Interface</h2>
+<h3 id="start_otree_server"><code>start_otree_server</code></h3>
 
 
 <div class="doc doc-object doc-function">
@@ -1918,8 +1919,7 @@ server. Defaults to 5.</p>
             </details>
     </div>
 
-</div><h2 id="init-otree-session">init Otree session</h2>
-<h3 id="get_session_configs"><code>get_session_configs</code></h3>
+</div><h3 id="get_session_configs"><code>get_session_configs</code></h3>
 
 
 <div class="doc doc-object doc-function">
@@ -5761,9 +5761,7 @@ and session data, respectively.</p>
 <span style="color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-1307">1307</a></span>
 <span style="color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-1308">1308</a></span>
 <span style="color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-1309">1309</a></span>
-<span style="color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-1310">1310</a></span>
-<span style="color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-1311">1311</a></span>
-<span style="color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-1312">1312</a></span></pre></div></td><td class="code"><div><pre style="line-height: 125%;"><span></span><code><span id="__span-0-842"><a id="__codelineno-0-842" name="__codelineno-0-842"></a><span style="color: #66d9ef">def</span> <span style="color: #a6e22e">normalize_otree_data</span><span style="color: #f8f8f2">(</span>
+<span style="color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-1310">1310</a></span></pre></div></td><td class="code"><div><pre style="line-height: 125%;"><span></span><code><span id="__span-0-842"><a id="__codelineno-0-842" name="__codelineno-0-842"></a><span style="color: #66d9ef">def</span> <span style="color: #a6e22e">normalize_otree_data</span><span style="color: #f8f8f2">(</span>
 </span><span id="__span-0-843"><a id="__codelineno-0-843" name="__codelineno-0-843"></a>    <span style="color: #f8f8f2">otree_csv_file:</span> <span style="color: #f8f8f2">str,</span> 
 </span><span id="__span-0-844"><a id="__codelineno-0-844" name="__codelineno-0-844"></a>    <span style="color: #f8f8f2">var_dict:</span> <span style="color: #f8f8f2">dict</span> <span style="color: #ff4689">|</span> <span style="color: #66d9ef">None</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">{</span>
 </span><span id="__span-0-845"><a id="__codelineno-0-845" name="__codelineno-0-845"></a>        <span style="color: #e6db74">&#39;participant&#39;</span><span style="color: #f8f8f2">:</span> <span style="color: #f8f8f2">{</span>
@@ -6064,176 +6062,174 @@ and session data, respectively.</p>
 </span><span id="__span-0-1140"><a id="__codelineno-0-1140" name="__codelineno-0-1140"></a>                    <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">col</span> <span style="color: #ff4689">and</span> <span style="color: #f8f8f2">col</span> <span style="color: #ff4689">not</span> <span style="color: #ff4689">in</span> <span style="color: #f8f8f2">pivoted[key]:</span>
 </span><span id="__span-0-1141"><a id="__codelineno-0-1141" name="__codelineno-0-1141"></a>                        <span style="color: #f8f8f2">pivoted[key][col]</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">val</span>
 </span><span id="__span-0-1142"><a id="__codelineno-0-1142" name="__codelineno-0-1142"></a>
-</span><span id="__span-0-1143"><a id="__codelineno-0-1143" name="__codelineno-0-1143"></a>            <span style="color: #f8f8f2">pivoted_list</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">remove_all_empty_columns(</span>
-</span><span id="__span-0-1144"><a id="__codelineno-0-1144" name="__codelineno-0-1144"></a>                <span style="color: #f8f8f2">unify_dict_keys(list(pivoted</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">values()))</span>
-</span><span id="__span-0-1145"><a id="__codelineno-0-1145" name="__codelineno-0-1145"></a>            <span style="color: #f8f8f2">)</span>
-</span><span id="__span-0-1146"><a id="__codelineno-0-1146" name="__codelineno-0-1146"></a>            <span style="color: #f8f8f2">out_df_rows</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">convert_columns(pivoted_list)</span>
-</span><span id="__span-0-1147"><a id="__codelineno-0-1147" name="__codelineno-0-1147"></a>            <span style="color: #f8f8f2">out_df_rows</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">index_to_participant_code(</span>
-</span><span id="__span-0-1148"><a id="__codelineno-0-1148" name="__codelineno-0-1148"></a>                <span style="color: #f8f8f2">out_df_rows,</span> <span style="color: #f8f8f2">obs_to_participant_code</span>
-</span><span id="__span-0-1149"><a id="__codelineno-0-1149" name="__codelineno-0-1149"></a>            <span style="color: #f8f8f2">)</span>
-</span><span id="__span-0-1150"><a id="__codelineno-0-1150" name="__codelineno-0-1150"></a>            <span style="color: #f8f8f2">table_name</span> <span style="color: #ff4689">=</span> <span style="color: #e6db74">f&quot;{</span><span style="color: #f8f8f2">app</span><span style="color: #e6db74">}_{</span><span style="color: #f8f8f2">group_name</span><span style="color: #e6db74">}&quot;</span>  
-</span><span id="__span-0-1151"><a id="__codelineno-0-1151" name="__codelineno-0-1151"></a>
-</span><span id="__span-0-1152"><a id="__codelineno-0-1152" name="__codelineno-0-1152"></a>            <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">group_name</span> <span style="color: #ff4689">==</span> <span style="color: #e6db74">&#39;subsession&#39;</span><span style="color: #f8f8f2">:</span>
-</span><span id="__span-0-1153"><a id="__codelineno-0-1153" name="__codelineno-0-1153"></a>                <span style="color: #959077"># This code assumes that subsesions are equal to rounds.</span>
-</span><span id="__span-0-1154"><a id="__codelineno-0-1154" name="__codelineno-0-1154"></a>                <span style="color: #959077"># This implies that round_number&#39; and &#39;round&#39; columns should </span>
-</span><span id="__span-0-1155"><a id="__codelineno-0-1155" name="__codelineno-0-1155"></a>                <span style="color: #959077"># match and that the resulting data should have 3 columns.</span>
-</span><span id="__span-0-1156"><a id="__codelineno-0-1156" name="__codelineno-0-1156"></a>                <span style="color: #f8f8f2">col_names</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">out_df_rows[</span><span style="color: #ae81ff">0</span><span style="color: #f8f8f2">]</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">keys()</span> <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">out_df_rows</span> <span style="color: #66d9ef">else</span> <span style="color: #f8f8f2">[]</span>
-</span><span id="__span-0-1157"><a id="__codelineno-0-1157" name="__codelineno-0-1157"></a>                <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">len(col_names)</span> <span style="color: #ff4689">!=</span> <span style="color: #ae81ff">3</span><span style="color: #f8f8f2">:</span>
-</span><span id="__span-0-1158"><a id="__codelineno-0-1158" name="__codelineno-0-1158"></a>                    <span style="color: #f8f8f2">logger</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">error(</span>
-</span><span id="__span-0-1159"><a id="__codelineno-0-1159" name="__codelineno-0-1159"></a>                        <span style="color: #e6db74">f&quot;Error {</span><span style="color: #f8f8f2">app</span><span style="color: #e6db74">} data extraction: app seems to contain &quot;</span>
-</span><span id="__span-0-1160"><a id="__codelineno-0-1160" name="__codelineno-0-1160"></a>                        <span style="color: #e6db74">&quot;more subsessions than rounds or subsession level data.&quot;</span>
-</span><span id="__span-0-1161"><a id="__codelineno-0-1161" name="__codelineno-0-1161"></a>                    <span style="color: #f8f8f2">)</span>
-</span><span id="__span-0-1162"><a id="__codelineno-0-1162" name="__codelineno-0-1162"></a>                    <span style="color: #66d9ef">raise</span> <span style="color: #a6e22e">ValueError</span><span style="color: #f8f8f2">(</span>
-</span><span id="__span-0-1163"><a id="__codelineno-0-1163" name="__codelineno-0-1163"></a>                        <span style="color: #e6db74">f&quot;Error in {</span><span style="color: #f8f8f2">app</span><span style="color: #e6db74">} data extraction: app seems to contain &quot;</span>
-</span><span id="__span-0-1164"><a id="__codelineno-0-1164" name="__codelineno-0-1164"></a>                        <span style="color: #e6db74">&quot;more subsessions than rounds.&quot;</span>
-</span><span id="__span-0-1165"><a id="__codelineno-0-1165" name="__codelineno-0-1165"></a>                    <span style="color: #f8f8f2">)</span>
-</span><span id="__span-0-1166"><a id="__codelineno-0-1166" name="__codelineno-0-1166"></a>                <span style="color: #66d9ef">for</span> <span style="color: #f8f8f2">row</span> <span style="color: #ff4689">in</span> <span style="color: #f8f8f2">out_df_rows:</span>
-</span><span id="__span-0-1167"><a id="__codelineno-0-1167" name="__codelineno-0-1167"></a>                    <span style="color: #66d9ef">if</span> <span style="color: #e6db74">&#39;round_number&#39;</span> <span style="color: #ff4689">in</span> <span style="color: #f8f8f2">row</span> <span style="color: #ff4689">and</span> <span style="color: #f8f8f2">row[</span><span style="color: #e6db74">&#39;round_number&#39;</span><span style="color: #f8f8f2">]</span> <span style="color: #ff4689">!=</span> <span style="color: #f8f8f2">row[</span><span style="color: #e6db74">&#39;round&#39;</span><span style="color: #f8f8f2">]:</span>
-</span><span id="__span-0-1168"><a id="__codelineno-0-1168" name="__codelineno-0-1168"></a>                        <span style="color: #f8f8f2">logger</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">error(</span>
-</span><span id="__span-0-1169"><a id="__codelineno-0-1169" name="__codelineno-0-1169"></a>                            <span style="color: #e6db74">f&quot;Error {</span><span style="color: #f8f8f2">app</span><span style="color: #e6db74">} data extraction: subsession round_number &quot;</span>
-</span><span id="__span-0-1170"><a id="__codelineno-0-1170" name="__codelineno-0-1170"></a>                            <span style="color: #e6db74">&quot;does not match inferred round.&quot;</span>
-</span><span id="__span-0-1171"><a id="__codelineno-0-1171" name="__codelineno-0-1171"></a>                        <span style="color: #f8f8f2">)</span>
-</span><span id="__span-0-1172"><a id="__codelineno-0-1172" name="__codelineno-0-1172"></a>                        <span style="color: #66d9ef">raise</span> <span style="color: #a6e22e">ValueError</span><span style="color: #f8f8f2">(</span>
-</span><span id="__span-0-1173"><a id="__codelineno-0-1173" name="__codelineno-0-1173"></a>                            <span style="color: #e6db74">f&quot;Error in {</span><span style="color: #f8f8f2">app</span><span style="color: #e6db74">} data extraction: subsession round_number &quot;</span>
-</span><span id="__span-0-1174"><a id="__codelineno-0-1174" name="__codelineno-0-1174"></a>                            <span style="color: #e6db74">&quot;does not match inferred round.&quot;</span>
-</span><span id="__span-0-1175"><a id="__codelineno-0-1175" name="__codelineno-0-1175"></a>                        <span style="color: #f8f8f2">)</span>
-</span><span id="__span-0-1176"><a id="__codelineno-0-1176" name="__codelineno-0-1176"></a>                <span style="color: #959077"># No data in subsession, so skip storing</span>
-</span><span id="__span-0-1177"><a id="__codelineno-0-1177" name="__codelineno-0-1177"></a>                <span style="color: #66d9ef">continue</span>
-</span><span id="__span-0-1178"><a id="__codelineno-0-1178" name="__codelineno-0-1178"></a>
-</span><span id="__span-0-1179"><a id="__codelineno-0-1179" name="__codelineno-0-1179"></a>            <span style="color: #66d9ef">elif</span> <span style="color: #f8f8f2">group_name</span> <span style="color: #ff4689">==</span> <span style="color: #e6db74">&#39;group&#39;</span><span style="color: #f8f8f2">:</span>
-</span><span id="__span-0-1180"><a id="__codelineno-0-1180" name="__codelineno-0-1180"></a>                <span style="color: #959077"># group data might or might not have data</span>
-</span><span id="__span-0-1181"><a id="__codelineno-0-1181" name="__codelineno-0-1181"></a>                <span style="color: #959077"># (only if there&#39;s more than one group or if there are </span>
-</span><span id="__span-0-1182"><a id="__codelineno-0-1182" name="__codelineno-0-1182"></a>                <span style="color: #959077"># group-level variables)</span>
-</span><span id="__span-0-1183"><a id="__codelineno-0-1183" name="__codelineno-0-1183"></a>
-</span><span id="__span-0-1184"><a id="__codelineno-0-1184" name="__codelineno-0-1184"></a>                <span style="color: #f8f8f2">sess_index</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">{}</span>
-</span><span id="__span-0-1185"><a id="__codelineno-0-1185" name="__codelineno-0-1185"></a>                <span style="color: #66d9ef">for</span> <span style="color: #f8f8f2">srow</span> <span style="color: #ff4689">in</span> <span style="color: #f8f8f2">session_data:</span>
-</span><span id="__span-0-1186"><a id="__codelineno-0-1186" name="__codelineno-0-1186"></a>                    <span style="color: #f8f8f2">pcode</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">srow</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">get(</span><span style="color: #e6db74">&#39;participant_code&#39;</span><span style="color: #f8f8f2">,</span> <span style="color: #66d9ef">None</span><span style="color: #f8f8f2">)</span>
-</span><span id="__span-0-1187"><a id="__codelineno-0-1187" name="__codelineno-0-1187"></a>                    <span style="color: #f8f8f2">sess_index[pcode]</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">srow</span>
-</span><span id="__span-0-1188"><a id="__codelineno-0-1188" name="__codelineno-0-1188"></a>
-</span><span id="__span-0-1189"><a id="__codelineno-0-1189" name="__codelineno-0-1189"></a>                <span style="color: #f8f8f2">merged_group</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">[]</span>
-</span><span id="__span-0-1190"><a id="__codelineno-0-1190" name="__codelineno-0-1190"></a>                <span style="color: #66d9ef">for</span> <span style="color: #f8f8f2">row</span> <span style="color: #ff4689">in</span> <span style="color: #f8f8f2">out_df_rows:</span>
-</span><span id="__span-0-1191"><a id="__codelineno-0-1191" name="__codelineno-0-1191"></a>                    <span style="color: #f8f8f2">pcode</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">row</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">get(</span><span style="color: #e6db74">&#39;participant_code&#39;</span><span style="color: #f8f8f2">,</span> <span style="color: #66d9ef">None</span><span style="color: #f8f8f2">)</span>
-</span><span id="__span-0-1192"><a id="__codelineno-0-1192" name="__codelineno-0-1192"></a>                    <span style="color: #f8f8f2">newrow</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">dict(row)</span>
-</span><span id="__span-0-1193"><a id="__codelineno-0-1193" name="__codelineno-0-1193"></a>                    <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">pcode</span> <span style="color: #ff4689">in</span> <span style="color: #f8f8f2">sess_index:</span>
-</span><span id="__span-0-1194"><a id="__codelineno-0-1194" name="__codelineno-0-1194"></a>                        <span style="color: #959077"># merge session data into newrow</span>
-</span><span id="__span-0-1195"><a id="__codelineno-0-1195" name="__codelineno-0-1195"></a>                        <span style="color: #66d9ef">for</span> <span style="color: #f8f8f2">k,</span> <span style="color: #f8f8f2">v</span> <span style="color: #ff4689">in</span> <span style="color: #f8f8f2">sess_index[pcode]</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">items():</span>
-</span><span id="__span-0-1196"><a id="__codelineno-0-1196" name="__codelineno-0-1196"></a>                            <span style="color: #959077"># do not overwrite if we already have something</span>
-</span><span id="__span-0-1197"><a id="__codelineno-0-1197" name="__codelineno-0-1197"></a>                            <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">k</span> <span style="color: #ff4689">not</span> <span style="color: #ff4689">in</span> <span style="color: #f8f8f2">(</span><span style="color: #e6db74">&#39;participant_code&#39;</span><span style="color: #f8f8f2">,</span> <span style="color: #e6db74">&#39;observation&#39;</span><span style="color: #f8f8f2">,</span> <span style="color: #e6db74">&#39;round&#39;</span><span style="color: #f8f8f2">):</span>
-</span><span id="__span-0-1198"><a id="__codelineno-0-1198" name="__codelineno-0-1198"></a>                                <span style="color: #f8f8f2">newrow[k]</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">v</span>
-</span><span id="__span-0-1199"><a id="__codelineno-0-1199" name="__codelineno-0-1199"></a>                    <span style="color: #f8f8f2">merged_group</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">append(newrow)</span>
-</span><span id="__span-0-1200"><a id="__codelineno-0-1200" name="__codelineno-0-1200"></a>                <span style="color: #f8f8f2">out_df_rows</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">merged_group</span>
-</span><span id="__span-0-1201"><a id="__codelineno-0-1201" name="__codelineno-0-1201"></a>
-</span><span id="__span-0-1202"><a id="__codelineno-0-1202" name="__codelineno-0-1202"></a>                <span style="color: #959077"># Check if &#39;id_in_subsession&#39; is all 1 - meaning there is only </span>
-</span><span id="__span-0-1203"><a id="__codelineno-0-1203" name="__codelineno-0-1203"></a>                <span style="color: #959077"># one group per session</span>
-</span><span id="__span-0-1204"><a id="__codelineno-0-1204" name="__codelineno-0-1204"></a>                <span style="color: #f8f8f2">all_id1</span> <span style="color: #ff4689">=</span> <span style="color: #66d9ef">True</span>
-</span><span id="__span-0-1205"><a id="__codelineno-0-1205" name="__codelineno-0-1205"></a>                <span style="color: #66d9ef">for</span> <span style="color: #f8f8f2">row</span> <span style="color: #ff4689">in</span> <span style="color: #f8f8f2">out_df_rows:</span>
-</span><span id="__span-0-1206"><a id="__codelineno-0-1206" name="__codelineno-0-1206"></a>                    <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">row</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">get(</span><span style="color: #e6db74">&#39;id_in_subsession&#39;</span><span style="color: #f8f8f2">)</span> <span style="color: #ff4689">!=</span> <span style="color: #ae81ff">1</span><span style="color: #f8f8f2">:</span>
-</span><span id="__span-0-1207"><a id="__codelineno-0-1207" name="__codelineno-0-1207"></a>                        <span style="color: #f8f8f2">all_id1</span> <span style="color: #ff4689">=</span> <span style="color: #66d9ef">False</span>
-</span><span id="__span-0-1208"><a id="__codelineno-0-1208" name="__codelineno-0-1208"></a>                        <span style="color: #66d9ef">break</span>
-</span><span id="__span-0-1209"><a id="__codelineno-0-1209" name="__codelineno-0-1209"></a>
-</span><span id="__span-0-1210"><a id="__codelineno-0-1210" name="__codelineno-0-1210"></a>                <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">all_id1:</span>
-</span><span id="__span-0-1211"><a id="__codelineno-0-1211" name="__codelineno-0-1211"></a>                    <span style="color: #959077"># drop [&#39;id_in_subsession&#39;, &#39;participant_code&#39;]</span>
-</span><span id="__span-0-1212"><a id="__codelineno-0-1212" name="__codelineno-0-1212"></a>                    <span style="color: #f8f8f2">cleaned</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">[]</span>
-</span><span id="__span-0-1213"><a id="__codelineno-0-1213" name="__codelineno-0-1213"></a>                    <span style="color: #66d9ef">for</span> <span style="color: #f8f8f2">row</span> <span style="color: #ff4689">in</span> <span style="color: #f8f8f2">out_df_rows:</span>
-</span><span id="__span-0-1214"><a id="__codelineno-0-1214" name="__codelineno-0-1214"></a>                        <span style="color: #f8f8f2">newrow</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">dict(row)</span>
-</span><span id="__span-0-1215"><a id="__codelineno-0-1215" name="__codelineno-0-1215"></a>                        <span style="color: #f8f8f2">newrow</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">pop(</span><span style="color: #e6db74">&#39;id_in_subsession&#39;</span><span style="color: #f8f8f2">,</span> <span style="color: #66d9ef">None</span><span style="color: #f8f8f2">)</span>
-</span><span id="__span-0-1216"><a id="__codelineno-0-1216" name="__codelineno-0-1216"></a>                        <span style="color: #f8f8f2">newrow</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">pop(</span><span style="color: #e6db74">&#39;participant_code&#39;</span><span style="color: #f8f8f2">,</span> <span style="color: #66d9ef">None</span><span style="color: #f8f8f2">)</span>
-</span><span id="__span-0-1217"><a id="__codelineno-0-1217" name="__codelineno-0-1217"></a>                        <span style="color: #f8f8f2">cleaned</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">append(newrow)</span>
-</span><span id="__span-0-1218"><a id="__codelineno-0-1218" name="__codelineno-0-1218"></a>                    <span style="color: #f8f8f2">out_df_rows</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">cleaned</span>
-</span><span id="__span-0-1219"><a id="__codelineno-0-1219" name="__codelineno-0-1219"></a>
-</span><span id="__span-0-1220"><a id="__codelineno-0-1220" name="__codelineno-0-1220"></a>                    <span style="color: #959077"># If after dropping columns we are left with only 2 columns </span>
-</span><span id="__span-0-1221"><a id="__codelineno-0-1221" name="__codelineno-0-1221"></a>                    <span style="color: #959077"># (session_code, round), there is no group level data</span>
-</span><span id="__span-0-1222"><a id="__codelineno-0-1222" name="__codelineno-0-1222"></a>                    <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">out_df_rows:</span>
-</span><span id="__span-0-1223"><a id="__codelineno-0-1223" name="__codelineno-0-1223"></a>                        <span style="color: #f8f8f2">col_count</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">len(out_df_rows[</span><span style="color: #ae81ff">0</span><span style="color: #f8f8f2">])</span>
-</span><span id="__span-0-1224"><a id="__codelineno-0-1224" name="__codelineno-0-1224"></a>                        <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">col_count</span> <span style="color: #ff4689">==</span> <span style="color: #ae81ff">2</span><span style="color: #f8f8f2">:</span>
-</span><span id="__span-0-1225"><a id="__codelineno-0-1225" name="__codelineno-0-1225"></a>                            <span style="color: #959077"># skip storing</span>
-</span><span id="__span-0-1226"><a id="__codelineno-0-1226" name="__codelineno-0-1226"></a>                            <span style="color: #66d9ef">continue</span>
-</span><span id="__span-0-1227"><a id="__codelineno-0-1227" name="__codelineno-0-1227"></a>                <span style="color: #66d9ef">else</span><span style="color: #f8f8f2">:</span>
-</span><span id="__span-0-1228"><a id="__codelineno-0-1228" name="__codelineno-0-1228"></a>                    <span style="color: #959077"># rename id_in_subsession -&gt; group_id</span>
-</span><span id="__span-0-1229"><a id="__codelineno-0-1229" name="__codelineno-0-1229"></a>                    <span style="color: #959077"># build a map of group_id to participant_code</span>
-</span><span id="__span-0-1230"><a id="__codelineno-0-1230" name="__codelineno-0-1230"></a>                    <span style="color: #f8f8f2">cleaned</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">[]</span>
-</span><span id="__span-0-1231"><a id="__codelineno-0-1231" name="__codelineno-0-1231"></a>                    <span style="color: #f8f8f2">group_participant_map</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">[]</span>
-</span><span id="__span-0-1232"><a id="__codelineno-0-1232" name="__codelineno-0-1232"></a>                    <span style="color: #66d9ef">for</span> <span style="color: #f8f8f2">row</span> <span style="color: #ff4689">in</span> <span style="color: #f8f8f2">out_df_rows:</span>
-</span><span id="__span-0-1233"><a id="__codelineno-0-1233" name="__codelineno-0-1233"></a>                        <span style="color: #f8f8f2">newrow</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">dict(row)</span>
-</span><span id="__span-0-1234"><a id="__codelineno-0-1234" name="__codelineno-0-1234"></a>                        <span style="color: #f8f8f2">newmap</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">dict()</span>
-</span><span id="__span-0-1235"><a id="__codelineno-0-1235" name="__codelineno-0-1235"></a>                        <span style="color: #f8f8f2">newrow[</span><span style="color: #e6db74">&#39;group_id&#39;</span><span style="color: #f8f8f2">]</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">newrow</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">pop(</span><span style="color: #e6db74">&#39;id_in_subsession&#39;</span><span style="color: #f8f8f2">)</span>
-</span><span id="__span-0-1236"><a id="__codelineno-0-1236" name="__codelineno-0-1236"></a>                        <span style="color: #f8f8f2">newmap[</span><span style="color: #e6db74">&#39;participant_code&#39;</span><span style="color: #f8f8f2">]</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">newrow</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">pop(</span><span style="color: #e6db74">&#39;participant_code&#39;</span><span style="color: #f8f8f2">)</span>
-</span><span id="__span-0-1237"><a id="__codelineno-0-1237" name="__codelineno-0-1237"></a>                        <span style="color: #f8f8f2">newmap[</span><span style="color: #e6db74">&#39;round&#39;</span><span style="color: #f8f8f2">]</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">newrow[</span><span style="color: #e6db74">&#39;round&#39;</span><span style="color: #f8f8f2">]</span>
-</span><span id="__span-0-1238"><a id="__codelineno-0-1238" name="__codelineno-0-1238"></a>                        <span style="color: #f8f8f2">newmap[</span><span style="color: #e6db74">&#39;group_id&#39;</span><span style="color: #f8f8f2">]</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">newrow[</span><span style="color: #e6db74">&#39;group_id&#39;</span><span style="color: #f8f8f2">]</span>
-</span><span id="__span-0-1239"><a id="__codelineno-0-1239" name="__codelineno-0-1239"></a>                        <span style="color: #f8f8f2">cleaned</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">append(newrow)</span>
-</span><span id="__span-0-1240"><a id="__codelineno-0-1240" name="__codelineno-0-1240"></a>                        <span style="color: #f8f8f2">group_participant_map</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">append(newmap)</span>
-</span><span id="__span-0-1241"><a id="__codelineno-0-1241" name="__codelineno-0-1241"></a>                    <span style="color: #f8f8f2">out_df_rows</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">cleaned</span>
-</span><span id="__span-0-1242"><a id="__codelineno-0-1242" name="__codelineno-0-1242"></a>
-</span><span id="__span-0-1243"><a id="__codelineno-0-1243" name="__codelineno-0-1243"></a>                <span style="color: #959077"># reorder columns</span>
-</span><span id="__span-0-1244"><a id="__codelineno-0-1244" name="__codelineno-0-1244"></a>                <span style="color: #f8f8f2">col_order</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">[</span><span style="color: #e6db74">&#39;session_code&#39;</span><span style="color: #f8f8f2">,</span> <span style="color: #e6db74">&#39;round&#39;</span><span style="color: #f8f8f2">]</span>
-</span><span id="__span-0-1245"><a id="__codelineno-0-1245" name="__codelineno-0-1245"></a>                <span style="color: #66d9ef">if</span> <span style="color: #ff4689">not</span> <span style="color: #f8f8f2">all_id1:</span> <span style="color: #f8f8f2">col_order</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">append(</span><span style="color: #e6db74">&#39;group_id&#39;</span><span style="color: #f8f8f2">)</span>
-</span><span id="__span-0-1246"><a id="__codelineno-0-1246" name="__codelineno-0-1246"></a>                <span style="color: #f8f8f2">out_df_rows</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">reorder_columns(out_df_rows,</span> <span style="color: #f8f8f2">col_order)</span>
-</span><span id="__span-0-1247"><a id="__codelineno-0-1247" name="__codelineno-0-1247"></a>
-</span><span id="__span-0-1248"><a id="__codelineno-0-1248" name="__codelineno-0-1248"></a>                <span style="color: #959077"># Deduplicate</span>
-</span><span id="__span-0-1249"><a id="__codelineno-0-1249" name="__codelineno-0-1249"></a>                <span style="color: #f8f8f2">unique_rows</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">[]</span>
-</span><span id="__span-0-1250"><a id="__codelineno-0-1250" name="__codelineno-0-1250"></a>                <span style="color: #f8f8f2">seen</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">set()</span>
-</span><span id="__span-0-1251"><a id="__codelineno-0-1251" name="__codelineno-0-1251"></a>                <span style="color: #66d9ef">for</span> <span style="color: #f8f8f2">row</span> <span style="color: #ff4689">in</span> <span style="color: #f8f8f2">out_df_rows:</span>
-</span><span id="__span-0-1252"><a id="__codelineno-0-1252" name="__codelineno-0-1252"></a>                    <span style="color: #959077"># convert to a tuple of items</span>
-</span><span id="__span-0-1253"><a id="__codelineno-0-1253" name="__codelineno-0-1253"></a>                    <span style="color: #f8f8f2">row_tup</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">tuple(sorted(row</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">items()))</span>
-</span><span id="__span-0-1254"><a id="__codelineno-0-1254" name="__codelineno-0-1254"></a>                    <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">row_tup</span> <span style="color: #ff4689">not</span> <span style="color: #ff4689">in</span> <span style="color: #f8f8f2">seen:</span>
-</span><span id="__span-0-1255"><a id="__codelineno-0-1255" name="__codelineno-0-1255"></a>                        <span style="color: #f8f8f2">seen</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">add(row_tup)</span>
-</span><span id="__span-0-1256"><a id="__codelineno-0-1256" name="__codelineno-0-1256"></a>                        <span style="color: #f8f8f2">unique_rows</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">append(row)</span>
-</span><span id="__span-0-1257"><a id="__codelineno-0-1257" name="__codelineno-0-1257"></a>                <span style="color: #f8f8f2">out_df_rows</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">unique_rows</span>
+</span><span id="__span-0-1143"><a id="__codelineno-0-1143" name="__codelineno-0-1143"></a>            <span style="color: #f8f8f2">pivoted_list</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">unify_dict_keys(list(pivoted</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">values()))</span>
+</span><span id="__span-0-1144"><a id="__codelineno-0-1144" name="__codelineno-0-1144"></a>            <span style="color: #f8f8f2">out_df_rows</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">convert_columns(pivoted_list)</span>
+</span><span id="__span-0-1145"><a id="__codelineno-0-1145" name="__codelineno-0-1145"></a>            <span style="color: #f8f8f2">out_df_rows</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">index_to_participant_code(</span>
+</span><span id="__span-0-1146"><a id="__codelineno-0-1146" name="__codelineno-0-1146"></a>                <span style="color: #f8f8f2">out_df_rows,</span> <span style="color: #f8f8f2">obs_to_participant_code</span>
+</span><span id="__span-0-1147"><a id="__codelineno-0-1147" name="__codelineno-0-1147"></a>            <span style="color: #f8f8f2">)</span>
+</span><span id="__span-0-1148"><a id="__codelineno-0-1148" name="__codelineno-0-1148"></a>            <span style="color: #f8f8f2">table_name</span> <span style="color: #ff4689">=</span> <span style="color: #e6db74">f&quot;{</span><span style="color: #f8f8f2">app</span><span style="color: #e6db74">}_{</span><span style="color: #f8f8f2">group_name</span><span style="color: #e6db74">}&quot;</span>  
+</span><span id="__span-0-1149"><a id="__codelineno-0-1149" name="__codelineno-0-1149"></a>
+</span><span id="__span-0-1150"><a id="__codelineno-0-1150" name="__codelineno-0-1150"></a>            <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">group_name</span> <span style="color: #ff4689">==</span> <span style="color: #e6db74">&#39;subsession&#39;</span><span style="color: #f8f8f2">:</span>
+</span><span id="__span-0-1151"><a id="__codelineno-0-1151" name="__codelineno-0-1151"></a>                <span style="color: #959077"># This code assumes that subsesions are equal to rounds.</span>
+</span><span id="__span-0-1152"><a id="__codelineno-0-1152" name="__codelineno-0-1152"></a>                <span style="color: #959077"># This implies that round_number&#39; and &#39;round&#39; columns should </span>
+</span><span id="__span-0-1153"><a id="__codelineno-0-1153" name="__codelineno-0-1153"></a>                <span style="color: #959077"># match and that the resulting data should have 3 columns.</span>
+</span><span id="__span-0-1154"><a id="__codelineno-0-1154" name="__codelineno-0-1154"></a>                <span style="color: #f8f8f2">col_names</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">out_df_rows[</span><span style="color: #ae81ff">0</span><span style="color: #f8f8f2">]</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">keys()</span> <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">out_df_rows</span> <span style="color: #66d9ef">else</span> <span style="color: #f8f8f2">[]</span>
+</span><span id="__span-0-1155"><a id="__codelineno-0-1155" name="__codelineno-0-1155"></a>                <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">len(col_names)</span> <span style="color: #ff4689">!=</span> <span style="color: #ae81ff">3</span><span style="color: #f8f8f2">:</span>
+</span><span id="__span-0-1156"><a id="__codelineno-0-1156" name="__codelineno-0-1156"></a>                    <span style="color: #f8f8f2">logger</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">error(</span>
+</span><span id="__span-0-1157"><a id="__codelineno-0-1157" name="__codelineno-0-1157"></a>                        <span style="color: #e6db74">f&quot;Error {</span><span style="color: #f8f8f2">app</span><span style="color: #e6db74">} data extraction: app seems to contain &quot;</span>
+</span><span id="__span-0-1158"><a id="__codelineno-0-1158" name="__codelineno-0-1158"></a>                        <span style="color: #e6db74">&quot;more subsessions than rounds or subsession level data.&quot;</span>
+</span><span id="__span-0-1159"><a id="__codelineno-0-1159" name="__codelineno-0-1159"></a>                    <span style="color: #f8f8f2">)</span>
+</span><span id="__span-0-1160"><a id="__codelineno-0-1160" name="__codelineno-0-1160"></a>                    <span style="color: #66d9ef">raise</span> <span style="color: #a6e22e">ValueError</span><span style="color: #f8f8f2">(</span>
+</span><span id="__span-0-1161"><a id="__codelineno-0-1161" name="__codelineno-0-1161"></a>                        <span style="color: #e6db74">f&quot;Error in {</span><span style="color: #f8f8f2">app</span><span style="color: #e6db74">} data extraction: app seems to contain &quot;</span>
+</span><span id="__span-0-1162"><a id="__codelineno-0-1162" name="__codelineno-0-1162"></a>                        <span style="color: #e6db74">&quot;more subsessions than rounds.&quot;</span>
+</span><span id="__span-0-1163"><a id="__codelineno-0-1163" name="__codelineno-0-1163"></a>                    <span style="color: #f8f8f2">)</span>
+</span><span id="__span-0-1164"><a id="__codelineno-0-1164" name="__codelineno-0-1164"></a>                <span style="color: #66d9ef">for</span> <span style="color: #f8f8f2">row</span> <span style="color: #ff4689">in</span> <span style="color: #f8f8f2">out_df_rows:</span>
+</span><span id="__span-0-1165"><a id="__codelineno-0-1165" name="__codelineno-0-1165"></a>                    <span style="color: #66d9ef">if</span> <span style="color: #e6db74">&#39;round_number&#39;</span> <span style="color: #ff4689">in</span> <span style="color: #f8f8f2">row</span> <span style="color: #ff4689">and</span> <span style="color: #f8f8f2">row[</span><span style="color: #e6db74">&#39;round_number&#39;</span><span style="color: #f8f8f2">]</span> <span style="color: #ff4689">!=</span> <span style="color: #f8f8f2">row[</span><span style="color: #e6db74">&#39;round&#39;</span><span style="color: #f8f8f2">]:</span>
+</span><span id="__span-0-1166"><a id="__codelineno-0-1166" name="__codelineno-0-1166"></a>                        <span style="color: #f8f8f2">logger</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">error(</span>
+</span><span id="__span-0-1167"><a id="__codelineno-0-1167" name="__codelineno-0-1167"></a>                            <span style="color: #e6db74">f&quot;Error {</span><span style="color: #f8f8f2">app</span><span style="color: #e6db74">} data extraction: subsession round_number &quot;</span>
+</span><span id="__span-0-1168"><a id="__codelineno-0-1168" name="__codelineno-0-1168"></a>                            <span style="color: #e6db74">&quot;does not match inferred round.&quot;</span>
+</span><span id="__span-0-1169"><a id="__codelineno-0-1169" name="__codelineno-0-1169"></a>                        <span style="color: #f8f8f2">)</span>
+</span><span id="__span-0-1170"><a id="__codelineno-0-1170" name="__codelineno-0-1170"></a>                        <span style="color: #66d9ef">raise</span> <span style="color: #a6e22e">ValueError</span><span style="color: #f8f8f2">(</span>
+</span><span id="__span-0-1171"><a id="__codelineno-0-1171" name="__codelineno-0-1171"></a>                            <span style="color: #e6db74">f&quot;Error in {</span><span style="color: #f8f8f2">app</span><span style="color: #e6db74">} data extraction: subsession round_number &quot;</span>
+</span><span id="__span-0-1172"><a id="__codelineno-0-1172" name="__codelineno-0-1172"></a>                            <span style="color: #e6db74">&quot;does not match inferred round.&quot;</span>
+</span><span id="__span-0-1173"><a id="__codelineno-0-1173" name="__codelineno-0-1173"></a>                        <span style="color: #f8f8f2">)</span>
+</span><span id="__span-0-1174"><a id="__codelineno-0-1174" name="__codelineno-0-1174"></a>                <span style="color: #959077"># No data in subsession, so skip storing</span>
+</span><span id="__span-0-1175"><a id="__codelineno-0-1175" name="__codelineno-0-1175"></a>                <span style="color: #66d9ef">continue</span>
+</span><span id="__span-0-1176"><a id="__codelineno-0-1176" name="__codelineno-0-1176"></a>
+</span><span id="__span-0-1177"><a id="__codelineno-0-1177" name="__codelineno-0-1177"></a>            <span style="color: #66d9ef">elif</span> <span style="color: #f8f8f2">group_name</span> <span style="color: #ff4689">==</span> <span style="color: #e6db74">&#39;group&#39;</span><span style="color: #f8f8f2">:</span>
+</span><span id="__span-0-1178"><a id="__codelineno-0-1178" name="__codelineno-0-1178"></a>                <span style="color: #959077"># group data might or might not have data</span>
+</span><span id="__span-0-1179"><a id="__codelineno-0-1179" name="__codelineno-0-1179"></a>                <span style="color: #959077"># (only if there&#39;s more than one group or if there are </span>
+</span><span id="__span-0-1180"><a id="__codelineno-0-1180" name="__codelineno-0-1180"></a>                <span style="color: #959077"># group-level variables)</span>
+</span><span id="__span-0-1181"><a id="__codelineno-0-1181" name="__codelineno-0-1181"></a>
+</span><span id="__span-0-1182"><a id="__codelineno-0-1182" name="__codelineno-0-1182"></a>                <span style="color: #f8f8f2">sess_index</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">{}</span>
+</span><span id="__span-0-1183"><a id="__codelineno-0-1183" name="__codelineno-0-1183"></a>                <span style="color: #66d9ef">for</span> <span style="color: #f8f8f2">srow</span> <span style="color: #ff4689">in</span> <span style="color: #f8f8f2">session_data:</span>
+</span><span id="__span-0-1184"><a id="__codelineno-0-1184" name="__codelineno-0-1184"></a>                    <span style="color: #f8f8f2">pcode</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">srow</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">get(</span><span style="color: #e6db74">&#39;participant_code&#39;</span><span style="color: #f8f8f2">,</span> <span style="color: #66d9ef">None</span><span style="color: #f8f8f2">)</span>
+</span><span id="__span-0-1185"><a id="__codelineno-0-1185" name="__codelineno-0-1185"></a>                    <span style="color: #f8f8f2">sess_index[pcode]</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">srow</span>
+</span><span id="__span-0-1186"><a id="__codelineno-0-1186" name="__codelineno-0-1186"></a>
+</span><span id="__span-0-1187"><a id="__codelineno-0-1187" name="__codelineno-0-1187"></a>                <span style="color: #f8f8f2">merged_group</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">[]</span>
+</span><span id="__span-0-1188"><a id="__codelineno-0-1188" name="__codelineno-0-1188"></a>                <span style="color: #66d9ef">for</span> <span style="color: #f8f8f2">row</span> <span style="color: #ff4689">in</span> <span style="color: #f8f8f2">out_df_rows:</span>
+</span><span id="__span-0-1189"><a id="__codelineno-0-1189" name="__codelineno-0-1189"></a>                    <span style="color: #f8f8f2">pcode</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">row</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">get(</span><span style="color: #e6db74">&#39;participant_code&#39;</span><span style="color: #f8f8f2">,</span> <span style="color: #66d9ef">None</span><span style="color: #f8f8f2">)</span>
+</span><span id="__span-0-1190"><a id="__codelineno-0-1190" name="__codelineno-0-1190"></a>                    <span style="color: #f8f8f2">newrow</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">dict(row)</span>
+</span><span id="__span-0-1191"><a id="__codelineno-0-1191" name="__codelineno-0-1191"></a>                    <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">pcode</span> <span style="color: #ff4689">in</span> <span style="color: #f8f8f2">sess_index:</span>
+</span><span id="__span-0-1192"><a id="__codelineno-0-1192" name="__codelineno-0-1192"></a>                        <span style="color: #959077"># merge session data into newrow</span>
+</span><span id="__span-0-1193"><a id="__codelineno-0-1193" name="__codelineno-0-1193"></a>                        <span style="color: #66d9ef">for</span> <span style="color: #f8f8f2">k,</span> <span style="color: #f8f8f2">v</span> <span style="color: #ff4689">in</span> <span style="color: #f8f8f2">sess_index[pcode]</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">items():</span>
+</span><span id="__span-0-1194"><a id="__codelineno-0-1194" name="__codelineno-0-1194"></a>                            <span style="color: #959077"># do not overwrite if we already have something</span>
+</span><span id="__span-0-1195"><a id="__codelineno-0-1195" name="__codelineno-0-1195"></a>                            <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">k</span> <span style="color: #ff4689">not</span> <span style="color: #ff4689">in</span> <span style="color: #f8f8f2">(</span><span style="color: #e6db74">&#39;participant_code&#39;</span><span style="color: #f8f8f2">,</span> <span style="color: #e6db74">&#39;observation&#39;</span><span style="color: #f8f8f2">,</span> <span style="color: #e6db74">&#39;round&#39;</span><span style="color: #f8f8f2">):</span>
+</span><span id="__span-0-1196"><a id="__codelineno-0-1196" name="__codelineno-0-1196"></a>                                <span style="color: #f8f8f2">newrow[k]</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">v</span>
+</span><span id="__span-0-1197"><a id="__codelineno-0-1197" name="__codelineno-0-1197"></a>                    <span style="color: #f8f8f2">merged_group</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">append(newrow)</span>
+</span><span id="__span-0-1198"><a id="__codelineno-0-1198" name="__codelineno-0-1198"></a>                <span style="color: #f8f8f2">out_df_rows</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">merged_group</span>
+</span><span id="__span-0-1199"><a id="__codelineno-0-1199" name="__codelineno-0-1199"></a>
+</span><span id="__span-0-1200"><a id="__codelineno-0-1200" name="__codelineno-0-1200"></a>                <span style="color: #959077"># Check if &#39;id_in_subsession&#39; is all 1 - meaning there is only </span>
+</span><span id="__span-0-1201"><a id="__codelineno-0-1201" name="__codelineno-0-1201"></a>                <span style="color: #959077"># one group per session</span>
+</span><span id="__span-0-1202"><a id="__codelineno-0-1202" name="__codelineno-0-1202"></a>                <span style="color: #f8f8f2">all_id1</span> <span style="color: #ff4689">=</span> <span style="color: #66d9ef">True</span>
+</span><span id="__span-0-1203"><a id="__codelineno-0-1203" name="__codelineno-0-1203"></a>                <span style="color: #66d9ef">for</span> <span style="color: #f8f8f2">row</span> <span style="color: #ff4689">in</span> <span style="color: #f8f8f2">out_df_rows:</span>
+</span><span id="__span-0-1204"><a id="__codelineno-0-1204" name="__codelineno-0-1204"></a>                    <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">row</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">get(</span><span style="color: #e6db74">&#39;id_in_subsession&#39;</span><span style="color: #f8f8f2">)</span> <span style="color: #ff4689">!=</span> <span style="color: #ae81ff">1</span><span style="color: #f8f8f2">:</span>
+</span><span id="__span-0-1205"><a id="__codelineno-0-1205" name="__codelineno-0-1205"></a>                        <span style="color: #f8f8f2">all_id1</span> <span style="color: #ff4689">=</span> <span style="color: #66d9ef">False</span>
+</span><span id="__span-0-1206"><a id="__codelineno-0-1206" name="__codelineno-0-1206"></a>                        <span style="color: #66d9ef">break</span>
+</span><span id="__span-0-1207"><a id="__codelineno-0-1207" name="__codelineno-0-1207"></a>
+</span><span id="__span-0-1208"><a id="__codelineno-0-1208" name="__codelineno-0-1208"></a>                <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">all_id1:</span>
+</span><span id="__span-0-1209"><a id="__codelineno-0-1209" name="__codelineno-0-1209"></a>                    <span style="color: #959077"># drop [&#39;id_in_subsession&#39;, &#39;participant_code&#39;]</span>
+</span><span id="__span-0-1210"><a id="__codelineno-0-1210" name="__codelineno-0-1210"></a>                    <span style="color: #f8f8f2">cleaned</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">[]</span>
+</span><span id="__span-0-1211"><a id="__codelineno-0-1211" name="__codelineno-0-1211"></a>                    <span style="color: #66d9ef">for</span> <span style="color: #f8f8f2">row</span> <span style="color: #ff4689">in</span> <span style="color: #f8f8f2">out_df_rows:</span>
+</span><span id="__span-0-1212"><a id="__codelineno-0-1212" name="__codelineno-0-1212"></a>                        <span style="color: #f8f8f2">newrow</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">dict(row)</span>
+</span><span id="__span-0-1213"><a id="__codelineno-0-1213" name="__codelineno-0-1213"></a>                        <span style="color: #f8f8f2">newrow</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">pop(</span><span style="color: #e6db74">&#39;id_in_subsession&#39;</span><span style="color: #f8f8f2">,</span> <span style="color: #66d9ef">None</span><span style="color: #f8f8f2">)</span>
+</span><span id="__span-0-1214"><a id="__codelineno-0-1214" name="__codelineno-0-1214"></a>                        <span style="color: #f8f8f2">newrow</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">pop(</span><span style="color: #e6db74">&#39;participant_code&#39;</span><span style="color: #f8f8f2">,</span> <span style="color: #66d9ef">None</span><span style="color: #f8f8f2">)</span>
+</span><span id="__span-0-1215"><a id="__codelineno-0-1215" name="__codelineno-0-1215"></a>                        <span style="color: #f8f8f2">cleaned</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">append(newrow)</span>
+</span><span id="__span-0-1216"><a id="__codelineno-0-1216" name="__codelineno-0-1216"></a>                    <span style="color: #f8f8f2">out_df_rows</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">cleaned</span>
+</span><span id="__span-0-1217"><a id="__codelineno-0-1217" name="__codelineno-0-1217"></a>
+</span><span id="__span-0-1218"><a id="__codelineno-0-1218" name="__codelineno-0-1218"></a>                    <span style="color: #959077"># If after dropping columns we are left with only 2 columns </span>
+</span><span id="__span-0-1219"><a id="__codelineno-0-1219" name="__codelineno-0-1219"></a>                    <span style="color: #959077"># (session_code, round), there is no group level data</span>
+</span><span id="__span-0-1220"><a id="__codelineno-0-1220" name="__codelineno-0-1220"></a>                    <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">out_df_rows:</span>
+</span><span id="__span-0-1221"><a id="__codelineno-0-1221" name="__codelineno-0-1221"></a>                        <span style="color: #f8f8f2">col_count</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">len(out_df_rows[</span><span style="color: #ae81ff">0</span><span style="color: #f8f8f2">])</span>
+</span><span id="__span-0-1222"><a id="__codelineno-0-1222" name="__codelineno-0-1222"></a>                        <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">col_count</span> <span style="color: #ff4689">==</span> <span style="color: #ae81ff">2</span><span style="color: #f8f8f2">:</span>
+</span><span id="__span-0-1223"><a id="__codelineno-0-1223" name="__codelineno-0-1223"></a>                            <span style="color: #959077"># skip storing</span>
+</span><span id="__span-0-1224"><a id="__codelineno-0-1224" name="__codelineno-0-1224"></a>                            <span style="color: #66d9ef">continue</span>
+</span><span id="__span-0-1225"><a id="__codelineno-0-1225" name="__codelineno-0-1225"></a>                <span style="color: #66d9ef">else</span><span style="color: #f8f8f2">:</span>
+</span><span id="__span-0-1226"><a id="__codelineno-0-1226" name="__codelineno-0-1226"></a>                    <span style="color: #959077"># rename id_in_subsession -&gt; group_id</span>
+</span><span id="__span-0-1227"><a id="__codelineno-0-1227" name="__codelineno-0-1227"></a>                    <span style="color: #959077"># build a map of group_id to participant_code</span>
+</span><span id="__span-0-1228"><a id="__codelineno-0-1228" name="__codelineno-0-1228"></a>                    <span style="color: #f8f8f2">cleaned</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">[]</span>
+</span><span id="__span-0-1229"><a id="__codelineno-0-1229" name="__codelineno-0-1229"></a>                    <span style="color: #f8f8f2">group_participant_map</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">[]</span>
+</span><span id="__span-0-1230"><a id="__codelineno-0-1230" name="__codelineno-0-1230"></a>                    <span style="color: #66d9ef">for</span> <span style="color: #f8f8f2">row</span> <span style="color: #ff4689">in</span> <span style="color: #f8f8f2">out_df_rows:</span>
+</span><span id="__span-0-1231"><a id="__codelineno-0-1231" name="__codelineno-0-1231"></a>                        <span style="color: #f8f8f2">newrow</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">dict(row)</span>
+</span><span id="__span-0-1232"><a id="__codelineno-0-1232" name="__codelineno-0-1232"></a>                        <span style="color: #f8f8f2">newmap</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">dict()</span>
+</span><span id="__span-0-1233"><a id="__codelineno-0-1233" name="__codelineno-0-1233"></a>                        <span style="color: #f8f8f2">newrow[</span><span style="color: #e6db74">&#39;group_id&#39;</span><span style="color: #f8f8f2">]</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">newrow</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">pop(</span><span style="color: #e6db74">&#39;id_in_subsession&#39;</span><span style="color: #f8f8f2">)</span>
+</span><span id="__span-0-1234"><a id="__codelineno-0-1234" name="__codelineno-0-1234"></a>                        <span style="color: #f8f8f2">newmap[</span><span style="color: #e6db74">&#39;participant_code&#39;</span><span style="color: #f8f8f2">]</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">newrow</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">pop(</span><span style="color: #e6db74">&#39;participant_code&#39;</span><span style="color: #f8f8f2">)</span>
+</span><span id="__span-0-1235"><a id="__codelineno-0-1235" name="__codelineno-0-1235"></a>                        <span style="color: #f8f8f2">newmap[</span><span style="color: #e6db74">&#39;round&#39;</span><span style="color: #f8f8f2">]</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">newrow[</span><span style="color: #e6db74">&#39;round&#39;</span><span style="color: #f8f8f2">]</span>
+</span><span id="__span-0-1236"><a id="__codelineno-0-1236" name="__codelineno-0-1236"></a>                        <span style="color: #f8f8f2">newmap[</span><span style="color: #e6db74">&#39;group_id&#39;</span><span style="color: #f8f8f2">]</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">newrow[</span><span style="color: #e6db74">&#39;group_id&#39;</span><span style="color: #f8f8f2">]</span>
+</span><span id="__span-0-1237"><a id="__codelineno-0-1237" name="__codelineno-0-1237"></a>                        <span style="color: #f8f8f2">cleaned</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">append(newrow)</span>
+</span><span id="__span-0-1238"><a id="__codelineno-0-1238" name="__codelineno-0-1238"></a>                        <span style="color: #f8f8f2">group_participant_map</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">append(newmap)</span>
+</span><span id="__span-0-1239"><a id="__codelineno-0-1239" name="__codelineno-0-1239"></a>                    <span style="color: #f8f8f2">out_df_rows</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">cleaned</span>
+</span><span id="__span-0-1240"><a id="__codelineno-0-1240" name="__codelineno-0-1240"></a>
+</span><span id="__span-0-1241"><a id="__codelineno-0-1241" name="__codelineno-0-1241"></a>                <span style="color: #959077"># reorder columns</span>
+</span><span id="__span-0-1242"><a id="__codelineno-0-1242" name="__codelineno-0-1242"></a>                <span style="color: #f8f8f2">col_order</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">[</span><span style="color: #e6db74">&#39;session_code&#39;</span><span style="color: #f8f8f2">,</span> <span style="color: #e6db74">&#39;round&#39;</span><span style="color: #f8f8f2">]</span>
+</span><span id="__span-0-1243"><a id="__codelineno-0-1243" name="__codelineno-0-1243"></a>                <span style="color: #66d9ef">if</span> <span style="color: #ff4689">not</span> <span style="color: #f8f8f2">all_id1:</span> <span style="color: #f8f8f2">col_order</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">append(</span><span style="color: #e6db74">&#39;group_id&#39;</span><span style="color: #f8f8f2">)</span>
+</span><span id="__span-0-1244"><a id="__codelineno-0-1244" name="__codelineno-0-1244"></a>                <span style="color: #f8f8f2">out_df_rows</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">reorder_columns(out_df_rows,</span> <span style="color: #f8f8f2">col_order)</span>
+</span><span id="__span-0-1245"><a id="__codelineno-0-1245" name="__codelineno-0-1245"></a>
+</span><span id="__span-0-1246"><a id="__codelineno-0-1246" name="__codelineno-0-1246"></a>                <span style="color: #959077"># Deduplicate</span>
+</span><span id="__span-0-1247"><a id="__codelineno-0-1247" name="__codelineno-0-1247"></a>                <span style="color: #f8f8f2">unique_rows</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">[]</span>
+</span><span id="__span-0-1248"><a id="__codelineno-0-1248" name="__codelineno-0-1248"></a>                <span style="color: #f8f8f2">seen</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">set()</span>
+</span><span id="__span-0-1249"><a id="__codelineno-0-1249" name="__codelineno-0-1249"></a>                <span style="color: #66d9ef">for</span> <span style="color: #f8f8f2">row</span> <span style="color: #ff4689">in</span> <span style="color: #f8f8f2">out_df_rows:</span>
+</span><span id="__span-0-1250"><a id="__codelineno-0-1250" name="__codelineno-0-1250"></a>                    <span style="color: #959077"># convert to a tuple of items</span>
+</span><span id="__span-0-1251"><a id="__codelineno-0-1251" name="__codelineno-0-1251"></a>                    <span style="color: #f8f8f2">row_tup</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">tuple(sorted(row</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">items()))</span>
+</span><span id="__span-0-1252"><a id="__codelineno-0-1252" name="__codelineno-0-1252"></a>                    <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">row_tup</span> <span style="color: #ff4689">not</span> <span style="color: #ff4689">in</span> <span style="color: #f8f8f2">seen:</span>
+</span><span id="__span-0-1253"><a id="__codelineno-0-1253" name="__codelineno-0-1253"></a>                        <span style="color: #f8f8f2">seen</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">add(row_tup)</span>
+</span><span id="__span-0-1254"><a id="__codelineno-0-1254" name="__codelineno-0-1254"></a>                        <span style="color: #f8f8f2">unique_rows</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">append(row)</span>
+</span><span id="__span-0-1255"><a id="__codelineno-0-1255" name="__codelineno-0-1255"></a>                <span style="color: #f8f8f2">out_df_rows</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">unique_rows</span>
+</span><span id="__span-0-1256"><a id="__codelineno-0-1256" name="__codelineno-0-1256"></a>
+</span><span id="__span-0-1257"><a id="__codelineno-0-1257" name="__codelineno-0-1257"></a>                <span style="color: #f8f8f2">final_tables[table_name]</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">out_df_rows</span>
 </span><span id="__span-0-1258"><a id="__codelineno-0-1258" name="__codelineno-0-1258"></a>
-</span><span id="__span-0-1259"><a id="__codelineno-0-1259" name="__codelineno-0-1259"></a>                <span style="color: #f8f8f2">final_tables[table_name]</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">out_df_rows</span>
-</span><span id="__span-0-1260"><a id="__codelineno-0-1260" name="__codelineno-0-1260"></a>
-</span><span id="__span-0-1261"><a id="__codelineno-0-1261" name="__codelineno-0-1261"></a>            <span style="color: #66d9ef">elif</span> <span style="color: #f8f8f2">group_name</span> <span style="color: #ff4689">==</span> <span style="color: #e6db74">&#39;player&#39;</span><span style="color: #f8f8f2">:</span>
-</span><span id="__span-0-1262"><a id="__codelineno-0-1262" name="__codelineno-0-1262"></a>                <span style="color: #959077"># rename id_in_group -&gt; player_id</span>
-</span><span id="__span-0-1263"><a id="__codelineno-0-1263" name="__codelineno-0-1263"></a>                <span style="color: #959077"># and merge with group_participant_map if it exists</span>
-</span><span id="__span-0-1264"><a id="__codelineno-0-1264" name="__codelineno-0-1264"></a>                <span style="color: #f8f8f2">cleaned</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">[]</span>
-</span><span id="__span-0-1265"><a id="__codelineno-0-1265" name="__codelineno-0-1265"></a>                <span style="color: #66d9ef">for</span> <span style="color: #f8f8f2">row</span> <span style="color: #ff4689">in</span> <span style="color: #f8f8f2">out_df_rows:</span>
-</span><span id="__span-0-1266"><a id="__codelineno-0-1266" name="__codelineno-0-1266"></a>                    <span style="color: #f8f8f2">newrow</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">dict(row)</span>
-</span><span id="__span-0-1267"><a id="__codelineno-0-1267" name="__codelineno-0-1267"></a>                    <span style="color: #f8f8f2">newrow[</span><span style="color: #e6db74">&#39;player_id&#39;</span><span style="color: #f8f8f2">]</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">newrow</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">pop(</span><span style="color: #e6db74">&#39;id_in_group&#39;</span><span style="color: #f8f8f2">)</span>
-</span><span id="__span-0-1268"><a id="__codelineno-0-1268" name="__codelineno-0-1268"></a>                    <span style="color: #66d9ef">if</span> <span style="color: #ff4689">not</span> <span style="color: #f8f8f2">all_id1:</span>
-</span><span id="__span-0-1269"><a id="__codelineno-0-1269" name="__codelineno-0-1269"></a>                        <span style="color: #66d9ef">for</span> <span style="color: #f8f8f2">m</span> <span style="color: #ff4689">in</span> <span style="color: #f8f8f2">group_participant_map:</span>
-</span><span id="__span-0-1270"><a id="__codelineno-0-1270" name="__codelineno-0-1270"></a>                            <span style="color: #66d9ef">if</span>  <span style="color: #f8f8f2">m[</span><span style="color: #e6db74">&#39;round&#39;</span><span style="color: #f8f8f2">]</span> <span style="color: #ff4689">==</span> <span style="color: #f8f8f2">newrow[</span><span style="color: #e6db74">&#39;round&#39;</span><span style="color: #f8f8f2">]</span> <span style="color: #ff4689">and</span> \
-</span><span id="__span-0-1271"><a id="__codelineno-0-1271" name="__codelineno-0-1271"></a>                                <span style="color: #f8f8f2">m[</span><span style="color: #e6db74">&#39;participant_code&#39;</span><span style="color: #f8f8f2">]</span> <span style="color: #ff4689">==</span> <span style="color: #f8f8f2">newrow[</span><span style="color: #e6db74">&#39;participant_code&#39;</span><span style="color: #f8f8f2">]:</span>
-</span><span id="__span-0-1272"><a id="__codelineno-0-1272" name="__codelineno-0-1272"></a>                                <span style="color: #f8f8f2">newrow[</span><span style="color: #e6db74">&#39;group_id&#39;</span><span style="color: #f8f8f2">]</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">m[</span><span style="color: #e6db74">&#39;group_id&#39;</span><span style="color: #f8f8f2">]</span>
-</span><span id="__span-0-1273"><a id="__codelineno-0-1273" name="__codelineno-0-1273"></a>                                <span style="color: #66d9ef">break</span>
-</span><span id="__span-0-1274"><a id="__codelineno-0-1274" name="__codelineno-0-1274"></a>                    <span style="color: #f8f8f2">cleaned</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">append(newrow)</span>
-</span><span id="__span-0-1275"><a id="__codelineno-0-1275" name="__codelineno-0-1275"></a>                <span style="color: #f8f8f2">out_df_rows</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">cleaned</span>
-</span><span id="__span-0-1276"><a id="__codelineno-0-1276" name="__codelineno-0-1276"></a>                <span style="color: #959077"># reorder</span>
-</span><span id="__span-0-1277"><a id="__codelineno-0-1277" name="__codelineno-0-1277"></a>                <span style="color: #66d9ef">if</span> <span style="color: #ff4689">not</span> <span style="color: #f8f8f2">all_id1:</span>
-</span><span id="__span-0-1278"><a id="__codelineno-0-1278" name="__codelineno-0-1278"></a>                    <span style="color: #f8f8f2">col_order</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">[</span><span style="color: #e6db74">&#39;participant_code&#39;</span><span style="color: #f8f8f2">,</span> <span style="color: #e6db74">&#39;round&#39;</span><span style="color: #f8f8f2">,</span> <span style="color: #e6db74">&#39;group_id&#39;</span><span style="color: #f8f8f2">,</span> <span style="color: #e6db74">&#39;player_id&#39;</span><span style="color: #f8f8f2">]</span>
-</span><span id="__span-0-1279"><a id="__codelineno-0-1279" name="__codelineno-0-1279"></a>                <span style="color: #66d9ef">else</span><span style="color: #f8f8f2">:</span>
-</span><span id="__span-0-1280"><a id="__codelineno-0-1280" name="__codelineno-0-1280"></a>                    <span style="color: #f8f8f2">col_order</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">[</span><span style="color: #e6db74">&#39;participant_code&#39;</span><span style="color: #f8f8f2">,</span> <span style="color: #e6db74">&#39;round&#39;</span><span style="color: #f8f8f2">,</span> <span style="color: #e6db74">&#39;player_id&#39;</span><span style="color: #f8f8f2">]</span>
-</span><span id="__span-0-1281"><a id="__codelineno-0-1281" name="__codelineno-0-1281"></a>                <span style="color: #f8f8f2">out_df_rows</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">reorder_columns(</span>
-</span><span id="__span-0-1282"><a id="__codelineno-0-1282" name="__codelineno-0-1282"></a>                    <span style="color: #f8f8f2">out_df_rows,</span> <span style="color: #f8f8f2">col_order</span>
-</span><span id="__span-0-1283"><a id="__codelineno-0-1283" name="__codelineno-0-1283"></a>                <span style="color: #f8f8f2">)</span>
-</span><span id="__span-0-1284"><a id="__codelineno-0-1284" name="__codelineno-0-1284"></a>                <span style="color: #f8f8f2">final_tables[table_name]</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">out_df_rows</span>
-</span><span id="__span-0-1285"><a id="__codelineno-0-1285" name="__codelineno-0-1285"></a>
-</span><span id="__span-0-1286"><a id="__codelineno-0-1286" name="__codelineno-0-1286"></a>            <span style="color: #66d9ef">else</span><span style="color: #f8f8f2">:</span>
-</span><span id="__span-0-1287"><a id="__codelineno-0-1287" name="__codelineno-0-1287"></a>                <span style="color: #959077"># This should not happen - but if it does, store the data as is</span>
-</span><span id="__span-0-1288"><a id="__codelineno-0-1288" name="__codelineno-0-1288"></a>                <span style="color: #f8f8f2">logger</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">warning(</span>
-</span><span id="__span-0-1289"><a id="__codelineno-0-1289" name="__codelineno-0-1289"></a>                    <span style="color: #e6db74">f&quot;Unrecognized level name &#39;{</span><span style="color: #f8f8f2">group_name</span><span style="color: #e6db74">}&#39; in app &#39;{</span><span style="color: #f8f8f2">app</span><span style="color: #e6db74">}&#39;.&quot;</span>
-</span><span id="__span-0-1290"><a id="__codelineno-0-1290" name="__codelineno-0-1290"></a>                <span style="color: #f8f8f2">)</span>
-</span><span id="__span-0-1291"><a id="__codelineno-0-1291" name="__codelineno-0-1291"></a>                <span style="color: #f8f8f2">final_tables[table_name]</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">out_df_rows</span>
-</span><span id="__span-0-1292"><a id="__codelineno-0-1292" name="__codelineno-0-1292"></a>
-</span><span id="__span-0-1293"><a id="__codelineno-0-1293" name="__codelineno-0-1293"></a>    <span style="color: #959077"># delete app names from table names if there is only one app</span>
-</span><span id="__span-0-1294"><a id="__codelineno-0-1294" name="__codelineno-0-1294"></a>    <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">len(apps)</span> <span style="color: #ff4689">==</span> <span style="color: #ae81ff">1</span><span style="color: #f8f8f2">:</span>
-</span><span id="__span-0-1295"><a id="__codelineno-0-1295" name="__codelineno-0-1295"></a>        <span style="color: #66d9ef">for</span> <span style="color: #f8f8f2">table_name</span> <span style="color: #ff4689">in</span> <span style="color: #f8f8f2">final_tables</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">keys():</span>
-</span><span id="__span-0-1296"><a id="__codelineno-0-1296" name="__codelineno-0-1296"></a>                <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">table_name</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">startswith(apps[</span><span style="color: #ae81ff">0</span><span style="color: #f8f8f2">]</span> <span style="color: #ff4689">+</span> <span style="color: #e6db74">&#39;_&#39;</span><span style="color: #f8f8f2">):</span>
-</span><span id="__span-0-1297"><a id="__codelineno-0-1297" name="__codelineno-0-1297"></a>                    <span style="color: #f8f8f2">final_tables[table_name</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">split(</span><span style="color: #e6db74">&#39;_&#39;</span><span style="color: #f8f8f2">)[</span><span style="color: #ff4689">-</span><span style="color: #ae81ff">1</span><span style="color: #f8f8f2">]]</span> <span style="color: #ff4689">=</span> \
-</span><span id="__span-0-1298"><a id="__codelineno-0-1298" name="__codelineno-0-1298"></a>                        <span style="color: #f8f8f2">final_tables</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">pop(table_name)</span>
-</span><span id="__span-0-1299"><a id="__codelineno-0-1299" name="__codelineno-0-1299"></a>
+</span><span id="__span-0-1259"><a id="__codelineno-0-1259" name="__codelineno-0-1259"></a>            <span style="color: #66d9ef">elif</span> <span style="color: #f8f8f2">group_name</span> <span style="color: #ff4689">==</span> <span style="color: #e6db74">&#39;player&#39;</span><span style="color: #f8f8f2">:</span>
+</span><span id="__span-0-1260"><a id="__codelineno-0-1260" name="__codelineno-0-1260"></a>                <span style="color: #959077"># rename id_in_group -&gt; player_id</span>
+</span><span id="__span-0-1261"><a id="__codelineno-0-1261" name="__codelineno-0-1261"></a>                <span style="color: #959077"># and merge with group_participant_map if it exists</span>
+</span><span id="__span-0-1262"><a id="__codelineno-0-1262" name="__codelineno-0-1262"></a>                <span style="color: #f8f8f2">cleaned</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">[]</span>
+</span><span id="__span-0-1263"><a id="__codelineno-0-1263" name="__codelineno-0-1263"></a>                <span style="color: #66d9ef">for</span> <span style="color: #f8f8f2">row</span> <span style="color: #ff4689">in</span> <span style="color: #f8f8f2">out_df_rows:</span>
+</span><span id="__span-0-1264"><a id="__codelineno-0-1264" name="__codelineno-0-1264"></a>                    <span style="color: #f8f8f2">newrow</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">dict(row)</span>
+</span><span id="__span-0-1265"><a id="__codelineno-0-1265" name="__codelineno-0-1265"></a>                    <span style="color: #f8f8f2">newrow[</span><span style="color: #e6db74">&#39;player_id&#39;</span><span style="color: #f8f8f2">]</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">newrow</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">pop(</span><span style="color: #e6db74">&#39;id_in_group&#39;</span><span style="color: #f8f8f2">)</span>
+</span><span id="__span-0-1266"><a id="__codelineno-0-1266" name="__codelineno-0-1266"></a>                    <span style="color: #66d9ef">if</span> <span style="color: #ff4689">not</span> <span style="color: #f8f8f2">all_id1:</span>
+</span><span id="__span-0-1267"><a id="__codelineno-0-1267" name="__codelineno-0-1267"></a>                        <span style="color: #66d9ef">for</span> <span style="color: #f8f8f2">m</span> <span style="color: #ff4689">in</span> <span style="color: #f8f8f2">group_participant_map:</span>
+</span><span id="__span-0-1268"><a id="__codelineno-0-1268" name="__codelineno-0-1268"></a>                            <span style="color: #66d9ef">if</span>  <span style="color: #f8f8f2">m[</span><span style="color: #e6db74">&#39;round&#39;</span><span style="color: #f8f8f2">]</span> <span style="color: #ff4689">==</span> <span style="color: #f8f8f2">newrow[</span><span style="color: #e6db74">&#39;round&#39;</span><span style="color: #f8f8f2">]</span> <span style="color: #ff4689">and</span> \
+</span><span id="__span-0-1269"><a id="__codelineno-0-1269" name="__codelineno-0-1269"></a>                                <span style="color: #f8f8f2">m[</span><span style="color: #e6db74">&#39;participant_code&#39;</span><span style="color: #f8f8f2">]</span> <span style="color: #ff4689">==</span> <span style="color: #f8f8f2">newrow[</span><span style="color: #e6db74">&#39;participant_code&#39;</span><span style="color: #f8f8f2">]:</span>
+</span><span id="__span-0-1270"><a id="__codelineno-0-1270" name="__codelineno-0-1270"></a>                                <span style="color: #f8f8f2">newrow[</span><span style="color: #e6db74">&#39;group_id&#39;</span><span style="color: #f8f8f2">]</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">m[</span><span style="color: #e6db74">&#39;group_id&#39;</span><span style="color: #f8f8f2">]</span>
+</span><span id="__span-0-1271"><a id="__codelineno-0-1271" name="__codelineno-0-1271"></a>                                <span style="color: #66d9ef">break</span>
+</span><span id="__span-0-1272"><a id="__codelineno-0-1272" name="__codelineno-0-1272"></a>                    <span style="color: #f8f8f2">cleaned</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">append(newrow)</span>
+</span><span id="__span-0-1273"><a id="__codelineno-0-1273" name="__codelineno-0-1273"></a>                <span style="color: #f8f8f2">out_df_rows</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">cleaned</span>
+</span><span id="__span-0-1274"><a id="__codelineno-0-1274" name="__codelineno-0-1274"></a>                <span style="color: #959077"># reorder</span>
+</span><span id="__span-0-1275"><a id="__codelineno-0-1275" name="__codelineno-0-1275"></a>                <span style="color: #66d9ef">if</span> <span style="color: #ff4689">not</span> <span style="color: #f8f8f2">all_id1:</span>
+</span><span id="__span-0-1276"><a id="__codelineno-0-1276" name="__codelineno-0-1276"></a>                    <span style="color: #f8f8f2">col_order</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">[</span><span style="color: #e6db74">&#39;participant_code&#39;</span><span style="color: #f8f8f2">,</span> <span style="color: #e6db74">&#39;round&#39;</span><span style="color: #f8f8f2">,</span> <span style="color: #e6db74">&#39;group_id&#39;</span><span style="color: #f8f8f2">,</span> <span style="color: #e6db74">&#39;player_id&#39;</span><span style="color: #f8f8f2">]</span>
+</span><span id="__span-0-1277"><a id="__codelineno-0-1277" name="__codelineno-0-1277"></a>                <span style="color: #66d9ef">else</span><span style="color: #f8f8f2">:</span>
+</span><span id="__span-0-1278"><a id="__codelineno-0-1278" name="__codelineno-0-1278"></a>                    <span style="color: #f8f8f2">col_order</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">[</span><span style="color: #e6db74">&#39;participant_code&#39;</span><span style="color: #f8f8f2">,</span> <span style="color: #e6db74">&#39;round&#39;</span><span style="color: #f8f8f2">,</span> <span style="color: #e6db74">&#39;player_id&#39;</span><span style="color: #f8f8f2">]</span>
+</span><span id="__span-0-1279"><a id="__codelineno-0-1279" name="__codelineno-0-1279"></a>                <span style="color: #f8f8f2">out_df_rows</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">reorder_columns(</span>
+</span><span id="__span-0-1280"><a id="__codelineno-0-1280" name="__codelineno-0-1280"></a>                    <span style="color: #f8f8f2">out_df_rows,</span> <span style="color: #f8f8f2">col_order</span>
+</span><span id="__span-0-1281"><a id="__codelineno-0-1281" name="__codelineno-0-1281"></a>                <span style="color: #f8f8f2">)</span>
+</span><span id="__span-0-1282"><a id="__codelineno-0-1282" name="__codelineno-0-1282"></a>                <span style="color: #f8f8f2">final_tables[table_name]</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">out_df_rows</span>
+</span><span id="__span-0-1283"><a id="__codelineno-0-1283" name="__codelineno-0-1283"></a>
+</span><span id="__span-0-1284"><a id="__codelineno-0-1284" name="__codelineno-0-1284"></a>            <span style="color: #66d9ef">else</span><span style="color: #f8f8f2">:</span>
+</span><span id="__span-0-1285"><a id="__codelineno-0-1285" name="__codelineno-0-1285"></a>                <span style="color: #959077"># This should not happen - but if it does, store the data as is</span>
+</span><span id="__span-0-1286"><a id="__codelineno-0-1286" name="__codelineno-0-1286"></a>                <span style="color: #f8f8f2">logger</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">warning(</span>
+</span><span id="__span-0-1287"><a id="__codelineno-0-1287" name="__codelineno-0-1287"></a>                    <span style="color: #e6db74">f&quot;Unrecognized level name &#39;{</span><span style="color: #f8f8f2">group_name</span><span style="color: #e6db74">}&#39; in app &#39;{</span><span style="color: #f8f8f2">app</span><span style="color: #e6db74">}&#39;.&quot;</span>
+</span><span id="__span-0-1288"><a id="__codelineno-0-1288" name="__codelineno-0-1288"></a>                <span style="color: #f8f8f2">)</span>
+</span><span id="__span-0-1289"><a id="__codelineno-0-1289" name="__codelineno-0-1289"></a>                <span style="color: #f8f8f2">final_tables[table_name]</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">out_df_rows</span>
+</span><span id="__span-0-1290"><a id="__codelineno-0-1290" name="__codelineno-0-1290"></a>
+</span><span id="__span-0-1291"><a id="__codelineno-0-1291" name="__codelineno-0-1291"></a>    <span style="color: #959077"># delete app names from table names if there is only one app</span>
+</span><span id="__span-0-1292"><a id="__codelineno-0-1292" name="__codelineno-0-1292"></a>    <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">len(apps)</span> <span style="color: #ff4689">==</span> <span style="color: #ae81ff">1</span><span style="color: #f8f8f2">:</span>
+</span><span id="__span-0-1293"><a id="__codelineno-0-1293" name="__codelineno-0-1293"></a>        <span style="color: #66d9ef">for</span> <span style="color: #f8f8f2">table_name</span> <span style="color: #ff4689">in</span> <span style="color: #f8f8f2">final_tables</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">keys():</span>
+</span><span id="__span-0-1294"><a id="__codelineno-0-1294" name="__codelineno-0-1294"></a>                <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">table_name</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">startswith(apps[</span><span style="color: #ae81ff">0</span><span style="color: #f8f8f2">]</span> <span style="color: #ff4689">+</span> <span style="color: #e6db74">&#39;_&#39;</span><span style="color: #f8f8f2">):</span>
+</span><span id="__span-0-1295"><a id="__codelineno-0-1295" name="__codelineno-0-1295"></a>                    <span style="color: #f8f8f2">final_tables[table_name</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">split(</span><span style="color: #e6db74">&#39;_&#39;</span><span style="color: #f8f8f2">)[</span><span style="color: #ff4689">-</span><span style="color: #ae81ff">1</span><span style="color: #f8f8f2">]]</span> <span style="color: #ff4689">=</span> \
+</span><span id="__span-0-1296"><a id="__codelineno-0-1296" name="__codelineno-0-1296"></a>                        <span style="color: #f8f8f2">final_tables</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">pop(table_name)</span>
+</span><span id="__span-0-1297"><a id="__codelineno-0-1297" name="__codelineno-0-1297"></a>
+</span><span id="__span-0-1298"><a id="__codelineno-0-1298" name="__codelineno-0-1298"></a>
+</span><span id="__span-0-1299"><a id="__codelineno-0-1299" name="__codelineno-0-1299"></a>    <span style="color: #959077"># --- 5) Optionally store as CSV -------------------------------------------</span>
 </span><span id="__span-0-1300"><a id="__codelineno-0-1300" name="__codelineno-0-1300"></a>
-</span><span id="__span-0-1301"><a id="__codelineno-0-1301" name="__codelineno-0-1301"></a>    <span style="color: #959077"># --- 5) Optionally store as CSV -------------------------------------------</span>
-</span><span id="__span-0-1302"><a id="__codelineno-0-1302" name="__codelineno-0-1302"></a>
-</span><span id="__span-0-1303"><a id="__codelineno-0-1303" name="__codelineno-0-1303"></a>    <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">store_as_csv:</span>
-</span><span id="__span-0-1304"><a id="__codelineno-0-1304" name="__codelineno-0-1304"></a>        <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">exp_prefix:</span> <span style="color: #f8f8f2">exp_prefix</span> <span style="color: #ff4689">+=</span> <span style="color: #e6db74">&#39;_&#39;</span>
-</span><span id="__span-0-1305"><a id="__codelineno-0-1305" name="__codelineno-0-1305"></a>        <span style="color: #66d9ef">for</span> <span style="color: #f8f8f2">table_name,</span> <span style="color: #f8f8f2">rows</span> <span style="color: #ff4689">in</span> <span style="color: #f8f8f2">final_tables</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">items():</span>
-</span><span id="__span-0-1306"><a id="__codelineno-0-1306" name="__codelineno-0-1306"></a>            <span style="color: #f8f8f2">out_csv</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">os</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">path</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">join(</span>
-</span><span id="__span-0-1307"><a id="__codelineno-0-1307" name="__codelineno-0-1307"></a>                <span style="color: #f8f8f2">data_exp_path,</span> <span style="color: #e6db74">f&quot;{</span><span style="color: #f8f8f2">exp_prefix</span><span style="color: #e6db74">}{</span><span style="color: #f8f8f2">table_name</span><span style="color: #e6db74">}.csv&quot;</span>
-</span><span id="__span-0-1308"><a id="__codelineno-0-1308" name="__codelineno-0-1308"></a>            <span style="color: #f8f8f2">)</span>
-</span><span id="__span-0-1309"><a id="__codelineno-0-1309" name="__codelineno-0-1309"></a>            <span style="color: #f8f8f2">write_dicts_to_csv(rows,</span> <span style="color: #f8f8f2">out_csv)</span>
-</span><span id="__span-0-1310"><a id="__codelineno-0-1310" name="__codelineno-0-1310"></a>
-</span><span id="__span-0-1311"><a id="__codelineno-0-1311" name="__codelineno-0-1311"></a>    <span style="color: #f8f8f2">logger</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">info(</span><span style="color: #e6db74">f&quot;Normalizing data completed&quot;</span><span style="color: #f8f8f2">)</span>
-</span><span id="__span-0-1312"><a id="__codelineno-0-1312" name="__codelineno-0-1312"></a>    <span style="color: #66d9ef">return</span> <span style="color: #f8f8f2">final_tables</span>
+</span><span id="__span-0-1301"><a id="__codelineno-0-1301" name="__codelineno-0-1301"></a>    <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">store_as_csv:</span>
+</span><span id="__span-0-1302"><a id="__codelineno-0-1302" name="__codelineno-0-1302"></a>        <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">exp_prefix:</span> <span style="color: #f8f8f2">exp_prefix</span> <span style="color: #ff4689">+=</span> <span style="color: #e6db74">&#39;_&#39;</span>
+</span><span id="__span-0-1303"><a id="__codelineno-0-1303" name="__codelineno-0-1303"></a>        <span style="color: #66d9ef">for</span> <span style="color: #f8f8f2">table_name,</span> <span style="color: #f8f8f2">rows</span> <span style="color: #ff4689">in</span> <span style="color: #f8f8f2">final_tables</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">items():</span>
+</span><span id="__span-0-1304"><a id="__codelineno-0-1304" name="__codelineno-0-1304"></a>            <span style="color: #f8f8f2">out_csv</span> <span style="color: #ff4689">=</span> <span style="color: #f8f8f2">os</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">path</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">join(</span>
+</span><span id="__span-0-1305"><a id="__codelineno-0-1305" name="__codelineno-0-1305"></a>                <span style="color: #f8f8f2">data_exp_path,</span> <span style="color: #e6db74">f&quot;{</span><span style="color: #f8f8f2">exp_prefix</span><span style="color: #e6db74">}{</span><span style="color: #f8f8f2">table_name</span><span style="color: #e6db74">}.csv&quot;</span>
+</span><span id="__span-0-1306"><a id="__codelineno-0-1306" name="__codelineno-0-1306"></a>            <span style="color: #f8f8f2">)</span>
+</span><span id="__span-0-1307"><a id="__codelineno-0-1307" name="__codelineno-0-1307"></a>            <span style="color: #f8f8f2">write_dicts_to_csv(rows,</span> <span style="color: #f8f8f2">out_csv)</span>
+</span><span id="__span-0-1308"><a id="__codelineno-0-1308" name="__codelineno-0-1308"></a>
+</span><span id="__span-0-1309"><a id="__codelineno-0-1309" name="__codelineno-0-1309"></a>    <span style="color: #f8f8f2">logger</span><span style="color: #ff4689">.</span><span style="color: #f8f8f2">info(</span><span style="color: #e6db74">f&quot;Normalizing data completed&quot;</span><span style="color: #f8f8f2">)</span>
+</span><span id="__span-0-1310"><a id="__codelineno-0-1310" name="__codelineno-0-1310"></a>    <span style="color: #66d9ef">return</span> <span style="color: #f8f8f2">final_tables</span>
 </span></code></pre></div></td></tr></table></div>
             </details>
     </div>
