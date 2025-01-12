@@ -52,7 +52,9 @@ def test_session_is_recorded_in_botex_db():
     delete_botex_db()
     otree_proc = botex.start_otree_server()
     botex_session = init_otree_test_session()
-    participants = botex.read_participants_from_botex_db(botex_db="tests/botex.db")
+    participants = botex.read_participants_from_botex_db(
+        botex_db="tests/botex.sqlite3"
+    )
     assert isinstance(participants, list)
     assert len(participants) == 2
     p1 = participants[0]

@@ -17,8 +17,8 @@ Different from the first tutorial, we will now use environment variables to conf
 In your project folder, create a file called `botex.env` and add the following content:
 
 ```text
-# Path your botex database file
-BOTEX_DB="botex.sqlite"
+# Path to your botex SQLite database file
+BOTEX_DB="botex.sqlite3"
 
 # Your otree project path
 OTREE_PROJECT_PATH="otree" 

@@ -12,7 +12,7 @@ from tests.utils import *
 )
 def test_export_part():
     csv_file = 'tests/botex_participants.csv'
-    botex.export_participant_data(csv_file, botex_db="tests/botex.db")
+    botex.export_participant_data(csv_file, botex_db="tests/botex.sqlite3")
     assert os.path.exists(csv_file)
     try:
         with open(csv_file) as f:
@@ -31,7 +31,7 @@ def test_export_part():
 )
 def test_export_response():
     csv_file = 'tests/botex_response.csv'
-    botex.export_response_data(csv_file, botex_db="tests/botex.db")
+    botex.export_response_data(csv_file, botex_db="tests/botex.sqlite3")
     assert os.path.exists(csv_file)
     try:
         with open(csv_file) as f:

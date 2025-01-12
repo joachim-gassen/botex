@@ -94,7 +94,7 @@ session = botex.init_otree_session(
     config_name=session_configs[0]['name'], # "guess_two_thirds"
     npart = 3,
     otree_server_url="http://localhost:8000",
-    botex_db = 'botex.sqlite'
+    botex_db = 'botex.sqlite3'
 )
 
 print(session)
@@ -144,14 +144,14 @@ session = botex.init_otree_session(
     config_name=session_configs[0]['name'], # "guess_two_thirds"
     npart = 3,
     otree_server_url="http://localhost:8000",
-    botex_db = 'botex.sqlite'
+    botex_db = 'botex.sqlite3'
 )
 
 # Run the bots on the session
 botex.run_bots_on_session(
     session_id=session['session_id'],
     otree_server_url="http://localhost:8000",
-    botex_db = 'botex.sqlite',
+    botex_db = 'botex.sqlite3',
     model="gemini/gemini-1.5-flash",
     api_key="***"
 )
@@ -222,7 +222,7 @@ import logging
 logging.basicConfig(level=logging.WARNING)
 
 # Will be created in the current directory if it does not exist
-BOTEX_DB = "botex.sqlite"
+BOTEX_DB = "botex.sqlite3"
 
 # Path to your oTree project folder if you want the code to start the server
 OTREE_PROJECT_PATH = "otree"

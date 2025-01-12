@@ -495,7 +495,7 @@ def run_bots_on_session(
         ```python
         run_bots_on_session(
             session_id="your_session_id",
-            botex_db="path/to/botex.db",
+            botex_db="path/to/botex.sqlite3",
             api_key="your_openai_api_key",
             # Other parameters if and as needed
         )
@@ -506,7 +506,7 @@ def run_bots_on_session(
         ```python    
         run_bots_on_session(
             session_id="your_session_id",
-            botex_db="path/to/botex.db",
+            botex_db="path/to/botex.sqlite3",
             model="gemini/gemini-1.5-flash",
             api_key="your_gemini_api_key",
             # Other parameters if and as needed
@@ -524,7 +524,7 @@ def run_bots_on_session(
         process_id = start_llamacpp_server(llamacpp_config)
         run_bots_on_session(
             session_id="your_session_id",
-            botex_db="path/to/botex.db",
+            botex_db="path/to/botex.sqlite3",
             model="llamacpp",
             # Other parameters if and as needed
         )
@@ -539,7 +539,7 @@ def run_bots_on_session(
         ```python
         run_bots_on_session(
             session_id="your_session_id",
-            botex_db="path/to/botex.db",
+            botex_db="path/to/botex.sqlite3",
             model = "llamacpp",
             api_base = "http://yourserver:port"},
             # Other parameters if and as needed
@@ -674,7 +674,7 @@ def run_single_bot(
             session_name="your_session_name",
             session_id="your_session_id",
             participant_id="your_participant_id",
-            botex_db="path/to/botex.db",
+            botex_db="path/to/botex.sqlite3",
             model="a LiteLLM model string, e.g. 'gemini/gemini-1.5-flash'",
             api_key="the API key for your model provide",
             # Other parameters if and as needed
@@ -690,7 +690,7 @@ def run_single_bot(
             session_name="your_session_name",
             session_id="your_session_id",
             participant_id="your_participant_id",
-            botex_db="path/to/botex.db",
+            botex_db="path/to/botex.sqlite3",
             model="llamacpp",
             api_base="http://yourhost:port" # defaults to http://localhost:8080
             # Other parameters if and as needed
@@ -711,7 +711,7 @@ def run_single_bot(
             session_name="your_session_name",
             session_id="your_session_id",
             participant_id="your_participant_id",
-            botex_db="path/to/botex.db",
+            botex_db="path/to/botex.sqlite3",
             model="llamacpp",
             # Other parameters if and as needed
         )
@@ -806,7 +806,7 @@ def export_otree_data(
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--log-level=3")
     chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
-    
+
     with tempfile.TemporaryDirectory() as tmp_dir:
         prefs = {"download.default_directory": tmp_dir}
         chrome_options.add_experimental_option("prefs", prefs)

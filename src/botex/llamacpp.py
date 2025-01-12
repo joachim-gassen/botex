@@ -147,7 +147,7 @@ class LlamaCppServerManager:
             f"listening to {self.config.server_url}... "
         )
         # Should the log file path become a configurable option at some point?
-        with open("llama_cpp_server.log", "a") as log_file:
+        with open("llama.log", "a") as log_file:
             process = subprocess.Popen(
                 cmd, stdout=log_file, stderr=subprocess.STDOUT
             )

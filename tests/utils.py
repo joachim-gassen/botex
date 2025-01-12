@@ -7,7 +7,7 @@ import botex
 
 OTREE_STARTUP_WAIT = 3
 
-def delete_botex_db(botex_db = "tests/botex.db"):
+def delete_botex_db(botex_db = "tests/botex.sqlite3"):
     try:
         os.remove(botex_db)
     except OSError:
@@ -19,7 +19,7 @@ def delete_otree_db():
     except OSError:
         pass    
 
-def init_otree_test_session(botex_db = "tests/botex.db"):
+def init_otree_test_session(botex_db = "tests/botex.sqlite3"):
     botex_session = botex.init_otree_session(
         config_name="botex_test", npart=2, botex_db = botex_db, 
     )
@@ -104,7 +104,7 @@ def check_conversation_and_export_answers(model, session_id):
         'I am sorry', 'Unfortunately', 'Your response was not valid'
     ]
     convs = botex.read_conversations_from_botex_db(
-        botex_db="tests/botex.db", session_id=session_id
+        botex_db="tests/botex.sqlite3", session_id=session_id
     )
     with open("tests/questions.csv") as f:
         qtexts = list(csv.DictReader(f))

@@ -60,7 +60,7 @@ def test_can_survey_be_completed_by_bots(model):
     global botex_session
     botex_session = init_otree_test_session()
     urls = botex.get_bot_urls(
-        botex_session["session_id"], "tests/botex.db"
+        botex_session["session_id"], "tests/botex.sqlite3"
     )
     assert len(urls) == 2
     botex.run_bots_on_session(
@@ -68,7 +68,7 @@ def test_can_survey_be_completed_by_bots(model):
         api_key = api_key,
         session_id=botex_session["session_id"], 
         bot_urls=botex_session["bot_urls"],
-        botex_db="tests/botex.db"
+        botex_db="tests/botex.sqlite3"
     )
     export_otree_data('tests/otree_data.csv')
     botex.stop_otree_server(otree_proc)
@@ -86,9 +86,12 @@ def test_can_survey_be_completed_by_bots_full_hist(model):
         return
     global botex_session
     otree_proc = botex.start_otree_server()
-    botex_session = init_otree_test_session(botex_db="tests/botex_full_hist.db")
+    botex_session = init_otree_test_session(
+        botex_db="tests/botex_full_hist.sqlite3"
+    )
     urls = botex.get_bot_urls(
-        botex_session["session_id"], botex_db="tests/botex_full_hist.db",
+        botex_session["session_id"], 
+        botex_db="tests/botex_full_hist.sqlite3",
     )
     assert len(urls) == 2
     botex.run_bots_on_session(
@@ -96,7 +99,7 @@ def test_can_survey_be_completed_by_bots_full_hist(model):
         api_key = api_key,
         session_id=botex_session["session_id"], 
         bot_urls=botex_session["bot_urls"],
-        botex_db="tests/botex.db",
+        botex_db="tests/botex.sqlite3",
         full_conv_history=True
     )
     export_otree_data('tests/otree_data_full_history.csv')
@@ -122,7 +125,7 @@ def test_can_botex_stop_llamacpp_server(model):
 )
 def test_can_conversation_data_be_obtained(model):
     conv = botex.read_conversations_from_botex_db(
-        botex_db="tests/botex.db", session_id=botex_session["session_id"]
+        botex_db="tests/botex.sqlite3", session_id=botex_session["session_id"]
     )
     assert isinstance(conv, list)
     assert len(conv) == 2
@@ -133,7 +136,7 @@ def test_can_conversation_data_be_obtained(model):
 )
 def test_is_open_ai_key_purged_from_db(model):
     conv = botex.read_conversations_from_botex_db(
-        botex_db="tests/botex.db", session_id=botex_session["session_id"]
+        botex_db="tests/botex.sqlite3", session_id=botex_session["session_id"]
     )
     bot_parms = json.loads(conv[0]['bot_parms'])
     assert bot_parms.get('openai_api_key') is None or bot_parms['openai_api_key'] == "******"

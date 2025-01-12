@@ -34,7 +34,7 @@ Then start the botex command line interface by running `botex`. You should see t
 ```text
 (.venv) user@host:~/github/project$ botex
 
-Botex database file not provided. Defaulting to 'botex.db'
+Botex database file not provided. Defaulting to 'botex.sqlite3'
 oTree server URL not provided. Defaulting to 'http://localhost:8000'
 No LLM provided. Enter your model string here ("llamacpp" if you are using
 llama.cpp) or press enter to accept the default [gemini/gemini-1.5-flash]: 

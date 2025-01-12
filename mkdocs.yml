@@ -15,8 +15,8 @@ nav:
     - Home: index.md
     - Getting Started: getting_started.md
     - Tutorials: 
-        - Run an oTree experiment with botex: tutorials/running_an_experiment.md
-        - Using botex to benchmark LLM performance in oTree experiments: tutorials/exp_3llms.md
+        - Run an oTree Experiment with botex: tutorials/running_an_experiment.md
+        - Using botex to Benchmark LLM Performance in oTree Experiments: tutorials/exp_3llms.md
     - API Reference: reference.md
 markdown_extensions:
     - pymdownx.highlight:

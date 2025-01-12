@@ -45,7 +45,7 @@ def tqs(s):
     help=tqs("""
         Path to the botex SQLite database file (will be created if it does 
         not exist). Read from environment variable BOTEX_DB if not provided.
-        Defaults to 'botex.db'.
+        Defaults to 'botex.sqlite3'.
     """),
 )
 @click.option(
@@ -205,8 +205,10 @@ def run_botex(
 
     # Default fallback for DB
     if not botex_db:
-        click.echo("Botex database file not provided. Defaulting to 'botex.db'")
-        botex_db = 'botex.db'
+        click.echo(
+            "Botex database file not provided. Defaulting to 'botex.sqlite3'"
+        )
+        botex_db = 'botex.sqlite3'
 
     # Default fallback for oTree server URL
     if not otree_server_url:

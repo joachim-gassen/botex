@@ -13,7 +13,7 @@ __pycache__/
 .DS_Store
 secrets.env
 botex.env
-botex.db
+botex.sqlite3
 *.pdf
 .vscode
 .Rproj.user
@@ -21,8 +21,8 @@ botex.db
 *.Rhistory
 build
 *.egg-info
-tests/botex.db
-tests/botex_full_hist.db
+tests/botex.sqlite3
+tests/botex_full_hist.sqlite3
 tests/otree/db.sqlite3
 tests/questions_and_answers*.csv
 tests/botex_participants.csv
@@ -45,5 +45,3 @@ README.html
 site/
 .cache/
 otree
-mybotex.env
-*.sqlite*
