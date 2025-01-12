@@ -4,6 +4,7 @@ import platform
 import psutil
 import time
 import os 
+import shutil
 import csv
 import tempfile
 import sqlite3
@@ -803,6 +804,8 @@ def export_otree_data(
     chrome_options.add_argument("--disable-gpu")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--log-level=3")
+
     with tempfile.TemporaryDirectory() as tmp_dir:
         prefs = {"download.default_directory": tmp_dir}
         chrome_options.add_experimental_option("prefs", prefs)
@@ -835,7 +838,7 @@ def export_otree_data(
             time.sleep(1)
             csv_files = [f for f in os.listdir(tmp_dir) if f.endswith(".csv")]
             if len(csv_files) == 1:
-                os.rename(f"{tmp_dir}/{csv_files[0]}", csv_file)
+                shutil.move(f"{tmp_dir}/{csv_files[0]}", csv_file)
                 logger.info("oTree CSV file downloaded.")
                 break
             else:

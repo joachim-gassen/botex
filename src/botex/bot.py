@@ -487,6 +487,8 @@ def run_bot(**kwargs):
     # Needed to work on codespaces but might be a security risk on
     # untrusted web pages
     options.add_argument("--no-sandbox")
+    # Should result in only fatal errors being logged
+    options.add_argument("--log-level=3")
     attempts = 0
     while attempts < MAX_NUM_OF_ATTEMPTS_TO_START_CHROME:
         try:
