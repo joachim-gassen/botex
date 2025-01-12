@@ -76,3 +76,5 @@ extra:
       link: https://pypi.org/project/botex/
     - icon: fontawesome/brands/bluesky
       link: https://bsky.app/profile/jgassen.bsky.social
+extra_css:
+  - assets/css/overrides.css

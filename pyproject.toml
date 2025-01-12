@@ -39,7 +39,7 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/joachim-gassen/botex"
+Homepage = "https://joachim-gassen.github.io/botex/"
 Issues = "https://github.com/joachim-gassen/botex/issues"
 
 [project.scripts]

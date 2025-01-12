@@ -2,9 +2,9 @@
 
 ## Starting oTree via Python
 
-When you want to run an oTree experiment with botex bots, you need to have access to a running oTree instance that is able to host th experiment that you want to run. 
+When you want to run an oTree experiment with botex bots, you need to have access to a running oTree instance that is able to host the experiment that you want to run.
 
-in the [getting started section](../getting_started.md), we have seen how to start an oTree server via the command line. Here, we will use botex to start an oTree server instance via Python. This is useful if you want to automate the process of running the experiment and collecting the data.
+in the [getting started section](../getting_started.md), we have seen how to start an oTree server via the command line. Now, we will use botex to start an oTree server instance via Python. This is useful if you want to automate the process of running an experiment and collecting its data.
 
 The following code snippet shows how to start an oTree server via Python:
 
@@ -31,7 +31,7 @@ INFO:botex:oTree server started successfully with endpoint 'http://localhost:800
 Please note that the oTree sever instance will terminate when your script terminates. 
 
 
-## Retrieve the available session configurations
+## Retrieve the Available Session Configurations
 
 Before you can run an experiment, you might want to know which session configurations are available. The extension of the code shows how to retrieve the available session configurations from a running oTree server:
 
@@ -71,7 +71,7 @@ INFO:botex:oTree server started successfully with endpoint 'http://localhost:800
 INFO:botex:oTree server stopped.
 ```
 
-## Initialize a session
+## Initialize a Session
 
 Once you know which session configurations are available, you can initialize a session. The extension of the code shows how to do this:
 
@@ -121,7 +121,7 @@ INFO:botex:oTree server stopped.
 
 You see that we initialized a session with three participants, all of which are bots. The bot URLs are provided in the `bot_urls` list.
 
-## Running botex bots on a session
+## Running botex Bots on a Session
 
 Once you have initialized a session, you can run the botex bots on it. Let's extend our code:
 
@@ -207,7 +207,7 @@ INFO:botex:Retrying with throttling.
 This is because the free tier of the Google Gemini model has per minute rate limits for requests. On encountering this error, botex automatically apply an exponential backoff strategy, meaning that it keeps retrying with increasing delays until the request is successful. If you want to avoid the warning, you can set the `throttle` parameter of `run_bots_on_session` to `True`. This will cause botex to throttle the requests to the model by default.
 
 
-## Exporting the data
+## Exporting the Data
 
 After running the experiment and before shutting down the oTree server, you might want to export the data, both from oTree and from botex. So here is our final extension of the code:
 

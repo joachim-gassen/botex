@@ -1,15 +1,21 @@
 # Getting Started
 
+## Requirements
+
 If you want to use botex to create LLM participants for your own oTree experiments, you need the following:
 
 - A working [python](https://www.python.org/downloads/) environment >= 3.10, [pip](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/) and preferably a [virtual environment](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/).
 - [Google Chrome](https://www.google.com/chrome/) for scraping the oTree participant pages.
+
+## Install botex
 
 Then, activate the virtual environment and install the current development version of the package in it:
 
 ```bash
 pip install git+https://github.com/joachim-gassen/botex.git
 ```
+
+## Install oTree
 
 The easiest way to get botex up and running is to use its [command line interface](reference.md#command-line-interface). It guides you through the process to start botex on a running oTree instance. To set oTree up, you can run the following in the same virtual environment that you set up botex in:
 
@@ -19,6 +25,8 @@ otree startproject otree # Say yes for sample games
 cd otree 
 otree devserver
 ```
+
+## Using the botex Command Line Interface
 
 Now, you have a locally running oTree sever. Switch to another terminal with the same virtual environment activated.
 Then start the botex command line interface by running `botex`. You should see the following output:
@@ -66,11 +74,17 @@ You can monitor its progress at http://localhost:8000/SessionMonitor/d8nqycbk
 Starting bots on session...
 ```
 
+## Running the Experiment
+
 The botex bots will now start to scrape their oTree participant pages and play the game. You can monitor their progress by opening the session monitor URL in your browser. You should see something like this:
 
-![Session Monitor](assets/images/otree_monitor.png)
+![Session Monitor](assets/images/gstarted_otree_monitor.png)
 
-You see, the bots already made their first move and wait for you ('P2'). Time to act. Open the human URL in your browser and play the game. You will see the bots' moves in the session monitor as you progress. After you and the bots have completed the game, the botex app asks whether you want to export the data. We suggest that you do, providing a file name to save the LLM response data in the current working directory.
+You see, the bots already made their first move and wait for you ('P2'). Time to act. Open the human URL in your browser and play the game. You will see the bots' moves in the session monitor as you progress. 
+
+## Exporting botex Data
+
+After you and the bots have completed the game, you can download the oTree data by using the oTree web frontend just like you would for a 'normal' experiment. In addition, the app asks whether you want to export the botex data. We suggest that you do, providing a file name to save the LLM response data in the current working directory.
 
 ```text
 Session complete.
@@ -94,5 +108,7 @@ Take a look at the resulting CSV file. It contains the responses from the two bo
 
 
 You see that, in this run, our LLM bots were not particularly smart in the first round but then quickly adapted their strategies in the later rounds.
+
+## Next Steps
 
 If you are interested in learning how to use the Python API of botex in your own code, we suggest that you continue with the tutorial [Run an oTree experiment with botex](tutorials/running_an_experiment.md). If you are interested in a more advanced use case and how different LLMs perform in the Guess Two Thirds game, you can thereafter continue with the tutorial [Using botex to benchmark LLM performance in oTree experiments](tutorials/exp_3llms.md).
