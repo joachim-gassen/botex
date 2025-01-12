@@ -176,7 +176,7 @@ def export_participant_data(csv_file, botex_db = None, session_id = None) -> Non
     p = read_participants_from_botex_db(
         session_id = session_id, botex_db = botex_db
     )
-    with open(csv_file, 'w') as f:
+    with open(csv_file, 'w', newline='') as f:
         w = csv.DictWriter(f, p[0].keys())
         w.writeheader()
         w.writerows(p)
@@ -201,7 +201,7 @@ def export_response_data(csv_file, botex_db = None, session_id = None) -> None:
     """
     
     r = read_responses_from_botex_db(botex_db = botex_db, session_id = session_id)
-    with open(csv_file, 'w') as f:
+    with open(csv_file, 'w', newline='') as f:
         w = csv.DictWriter(f, r[0].keys())
         w.writeheader()
         w.writerows(r)

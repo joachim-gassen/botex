@@ -164,7 +164,7 @@ def check_conversation_and_export_answers(model, session_id):
 
     assert len(ids) == len(qids)    
     assert set(ids) == set(qids)
-    with open(f"tests/questions_and_answers_{type}.csv", 'w') as f:
+    with open(f"tests/questions_and_answers_{type}.csv", 'w', newline='') as f:
         writer = csv.DictWriter(f, fieldnames=qtexts[0].keys())
         writer.writeheader()
         writer.writerows(qtexts)
