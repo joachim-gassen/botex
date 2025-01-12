@@ -227,9 +227,9 @@ The first plot shows the average guesses by round and player, with 95% confidenc
 
 ![Guesses by Round and Participants](../assets/images/tut_exp_3llms_fig1_guesses_by_round.png)
 
-As you can see, OpenAI's 4o model seems to make the best guesses in the first round, indicating that it might have a little bit of an edge in higher order beliefs. However, Google Gemini quickly picks up in later rounds and tend to be closer towards the correct 2/2 average towards the end. In comparison, Llama 3.1-8B Instruct guesses to high throughout.
+As you can see, OpenAI's 4o model seems to make the best guesses in the first round, indicating that it might have a little bit of an edge in higher order beliefs. However, Google Gemini quickly picks up in later rounds and tend to be closer towards the correct 2/3 average towards the end. In comparison, Llama 3.1-8B Instruct guesses too high throughout.
 
 ![Payoff by Participants](../assets/images/tut_exp_3llms_fig2_payoffs.png)
 
-The second plot shows the mean summed payoff by player, with 95% confidence intervals and Bonferroni-corrected Mann-Whitney tests for cross-participant differences. It seems that OpenAI's 4o model and Google Gemini are roughly at par (the difference between the two is no significant at conventional levels while both clearly dominate Llama 3.1-8B Instruct.
+The second plot shows the mean summed payoff by player, with 95% confidence intervals and Bonferroni-corrected Mann-Whitney tests for cross-participant differences. It seems that OpenAI's 4o model and Google Gemini are roughly at par (the difference between the two is no significant at conventional levels) while both clearly dominate Llama 3.1-8B Instruct.
 

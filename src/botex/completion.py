@@ -66,7 +66,7 @@ def instructor_completion(**kwargs):
     except InstructorRetryException as e:
         logger.warning(f"Instructor Retry Exception after {e.n_attempts} attempts")
         logger.warning(f"Last completion: {e.last_completion}")
-        logger.warning(f"Error: {e.messages[-1]["content"]}")
+        logger.warning(f"Error: {e.messages[-1]['content']}")
         raise(e)
     resp = {
         'resp_str': resp_instructor.model_dump_json(),
