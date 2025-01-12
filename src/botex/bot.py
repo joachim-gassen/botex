@@ -489,6 +489,7 @@ def run_bot(**kwargs):
     options.add_argument("--no-sandbox")
     # Should result in only fatal errors being logged
     options.add_argument("--log-level=3")
+    options.add_experimental_option('excludeSwitches', ['enable-logging'])
     attempts = 0
     while attempts < MAX_NUM_OF_ATTEMPTS_TO_START_CHROME:
         try:

@@ -805,7 +805,8 @@ def export_otree_data(
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--log-level=3")
-
+    chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
+    
     with tempfile.TemporaryDirectory() as tmp_dir:
         prefs = {"download.default_directory": tmp_dir}
         chrome_options.add_experimental_option("prefs", prefs)

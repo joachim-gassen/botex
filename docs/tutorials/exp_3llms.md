@@ -99,14 +99,14 @@ The code above starts an oTree server, a llama.cpp server, and runs three bots i
 
 After `NSESSIONS` have been completed, the code exports the oTree data to a CSV file and stops both the oTree and the llama.cpp servers. 
 
-If you want to reproduce the analysis presented below, you would need increase `NSESSIONS` so that multiple sessions are beeing played. The analysis below is based on 50 sessions.
+If you want to reproduce the analysis presented below, you would need increase `NSESSIONS` so that multiple sessions are beeing played. The analysis below is based on 50 sessions and running them has incurred OpenAI API costs of around US-$ 3.
 
 ## Analyze the Data
 
 The code below reads the CSV file created by the script above, normalizes the data and plots the results. If you want to reproduce the analysis, you need to install the required Python packages first. You can do this by running the following command:
 
 ```bash
-pip install pandas seaborn matplotlib statannotations
+pip install pandas seaborn matplotlib statannotations statsmodels
 ```
 
 Then, create a Python script called `analyze_exp_3llms.py` in the same folder and add the following code:
