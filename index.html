@@ -52,6 +52,8 @@
     
       <link rel="stylesheet" href="assets/_mkdocstrings.css">
     
+      <link rel="stylesheet" href="assets/css/overrides.css">
+    
     <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -385,9 +387,27 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#idea" class="md-nav__link">
+  <a href="#overview" class="md-nav__link">
     <span class="md-ellipsis">
-      Idea
+      Overview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-choose-botex" class="md-nav__link">
+    <span class="md-ellipsis">
+      Why Choose Botex?
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#current-capabilities-and-limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Current Capabilities and Limitations
     </span>
   </a>
   
@@ -569,9 +589,26 @@
 
 
 <h1 id="botex-using-llms-as-experimental-participants-in-otree">botex: Using LLMs as Experimental Participants in oTree</h1>
-<h2 id="idea">Idea</h2>
-<p>This in-development Python package allows you to use large language models (LLMs) as bots in <a href="https://www.otree.org">oTree</a> experiments. It has been inspired by recent work of Grossmann, Engel and Ockenfels (<a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4682602">paper</a>, <a href="https://github.com/mrpg/ego">repo</a>) but uses a different approach. Instead of using dedicated prompts, botex bots consecutively scrape their respective oTree participant's webpage and infer the experimental flow solely from the webpage text content. This avoids the risk of misalignment between human (webpage) and bot (LLM prompt) experimental designs and, besides facilitating the study of LLM "behavior", allows to use LLM participants to develop and pre-test oTree experiments that are designed (primarily) for human participants.</p>
-<p>The downside of this approach is that the scraping has to rely on some level of standardization. Luckily, the oTree framework is relatively rigid, unless the user adds customized HTML forms to their experimental designs. Currently, all standard form models used by oTree are tested and verified to work. In the future, we plan to implement also customized HTML forms but likely this will require some standardization by the user implementing the experimental design.</p>
+<h2 id="overview">Overview</h2>
+<p>Welcome to botex, a new Python package that leverages the power of <strong>large language models (LLMs) as participants in oTree experiments</strong>. Inspired by the innovative work of Grossmann, Engel and Ockenfels (<a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4682602">paper</a>, <a href="https://github.com/mrpg/ego">repo</a>), <strong>botex</strong> takes a novel approach to integrating LLMs into behavioral experiments.</p>
+<p>Rather than relying on predefined prompts, <strong>botex bots dynamically interact with their experimental environment by scraping their respective oTree participant pages</strong>. This approach allows them to infer the experimental flow solely from the webpage's textual content. By aligning bot behavior directly with the experimental interface, botex eliminates potential discrepancies between human and bot designs. This not only opens up <strong>exciting opportunities to explore LLM behavior</strong> but also positions LLMs as a <strong>powerful tool for developing and pre-testing experiments</strong> intended for human participants.</p>
+<p style="text-align: center;">
+  <img src="assets/images/index_botex_workflow.svg" alt="Botex Workflow" width="80%">
+</p>
+
+<h2 id="why-choose-botex">Why Choose Botex?</h2>
+<p>botex's innovative approach offers several advantages:</p>
+<ul>
+<li><strong>Alignment</strong>: By scraping oTree pages, LLMs respond to the same interface as human participants, ensuring consistency in experimental design.</li>
+<li><strong>Pre-testing</strong>: LLMs can act as intelligent pre-testers, providing valuable feedback during the design phase of human-centric experiments.</li>
+<li><strong>Behavioral Insights</strong>: Explore how LLMs interact and respond under experimental conditions designed for humans.</li>
+</ul>
+<h2 id="current-capabilities-and-limitations">Current Capabilities and Limitations</h2>
+<p>While botex provides robust functionality for standard oTree forms, its reliance on web scraping introduces certain constraints:</p>
+<ul>
+<li><strong>Standardized oTree Designs</strong>: The oTree framework’s rigidity ensures compatibility, but customized HTML forms may require adjustments.</li>
+<li><strong>Future Enhancements</strong>: We aim to extend support to custom HTML forms. However, some degree of standardization by users will likely be necessary for seamless integration.</li>
+</ul>
 <p>See <a href="getting_started.html">Getting Started</a> for a quick start guide.</p>
 <h2 id="usable-llms">Usable LLMs</h2>
 <p>For interfacing with LLMs, botex offers two options</p>

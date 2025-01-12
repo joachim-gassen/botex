@@ -54,6 +54,8 @@
     
       <link rel="stylesheet" href="../assets/_mkdocstrings.css">
     
+      <link rel="stylesheet" href="../assets/css/overrides.css">
+    
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -483,7 +485,7 @@
         <li class="md-nav__item">
   <a href="#retrieve-the-available-session-configurations" class="md-nav__link">
     <span class="md-ellipsis">
-      Retrieve the available session configurations
+      Retrieve the Available Session Configurations
     </span>
   </a>
   
@@ -492,7 +494,7 @@
         <li class="md-nav__item">
   <a href="#initialize-a-session" class="md-nav__link">
     <span class="md-ellipsis">
-      Initialize a session
+      Initialize a Session
     </span>
   </a>
   
@@ -501,7 +503,7 @@
         <li class="md-nav__item">
   <a href="#running-botex-bots-on-a-session" class="md-nav__link">
     <span class="md-ellipsis">
-      Running botex bots on a session
+      Running botex Bots on a Session
     </span>
   </a>
   
@@ -510,7 +512,7 @@
         <li class="md-nav__item">
   <a href="#exporting-the-data" class="md-nav__link">
     <span class="md-ellipsis">
-      Exporting the data
+      Exporting the Data
     </span>
   </a>
   
@@ -593,8 +595,8 @@
 
 <h1 id="run-an-otree-experiment-with-botex">Run an oTree Experiment with botex</h1>
 <h2 id="starting-otree-via-python">Starting oTree via Python</h2>
-<p>When you want to run an oTree experiment with botex bots, you need to have access to a running oTree instance that is able to host th experiment that you want to run. </p>
-<p>in the <a href="../getting_started.html">getting started section</a>, we have seen how to start an oTree server via the command line. Here, we will use botex to start an oTree server instance via Python. This is useful if you want to automate the process of running the experiment and collecting the data.</p>
+<p>When you want to run an oTree experiment with botex bots, you need to have access to a running oTree instance that is able to host the experiment that you want to run.</p>
+<p>in the <a href="../getting_started.html">getting started section</a>, we have seen how to start an oTree server via the command line. Now, we will use botex to start an oTree server instance via Python. This is useful if you want to automate the process of running an experiment and collecting its data.</p>
 <p>The following code snippet shows how to start an oTree server via Python:</p>
 <div class="language-python highlight" style="background: #f0f0f0"><pre style="line-height: 125%;"><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span style="color: #007020; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">botex</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
@@ -611,7 +613,7 @@
 <div class="language-text highlight" style="background: #f0f0f0"><pre style="line-height: 125%;"><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>INFO:botex:oTree server started successfully with endpoint &#39;http://localhost:8000&#39;
 </span></code></pre></div>
 <p>Please note that the oTree sever instance will terminate when your script terminates. </p>
-<h2 id="retrieve-the-available-session-configurations">Retrieve the available session configurations</h2>
+<h2 id="retrieve-the-available-session-configurations">Retrieve the Available Session Configurations</h2>
 <p>Before you can run an experiment, you might want to know which session configurations are available. The extension of the code shows how to retrieve the available session configurations from a running oTree server:</p>
 <div class="language-python highlight" style="background: #f0f0f0"><pre style="line-height: 125%;"><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span style="color: #007020; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">botex</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
@@ -642,7 +644,7 @@
 </span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>&#39;num_demo_participants&#39;: 1, &#39;display_name&#39;: &#39;survey&#39;}]
 </span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>INFO:botex:oTree server stopped.
 </span></code></pre></div>
-<h2 id="initialize-a-session">Initialize a session</h2>
+<h2 id="initialize-a-session">Initialize a Session</h2>
 <p>Once you know which session configurations are available, you can initialize a session. The extension of the code shows how to do this:</p>
 <div class="language-python highlight" style="background: #f0f0f0"><pre style="line-height: 125%;"><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span style="color: #007020; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">botex</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
@@ -683,7 +685,7 @@
 </span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>INFO:botex:oTree server stopped.
 </span></code></pre></div>
 <p>You see that we initialized a session with three participants, all of which are bots. The bot URLs are provided in the <code>bot_urls</code> list.</p>
-<h2 id="running-botex-bots-on-a-session">Running botex bots on a session</h2>
+<h2 id="running-botex-bots-on-a-session">Running botex Bots on a Session</h2>
 <p>Once you have initialized a session, you can run the botex bots on it. Let's extend our code:</p>
 <div class="language-python highlight" style="background: #f0f0f0"><pre style="line-height: 125%;"><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span style="color: #007020; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">botex</span>
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
@@ -756,7 +758,7 @@
 </span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>INFO:botex:Retrying with throttling.
 </span></code></pre></div>
 <p>This is because the free tier of the Google Gemini model has per minute rate limits for requests. On encountering this error, botex automatically apply an exponential backoff strategy, meaning that it keeps retrying with increasing delays until the request is successful. If you want to avoid the warning, you can set the <code>throttle</code> parameter of <code>run_bots_on_session</code> to <code>True</code>. This will cause botex to throttle the requests to the model by default.</p>
-<h2 id="exporting-the-data">Exporting the data</h2>
+<h2 id="exporting-the-data">Exporting the Data</h2>
 <p>After running the experiment and before shutting down the oTree server, you might want to export the data, both from oTree and from botex. So here is our final extension of the code:</p>
 <div class="language-python highlight" style="background: #f0f0f0"><pre style="line-height: 125%;"><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span style="color: #007020; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">botex</span>
 </span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>
