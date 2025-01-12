@@ -654,7 +654,7 @@
 </span></code></pre></div>
 <p>The code above starts an oTree server, a llama.cpp server, and runs three bots in parallel. By default, <code>run_single_bot()</code> will wait for its bot's thread to finish before returning. But if you set <code>wait=False</code> it will instead return the thread after starting it. The subsequent joining of the threads ensures that the code will continue after all three bot threads have completed.</p>
 <p>After <code>NSESSIONS</code> have been completed, the code exports the oTree data to a CSV file and stops both the oTree and the llama.cpp servers. </p>
-<p>If you want to reproduce the analysis presented below, you would need increase <code>NSESSIONS</code> so that multiple sessions are beeing plaid. The analysis below is based on 50 sessions.</p>
+<p>If you want to reproduce the analysis presented below, you would need increase <code>NSESSIONS</code> so that multiple sessions are beeing played. The analysis below is based on 50 sessions.</p>
 <h2 id="analyze-the-data">Analyze the Data</h2>
 <p>The code below reads the CSV file created by the script above, normalizes the data and plots the results. If you want to reproduce the analysis, you need to install the required Python packages first. You can do this by running the following command:</p>
 <div class="language-bash highlight" style="background: #f0f0f0"><pre style="line-height: 125%;"><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>pip<span style="color: #bbbbbb"> </span>install<span style="color: #bbbbbb"> </span>pandas<span style="color: #bbbbbb"> </span>seaborn<span style="color: #bbbbbb"> </span>matplotlib<span style="color: #bbbbbb"> </span>statannotations
