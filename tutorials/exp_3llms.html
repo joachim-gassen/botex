@@ -654,10 +654,10 @@
 </span></code></pre></div>
 <p>The code above starts an oTree server, a llama.cpp server, and runs three bots in parallel. By default, <code>run_single_bot()</code> will wait for its bot's thread to finish before returning. But if you set <code>wait=False</code> it will instead return the thread after starting it. The subsequent joining of the threads ensures that the code will continue after all three bot threads have completed.</p>
 <p>After <code>NSESSIONS</code> have been completed, the code exports the oTree data to a CSV file and stops both the oTree and the llama.cpp servers. </p>
-<p>If you want to reproduce the analysis presented below, you would need increase <code>NSESSIONS</code> so that multiple sessions are beeing played. The analysis below is based on 50 sessions.</p>
+<p>If you want to reproduce the analysis presented below, you would need increase <code>NSESSIONS</code> so that multiple sessions are beeing played. The analysis below is based on 50 sessions and running them has incurred OpenAI API costs of around US-$ 3.</p>
 <h2 id="analyze-the-data">Analyze the Data</h2>
 <p>The code below reads the CSV file created by the script above, normalizes the data and plots the results. If you want to reproduce the analysis, you need to install the required Python packages first. You can do this by running the following command:</p>
-<div class="language-bash highlight" style="background: #f0f0f0"><pre style="line-height: 125%;"><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>pip<span style="color: #bbbbbb"> </span>install<span style="color: #bbbbbb"> </span>pandas<span style="color: #bbbbbb"> </span>seaborn<span style="color: #bbbbbb"> </span>matplotlib<span style="color: #bbbbbb"> </span>statannotations
+<div class="language-bash highlight" style="background: #f0f0f0"><pre style="line-height: 125%;"><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>pip<span style="color: #bbbbbb"> </span>install<span style="color: #bbbbbb"> </span>pandas<span style="color: #bbbbbb"> </span>seaborn<span style="color: #bbbbbb"> </span>matplotlib<span style="color: #bbbbbb"> </span>statannotations<span style="color: #bbbbbb"> </span>statsmodels
 </span></code></pre></div>
 <p>Then, create a Python script called <code>analyze_exp_3llms.py</code> in the same folder and add the following code:</p>
 <div class="language-python highlight" style="background: #f0f0f0"><pre style="line-height: 125%;"><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span style="color: #007020; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">seaborn</span> <span style="color: #007020; font-weight: bold">as</span> <span style="color: #0e84b5; font-weight: bold">sns</span>
@@ -772,9 +772,9 @@
 </span></code></pre></div>
 <p>The first plot shows the average guesses by round and player, with 95% confidence intervals, and the correct 2/3 average.</p>
 <p><img alt="Guesses by Round and Participants" src="../assets/images/tut_exp_3llms_fig1_guesses_by_round.png" /></p>
-<p>As you can see, OpenAI's 4o model seems to make the best guesses in the first round, indicating that it might have a little bit of an edge in higher order beliefs. However, Google Gemini quickly picks up in later rounds and tend to be closer towards the correct 2/2 average towards the end. In comparison, Llama 3.1-8B Instruct guesses to high throughout.</p>
+<p>As you can see, OpenAI's 4o model seems to make the best guesses in the first round, indicating that it might have a little bit of an edge in higher order beliefs. However, Google Gemini quickly picks up in later rounds and tend to be closer towards the correct 2/3 average towards the end. In comparison, Llama 3.1-8B Instruct guesses too high throughout.</p>
 <p><img alt="Payoff by Participants" src="../assets/images/tut_exp_3llms_fig2_payoffs.png" /></p>
-<p>The second plot shows the mean summed payoff by player, with 95% confidence intervals and Bonferroni-corrected Mann-Whitney tests for cross-participant differences. It seems that OpenAI's 4o model and Google Gemini are roughly at par (the difference between the two is no significant at conventional levels while both clearly dominate Llama 3.1-8B Instruct.</p>
+<p>The second plot shows the mean summed payoff by player, with 95% confidence intervals and Bonferroni-corrected Mann-Whitney tests for cross-participant differences. It seems that OpenAI's 4o model and Google Gemini are roughly at par (the difference between the two is no significant at conventional levels) while both clearly dominate Llama 3.1-8B Instruct.</p>
 
 
 
