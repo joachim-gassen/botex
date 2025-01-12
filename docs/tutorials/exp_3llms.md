@@ -99,7 +99,7 @@ The code above starts an oTree server, a llama.cpp server, and runs three bots i
 
 After `NSESSIONS` have been completed, the code exports the oTree data to a CSV file and stops both the oTree and the llama.cpp servers. 
 
-If you want to reproduce the analysis presented below, you would need increase `NSESSIONS` so that multiple sessions are beeing plaid. The analysis below is based on 50 sessions.
+If you want to reproduce the analysis presented below, you would need increase `NSESSIONS` so that multiple sessions are beeing played. The analysis below is based on 50 sessions.
 
 ## Analyze the Data
 
