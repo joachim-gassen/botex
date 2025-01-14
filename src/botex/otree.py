@@ -811,6 +811,7 @@ def export_otree_data(
         prefs = {"download.default_directory": tmp_dir}
         chrome_options.add_experimental_option("prefs", prefs)
         driver = webdriver.Chrome(options=chrome_options)
+        driver.set_window_size(1920, 1400)
         if server_url is None:
             server_url = os.getenv("OTREE_SERVER_URL")
         if admin_password is None:
@@ -832,6 +833,7 @@ def export_otree_data(
         download_link = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.ID, "wide-csv"))
         )
+        driver.execute_script("arguments[0].scrollIntoView(true)", download_link)
         download_link.click()
 
         time_out = time.time() + time_out
