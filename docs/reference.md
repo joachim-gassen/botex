@@ -56,6 +56,12 @@ Running experiments with botex requires an oTree server with an active session t
       show_root_heading: false
       show_root_toc_entry: false
 
+### `otree_server_is_running`
+::: botex.otree.otree_server_is_running
+    options:
+      show_root_heading: false
+      show_root_toc_entry: false
+
 ### `get_session_configs`
 ::: botex.otree.get_session_configs
     options:

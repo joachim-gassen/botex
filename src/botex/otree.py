@@ -108,18 +108,18 @@ def call_otree_api(
     return resp.json()
 
 
-def otree_server_running(server_url = None, rest_key = None) -> bool:
+def otree_server_is_running(server_url = None, rest_key = None) -> bool:
     """
     Check if an oTree server is running.
 
-    Parameters:
-    server_url (str): The URL of the oTree server. Read from environment
-        variable OTREE_SERVER_URL if None (the default).
-    rest_key (str): The API key for the oTree server. Read from environment
-        variable OTREE_REST_KEY if None (the default).
+    Args:
+        server_url (str): The URL of the oTree server. Read from environment
+            variable OTREE_SERVER_URL if None (the default).
+        rest_key (str): The API key for the oTree server. Read from environment
+            variable OTREE_REST_KEY if None (the default).
 
     Returns:
-    bool: True if the server is running, False otherwise.
+        True if the server is running, False otherwise.
     """
     try: 
         data = call_otree_api(
@@ -209,7 +209,7 @@ def start_otree_server(
     # Access oTree API to check if server is running
     time_out = time.time() + timeout
     while True:
-        if otree_server_running(rest_key = rest_key):
+        if otree_server_is_running(rest_key = rest_key):
             logger.info(
                 "oTree server started successfully "
                 f"with endpoint '{otree_server_url}'"
@@ -266,7 +266,7 @@ def get_session_configs(
             environment variable OTREE_REST_KEY if None (the default).
 
     Returns:
-        dict: The session configurations.
+        The session configurations.
     """
 
     return call_otree_api(

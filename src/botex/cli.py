@@ -5,7 +5,7 @@ import sys
 
 import click
 
-from .otree import get_session_configs, otree_server_running, \
+from .otree import get_session_configs, otree_server_is_running, \
     start_otree_server, stop_otree_server, init_otree_session, \
     run_bots_on_session
 from .botex_db import export_response_data
@@ -220,7 +220,7 @@ def run_botex(
         otree_server_url = 'http://localhost:8000'
 
     # Check if oTree server is reachable
-    otree_available = otree_server_running(
+    otree_available = otree_server_is_running(
         server_url = otree_server_url, 
         rest_key = otree_rest_key
     )
