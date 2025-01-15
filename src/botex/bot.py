@@ -1,15 +1,34 @@
-import re
-import logging
 import json
 import time
 from datetime import datetime, timezone
 import sqlite3
 import csv
 from importlib.resources import files
+import re
+import logging
+logger = logging.getLogger("botex")
 
-import litellm
+import warnings
+from importlib.metadata import version, PackageNotFoundError
+
+# Starting with v1.56.2, LiteLLM triggers a user Pydantic user warning
+# we will filter this out until the issue is resolved  
+try:
+    litellm_version = version("litellm")
+    logger.info(f"LiteLLM version: {litellm_version}")
+except PackageNotFoundError:
+    logger.error(f"LiteLLM not installed")
+
+if litellm_version >= "1.56.2":
+    with warnings.catch_warnings():
+        warnings.simplefilter('ignore')
+        import litellm
+else:
+    import litellm
+
 litellm.suppress_debug_info = True
 litellm.set_verbose = False
+logging.getLogger("LiteLLM").setLevel(logging.ERROR)
 
 
 from pydantic import ValidationError
@@ -24,8 +43,6 @@ from .llamacpp import LlamaCpp
 from .schemas import create_answers_response_model, EndSchema, Phase, StartSchema, SummarySchema
 from .completion import model_supports_response_schema, completion
 
-logger = logging.getLogger("botex")
-logging.getLogger("LiteLLM").setLevel(logging.ERROR)
 
 MAX_NUM_OF_ANSWER_ATTEMPTS = 3
 MAX_NUM_OF_SCRAPE_ATTEMPTS = 5
