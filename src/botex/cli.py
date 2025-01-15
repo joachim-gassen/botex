@@ -5,7 +5,9 @@ import sys
 
 import click
 
-from .otree import get_session_configs, init_otree_session, run_bots_on_session
+from .otree import get_session_configs, otree_server_running, \
+    start_otree_server, stop_otree_server, init_otree_session, \
+    run_bots_on_session
 from .botex_db import export_response_data
 from .llamacpp import is_llamacpp_server_reachable, start_llamacpp_server, stop_llamacpp_server
 from .env import load_botex_env
@@ -217,6 +219,43 @@ def run_botex(
         )
         otree_server_url = 'http://localhost:8000'
 
+    # Check if oTree server is reachable
+    otree_available = otree_server_running(
+        server_url = otree_server_url, 
+        rest_key = otree_rest_key
+    )
+    if not otree_available:
+        click.echo(f"oTree server at '{otree_server_url}' is not reachable.")
+        click.echo()
+        confirm = click.confirm(
+            'Do you want me to start an otree instance?', 
+            default=True
+        )
+        if not confirm:
+            click.echo("Exiting...")
+            click.echo()
+            sys.exit(1)
+        else:
+            otree_project_path = click.prompt(
+                'Enter your oTree project folder', default='otree'
+            )
+            if otree_rest_key:
+                click.echo(
+                    f"Starting oTree server at '{otree_server_url}' with "
+                    "authentication level 'STUDY'..."
+                )
+                otree_process = start_otree_server(
+                    otree_project_path, port=8000,
+                    auth_level='STUDY', rest_key=otree_rest_key
+                )
+            else:
+                click.echo(f"Starting oTree server at '{otree_server_url}'...")
+                start_otree_server(otree_project_path)
+            
+    else:
+        click.echo(f"oTree server at '{otree_server_url}' is reachable.")
+        otree_process = None
+
     # If model is not provided, check if llama.cpp is feasible or prompt
     if not model:
         if llamacpp_server and llamacpp_local_llm:
@@ -390,6 +429,14 @@ def run_botex(
 
     if csv_file:
         export_response_data(csv_file, botex_db, session_id)
+    
+    if otree_process:
+        confirm = click.confirm(
+            "Do you want me to stop the oTree server?", default=True
+        ) 
+        if confirm:
+            stop_otree_server(otree_process)
+            click.echo("oTree server stopped.")
 
 
 if __name__ == "__main__":
