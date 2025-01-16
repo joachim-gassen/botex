@@ -73,6 +73,8 @@ class LlamaCppConfig(BaseSettings):
             raise FileNotFoundError(
                 f"Model path {self.local_llm_path} not found."
             )
+        if not self.context_length:
+            self.context_length = GGUFParser(self.local_llm_path).get_metadata().get("context_length", 4096)
         return self
     
 
@@ -108,15 +110,14 @@ class LlamaCppServerManager:
             )
 
         parsed_url = urlparse(self.config.server_url)
+        assert self.config.context_length, "Context length should have been set by now."
         cmd = [
             self.config.server_path,
             "--host", parsed_url.hostname,
             "--port", str(parsed_url.port),
             "-ngl", str(self.config.number_of_layers_to_offload_to_gpu),
             "-m", self.config.local_llm_path,
-            "-c", str(int(self.config.num_slots) * 
-                      (int(self.config.context_length or 4096) + 
-                       int(self.config.maximum_tokens_to_predict))),
+            "-c", str(int(self.config.num_slots) * self.config.context_length),
             "-n", str(self.config.maximum_tokens_to_predict),
             "--parallel", str(self.config.num_slots),
             "-fa",
