@@ -49,8 +49,6 @@ import botex
 import logging
 logging.basicConfig(level=logging.WARNING)
 
-import botex 
-
 NPART = 3
 NSESSIONS = 1
 
