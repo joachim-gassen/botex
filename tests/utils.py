@@ -62,8 +62,32 @@ def normalize_otree_data(csv_file):
     ]
     assert len(dta['player']) == 2
     assert list(dta['player'][0].keys()) == [
-        'participant_code', 'round', 'player_id', 'payoff', 'button_radio'
+        'participant_code', 'round', 'player_id', 'payoff', 'button_radio', 
+        'role'
     ]
+    dta = botex.normalize_otree_data(
+        csv_file, store_as_csv=True, data_exp_path= "tests",
+        var_dict={
+            'participant': {
+                'code': 'participant_code', 
+                'time_started_utc': 'time_started_utc'            
+            },
+            'session': {
+                'code': 'session_code'
+            },
+            'botex_test': {
+                'player': {
+                    'payoff': 'payoff',
+                    'button_radio': 'bttn_radio',
+                }
+            }
+        },
+        exp_prefix="test"
+    )
+    assert list(dta['player'][0].keys()) == [
+        'participant_code', 'round', 'player_id', 'payoff', 'bttn_radio'
+    ]
+
 
 def get_model_provider(model):
     if "llamacpp" in model:

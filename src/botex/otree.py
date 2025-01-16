@@ -940,12 +940,17 @@ def normalize_otree_data(
 
     def extract_data(var, stacked_data, var_dict):
         relevant = [
-            d for d in stacked_data
-            if d['level_1'] == var and d['level_2'] in var_dict[var].keys()
+            d for d in stacked_data if d['level_1'] == var 
         ]
-        # Remap level_2 column names
-        for item in relevant:
-            item['level_2'] = var_dict[var][item['level_2']]
+        var_dict = var_dict.get(var)
+        if var in ['participant', 'session']:
+            # exclude not requested rows
+            relevant = [
+                d for d in relevant if d['level_2'] in var_dict.keys()
+            ]
+            # Remap level_2 column names
+            for item in relevant:
+                item['level_2'] = var_dict[item['level_2']]
 
         # Build pivot result as dict {observation -> one row dict}
         pivoted = {}
@@ -988,26 +993,18 @@ def normalize_otree_data(
             pass
         return str(x)
 
-    def convert_columns(data_list):
+    def convert_columns(data_list, keys=None):
+        missing_keys = set()
+        if keys:
+            missing_keys = set(keys) - set(data_list[0].keys())
         for row in data_list:
             for k, v in row.items():
                 if k not in ("observation",):  # do not convert observation index
                     row[k] = try_convert_number(v)
+            for k in missing_keys:
+                row[k] = '' 
         return data_list
-
-    def remove_all_empty_columns(rows):
-        keys = rows[0].keys() if rows else []
-        has_nonempty = {col: False for col in keys}
-        for r in rows:
-            for col in has_nonempty:
-                if r.get(col, None) not in (None, ''):
-                    has_nonempty[col] = True
-        for r in rows:
-            for col, is_nonempty in has_nonempty.items():
-                if not is_nonempty:
-                    r.pop(col)
-        return rows
-    
+ 
     def unify_dict_keys(rows):
         seen_keys = []
         for d in rows:
@@ -1147,14 +1144,37 @@ def normalize_otree_data(
             ]
             if not relevant:
                 continue
+            
+            # Check whether the user provided a custom variable dictionary
+            # for this app and group 
+
+            group_dict = var_dict[app].get(group_name, None)
+            if group_dict:
+                # exclude not requested rows
+                struct_vars = [
+                    'id_in_group', 'id_in_subsession', 'round_number'
+                ]
+                relevant = [
+                    d for d in relevant if (
+                        d['level_4'] in group_dict.keys() or
+                        d['level_4'] in struct_vars
+                    )
+                ]
+                # Remap level_4 column names
+                for item in relevant:
+                    if item['level_4'] not in struct_vars:
+                        item['level_4'] = group_dict[item['level_4']]
 
             pivoted = {}
+            cols = set()
             for item in relevant:
                 obs = item['observation']
                 try:
                     rnd = int(item['level_2'])  # round number
                 except (ValueError, TypeError):
                     rnd = None
+
+                cols.add(item['level_4'])
                 if item['value'] not in (None, ''):
                     col = item['level_4']
                     val = item['value']
@@ -1169,7 +1189,7 @@ def normalize_otree_data(
                         pivoted[key][col] = val
 
             pivoted_list = unify_dict_keys(list(pivoted.values()))
-            out_df_rows = convert_columns(pivoted_list)
+            out_df_rows = convert_columns(pivoted_list, cols)
             out_df_rows = index_to_participant_code(
                 out_df_rows, obs_to_participant_code
             )
@@ -1201,7 +1221,7 @@ def normalize_otree_data(
                         )
                 # No data in subsession, so skip storing
                 continue
-            
+
             elif group_name == 'group':
                 # group data might or might not have data
                 # (only if there's more than one group or if there are 
@@ -1213,6 +1233,7 @@ def normalize_otree_data(
                     sess_index[pcode] = srow
 
                 merged_group = []
+                cols = set()
                 for row in out_df_rows:
                     pcode = row.get('participant_code', None)
                     newrow = dict(row)
@@ -1221,6 +1242,7 @@ def normalize_otree_data(
                         for k, v in sess_index[pcode].items():
                             # do not overwrite if we already have something
                             if k not in ('participant_code', 'observation', 'round'):
+                                cols.add(k)
                                 newrow[k] = v
                     merged_group.append(newrow)
                 out_df_rows = merged_group
@@ -1269,7 +1291,10 @@ def normalize_otree_data(
                 # reorder columns
                 col_order = ['session_code', 'round']
                 if not all_id1: col_order.append('group_id')
-                out_df_rows = reorder_columns(out_df_rows, col_order)
+                out_df_rows = convert_columns(
+                    reorder_columns(out_df_rows, col_order),
+                    cols
+                )
 
                 # Deduplicate
                 unique_rows = []
