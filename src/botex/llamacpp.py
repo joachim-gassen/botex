@@ -38,7 +38,8 @@ class ChatCompletionResponse(BaseModel):
     choices: List[Choice]
 
 class LlamaCppConfig(BaseSettings):
-    model_config = SettingsConfigDict(env_ignore_empty=True)
+    model_config = SettingsConfigDict(
+        env_prefix="LLAMACPP_", env_ignore_empty=True)
     server_url: str = Field(default='http://localhost:8080')
     server_path: str | None = Field(default=None)
     local_llm_path: str | None = Field(default=None)
@@ -96,26 +97,6 @@ def is_llamacpp_server_reachable(url, timeout=6):
 class LlamaCppServerManager:
     def __init__(self, config: dict | None = None):
         config = config or {}
-        if "server_path" not in config.keys():
-            config['server_path'] = os.getenv('LLAMACPP_SERVER_PATH')
-        if "local_llm_path" not in config.keys():
-            config['local_llm_path'] = os.getenv('LLAMACPP_LOCAL_LLM_PATH')
-        if "server_url" not in config.keys():
-            config['server_url'] = os.getenv('LLAMACPP_SERVER_URL')
-        if "context_length" not in config.keys():
-            config['context_length'] = os.getenv('LLAMACPP_CONTEXT_LENGTH')
-        if "number_of_layers_to_offload_to_gpu" not in config.keys():
-            config['number_of_layers_to_offload_to_gpu'] = \
-                os.getenv('LLAMACPP_NUMBER_OF_LAYERS_TO_OFFLOAD_TO_GPU')
-        if "temperature" not in config.keys():
-            config['temperature'] = os.getenv('LLAMACPP_TEMPERATURE')
-        if "maximum_tokens_to_predict" not in config.keys():
-            config['maximum_tokens_to_predict'] = \
-                os.getenv('LLAMACPP_MAXIMUM_TOKENS_TO_PREDICT')
-        if "num_slots" not in config.keys():
-            config['num_slots'] = os.getenv('LLAMACPP_CONFIG_NUM_SLOTS')
-        
-        config = {k: v for k, v in config.items() if v is not None}
         self.config = LlamaCppConfig(**config)
 
     def start_server(self) -> subprocess.Popen:
