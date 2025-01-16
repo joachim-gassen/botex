@@ -211,10 +211,10 @@ class LlamaCpp:
             response = requests.get(url)
             response.raise_for_status()
             res = response.json()
-            self.local_llm_path = res['default_generation_settings']['model']
+            self.local_llm_path = res['model_path']
             self.context_length = res['default_generation_settings']['n_ctx']
             self.num_slots = res['total_slots']
-            self.max_tokens = res['default_generation_settings']['n_predict']
+            self.max_tokens = res['default_generation_settings']['params']['n_predict']
             self.temperature = 0.8
             self.top_p = 0.9
             self.top_k = 40
