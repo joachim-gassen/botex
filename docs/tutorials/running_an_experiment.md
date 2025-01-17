@@ -4,7 +4,7 @@
 
 When you want to run an oTree experiment with botex bots, you need to have access to a running oTree instance that is able to host the experiment that you want to run.
 
-in the [getting started section](../getting_started.md), we have seen how to start an oTree server via the command line. Now, we will use botex to start an oTree server instance via Python. This is useful if you want to automate the process of running an experiment and collecting its data.
+In the [getting started section](../getting_started.md), we have seen how to start an oTree server via the command line. Now, we will use botex to start an oTree server instance via Python. This is useful if you want to automate the process of running an experiment and collecting its data.
 
 The following code snippet shows how to start an oTree server via Python:
 
@@ -20,7 +20,7 @@ logging.basicConfig(level=logging.INFO)
 botex.start_otree_server(project_path="otree")
 ```
 
-Adjust the `project_path` parameter to where you installed your otree project. The above starts a development oTree server without authentication. If you want to require authentication (recommended for publicly accessible servers), you can set the `auth_level` parameter of `start_otree_server` to `'STUDY'`. In this case, you should also set the parameters `rest_key` and `admin_password`.
+Adjust the `project_path` parameter to where you installed your oTree project. The above starts a development oTree server without authentication. If you want to require authentication (recommended for publicly accessible servers), you can set the `auth_level` parameter of `start_otree_server` to `'STUDY'`. In this case, you should also set the parameters `rest_key` and `admin_password`.
 
 Running the snippet from above, you should see the following output:
 
@@ -103,7 +103,7 @@ print(session)
 botex.stop_otree_server(otree_process)
 ```
 
-Again, adjust the `otree_server_url` parameter and add `rest_key` as required. `init_otree_session()` requires the session config name and the number of participants to include. When changing this parameter, make sure that the experiment supports it. E.g., the Guess two Thirds game provided as an example with the oTree installation requires participants to be multiples of three. In addition, we need to provide a file for the SQLite database where botex stores its data. If the file does not exist, it will be created. If it exists, the data will be appended.
+Again, adjust the `otree_server_url` parameter and add `rest_key` as required. `init_otree_session()` requires the session config name and the number of participants to include. When changing this parameter, make sure that the experiment supports it. E.g., the Guess Two Thirds game provided as an example with the oTree installation requires participants to be multiples of three. In addition, we need to provide a file for the SQLite database where botex stores its data. If the file does not exist, it will be created. If it exists, the data will be appended.
 
 `init_otree_session()` returns a dict with session data, including the session ID and the participant URLs. The output of the above script should look like this:
 
