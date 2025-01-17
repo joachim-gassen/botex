@@ -200,11 +200,21 @@ class LlamaCpp:
             self.temperature = 0.8
             self.top_p = 0.9
             self.top_k = 40
-        except (requests.RequestException, KeyError) as e:
+        except requests.RequestException as req_exc:
             raise Exception(
                 "Failed to retrieve metadata from llama.cpp server "
-                "at {self.api_base}: {e}"
+                f"at {self.api_base}: {req_exc}"
             )
+        except KeyError as key_err:
+            raise Exception(
+                "Failed to parse metadata from llama.cpp server, please make "
+                "sure you are running a compatible version of llama.cpp server "
+                "(version : `b4285` and commit: `3573fa8` or later). If you "
+                "are still facing this issue with a compatible version, please"
+                " consider raising an issue on botex GitHub repository. Error:"
+                f"{key_err}"
+            )
+
 
     def json_dump_model_cfg(self):
         return {
