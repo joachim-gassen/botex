@@ -204,7 +204,7 @@ WARNING:botex:Litellm completion failed, error: 'litellm.RateLimitError: litellm
 INFO:botex:Retrying with throttling.
 ```
 
-This is because the free tier of the Google Gemini model has per minute rate limits for requests. On encountering this error, botex automatically apply an exponential backoff strategy, meaning that it keeps retrying with increasing delays until the request is successful. If you want to avoid the warning, you can set the `throttle` parameter of `run_bots_on_session` to `True`. This will cause botex to throttle the requests to the model by default.
+This is because the free tier of the Google Gemini model has per minute rate limits for requests. On encountering this error, botex automatically applies an exponential backoff strategy, meaning that it keeps retrying with increasing delays until the request is successful. If you want to avoid the warning, you can set the `throttle` parameter of `run_bots_on_session` to `True`. This will cause botex to throttle the requests to the model by default.
 
 
 ## Exporting the Data
@@ -299,6 +299,6 @@ botex.stop_otree_server(otree_process)
 
 To silence botex, we now set the logging level to `WARNING`. Also, we set `throttle` to `True` to avoid that botex nags us about the rate limit rejects. We also refactor the code to use variables for the paths and URLs. This makes it easier to adjust the code to your setup.
 
-The code now starts an oTree server, initializes a session, runs the bots on the session, and exports the data. The data is exported in CSV format. The botex data is exported in two files: one containing the participant data and one containing the responses. The oTree data is exported in wide format and then normalized. The normalized data is stored in a set of CSV files with the prefix `two_thirds_otree`. You should see all files in your project directory after the code has been run.
+The code now starts an oTree server, initializes a session, runs the bots on the session, and exports the data. The data are exported in CSV format. The botex data are exported in two files: one containing the participant data and one containing the responses. The oTree data are exported in wide format and then normalized. The normalized data are stored in a set of CSV files with the prefix `two_thirds_otree`. You should see all files in your project directory after the code has been run.
 
 This concludes this tutorial. If you want to learn how to run single botex bots using different LLM models to benchmark their performance with oTree experiments and how to evaluate the results, please refer to the [next tutorial](exp_3llms.md).
