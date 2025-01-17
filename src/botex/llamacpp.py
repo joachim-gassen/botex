@@ -74,7 +74,9 @@ class LlamaCppConfig(BaseSettings):
                 f"Model path {self.local_llm_path} not found."
             )
         if not self.context_length:
-            self.context_length = GGUFParser(self.local_llm_path).get_metadata().get("context_length", 4096)
+            self.context_length = GGUFParser(
+                self.local_llm_path
+            ).get_metadata().get("context_length", 4096)
         return self
     
 
@@ -193,10 +195,16 @@ class LlamaCpp:
             response = requests.get(url)
             response.raise_for_status()
             res = response.json()
-            self.local_llm_path = res['model_path']
+            if "model_path" in res:
+                self.local_llm_path = res['model_path']
+            else:
+                self.local_llm_path = res['default_generation_settings']['model']
             self.context_length = res['default_generation_settings']['n_ctx']
             self.num_slots = res['total_slots']
-            self.max_tokens = res['default_generation_settings']['params']['n_predict']
+            if 'n_predict' in res['default_generation_settings']:
+                self.max_tokens = res['default_generation_settings']['n_predict']
+            else:    
+                self.max_tokens = res['default_generation_settings']['params']['n_predict']
             self.temperature = 0.8
             self.top_p = 0.9
             self.top_k = 40
@@ -207,12 +215,10 @@ class LlamaCpp:
             )
         except KeyError as key_err:
             raise Exception(
-                "Failed to parse metadata from llama.cpp server, please make "
-                "sure you are running a compatible version of llama.cpp server "
-                "(version : `b4285` and commit: `3573fa8` or later). If you "
-                "are still facing this issue with a compatible version, please"
-                " consider raising an issue on botex GitHub repository. Error:"
-                f"{key_err}"
+                "Failed to parse metadata from llama.cpp server, please "
+                "consider raising an issue on the botex GitHub repository. "
+                "Please provide your llama.cpp version and the error: "
+                f"'{key_err}'"
             )
 
 
