@@ -37,6 +37,7 @@ markdown_extensions:
     - mkdocs-click
     - pymdownx.tabbed:
           alternate_style: true
+    - footnotes
 theme:
     name: material
     features:
