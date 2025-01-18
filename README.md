@@ -1,222 +1,55 @@
-# botex: Using LLMs as Experimental Participants in oTree
+# botex: Using LLMs as Experimental Participants in oTree 
 
-New: Documentation for the botex package is now also available at [https://joachim-gassen.github.io/botex/](https://joachim-gassen.github.io/botex/).
+## Overview
 
-## Idea
+Welcome to the GitHub repository botex, a new Python package that leverages the power of **large language models (LLMs) as participants in oTree experiments**.
 
-This in-development Python package allows you to use large language models (LLMs) as bots in [oTree](https://www.otree.org) experiments. It has been inspired by recent work of Grossmann, Engel and Ockenfels ([paper](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4682602), [repo](https://github.com/mrpg/ego)) but uses a different approach. Instead of using dedicated prompts, botex bots consecutively scrape their respective oTree participant's webpage and infer the experimental flow solely from the webpage text content. This avoids the risk of misalignment between human (webpage) and bot (LLM prompt) experimental designs and, besides facilitating the study of LLM "behavior", allows to use LLM participants to develop and pre-test oTree experiments that are designed (primarily) for human participants.
+Botex takes a novel approach to integrating LLMs into behavioral experiments. Rather than relying on predefined prompts,[^1] **botex bots dynamically interact with their experimental environment by scraping their respective oTree participant pages**. This approach allows them to infer the experimental flow solely from the webpage's textual content. By aligning bot behavior directly with the experimental interface, botex eliminates potential discrepancies between human and bot designs. This not only opens up **exciting opportunities to explore LLM behavior** but also positions LLMs as a **powerful tool for developing and pre-testing experiments** intended for human participants.
 
-The downside of this approach is that the scraping has to rely on some level of standardization. Luckily, the oTree framework is relatively rigid, unless the user adds customized HTML forms to their experimental designs. Currently, all standard form models used by oTree are tested and verified to work. In the future, we plan to implement also customized HTML forms but likely this will require some standardization by the user implementing the experimental design.
+[^1]:  See, for example, Grossmann, Engel and Ockenfels ([paper](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4682602), [repo](https://github.com/mrpg/ego))
 
-For interfacing with LLMs, botex offers two options
+<p style="text-align: center;">
+  <img src="https://raw.githubusercontent.com/joachim-gassen/botex/main/docs/assets/images/index_botex_workflow.svg" alt="Botex Workflow" width="80%">
+</p>
 
-- [litellm](https://litellm.vercel.app): Allows the use of various commercial LLMs
-- [llama.cpp](https://github.com/ggerganov/llama.cpp): Allows the use of local (open source) LLMs  
+## Why Choose Botex?
 
-While both approaches have been tested and found to work, currently, we have only used OpenAI's Chat GPT-4o model for our own research work. See further below for a list of commercial and open-source LLMs that we have verified to pass the package tests.
+Botex's innovative approach offers several advantages:
 
+- **Alignment**: By scraping oTree pages, LLMs respond to the same interface as human participants, ensuring consistency in experimental design.
+- **Pre-testing**: LLMs can act as intelligent pre-testers, providing valuable feedback during the design phase of human-centric experiments.
+- **Behavioral Insights**: Explore how LLMs interact and respond under experimental conditions designed for humans.
 
-## Usage
-
-If you want to use botex to create LLM participants for your own oTree experiments, you need the following:
+## Requirements
 
 - A working python environment >= 3.10 and preferably a virtual environment.
 - [Google Chrome](https://www.google.com/chrome/) for scraping the oTree participant pages.
-- Access to an oTree server that you can start sessions on or at least an URL of an oTree participant link. The server can be local or remote.
-- Access to an LLM model for inference. See [Verfied LLMs section](#verified-llms).
 
-Then, install the current development version of the package that is described in this README directly from this repository: `pip install git+https://github.com/joachim-gassen/botex.git`.
+## Documentation
 
-If you rather want to play it safe and install the last stable PyPi version of the package, then you can install it the 'normal way' by running `pip install botex`. However, in this case, you should refer to the [readme available on Pypi](https://pypi.org/project/botex/) for pointers on how to get started.
+For learning how to use botex in your project, please refer to the [package documentation](https://joachim-gassen.github.io/botex/).
 
+## Problems and Bugs
 
-## Using the botex command line interface
+If you encounter any problems or bugs, please open a [GitHub issue]((https://github.com/joachim-gassen/botex/issues)) on this repository.
 
-The botex package comes with a command line interface that allows you to start botex on a running oTree instance. To set one up you can do the following in your virtual environment:
+## Paper
 
-```bash
-pip install otree
-otree startproject otree # Say yes for examples
-cd otree 
-otree devserver
-```
+If you use botex in your research, please cite its accompanying paper:
 
-Then start the botex command line interface by running `botex` in your virtual environment. You should see the following output:
-
-```text
-(.venv) user@host:~/github/project$ botex
-Botex database file not provided. Defaulting to 'botex.sqlite3'
-oTree server URL not provided. Defaulting to 'http://localhost:8000'
-No LLM provided. Enter your litellm model string here or press enter
-to accept the default ('gemini/gemini-1.5-flash'):
-```
-
-After accepting the default Gemini model you need to enter an API key. If you do not have one yet, you can get a free one from the [Google AI Studio](https://ai.google.dev). After entering the key, you can select an oTree experiment from the examples offered by the fresh oTree installation:
-
-```text
-Enter the API key for your LLM model (for the Gemini model,
-you can get a free API key at https://aistudio.google.com/apikey):***
-Available session configurations:
-1: guess_two_thirds
-2: survey
-Select a configuration by number: 
-```
-
-We suggest that you choose the Guess two Thirds game.
-
-```text
-Selected session configuration: guess_two_thirds
-Number of participants: 3
-Number of human participants: 0
-Session 'ouwx1xnb' initialized
-You can monitor its progress at http://localhost:8000/SessionMonitor/ouwx1xnb
-Starting bots on session...
-```
-
-You can monitor how the three bots complete the experiment. After they are done, you can store the botex data from the run.
-
-```text
-Session complete. You can view the oTree data at http://localhost:8000/SessionData/ouwx1xnb
-Download the oTree data at: http://localhost:8000/export
-Enter CSV file name to export botex data to or press Enter to skip: 
-```
-
-The resulting CSV file will contain data similar to the following table
-
-| session_id   | participant_id   |   round | question_id   |   answer | reason                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-|--------------|------------------|---------|---------------|----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| ouwx1xnb     | j14kfulq         |       1 | id_guess      |       67 | I will start by choosing a number above 0.  In this game, the goal is to get as close as possible to two-thirds of the average of all numbers submitted by players.  Since it is the first round and I do not know what other people will do, I choose a number which is roughly in the middle.                                                                                                                                                                                 |
-| ouwx1xnb     | j14kfulq         |       2 | id_guess      |        0 | In the first round, two-thirds of the average was 36.89, and the closest guess was 33.  In the second round, if everyone plays the same strategy again, the average of 33, 33, and 33 would be 33, and two-thirds of the average would still be 33.  To win, I should pick 0 to try and get close to that two-thirds value.  If the other players also realize this, then the average will be lower and the two-thirds average will be even lower, and 0 will be a safe choice. |
-| ouwx1xnb     | j14kfulq         |       3 | id_guess      |        0 | Following the iterative reasoning from the previous rounds, if all players continue to use the same logic, the average should approach zero. Therefore, choosing 0 is the most strategically sound choice.                                                                                                                                                                                                                                                                      |
-| ouwx1xnb     | 8o1f9cf9         |       1 | id_guess      |       66 | I will start with a number close to 2/3 of 100                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| ouwx1xnb     | 8o1f9cf9         |       2 | id_guess      |       33 | In the first round, the average was 52, two thirds of the average is 34.67, and the closest guess was 33. I will guess 33 again, hoping others also guess 33.                                                                                                                                                                                                                                                                                                                   |
-| ouwx1xnb     | 8o1f9cf9         |       3 | id_guess      |        0 | Given the pattern of previous rounds, it's likely that players will try to anticipate each other's moves, potentially leading to a convergence toward lower numbers.  I will choose 0, hoping to be closest to two-thirds of the average.                                                                                                                                                                                                                                       |
-| ouwx1xnb     | 1xctv42x         |       1 | id_guess      |       33 | I will start by guessing 33.  This is a common starting point in this type of game, based on iterative reasoning and assuming other players will also use a similar strategy.                                                                                                                                                                                                                                                                                                   |
-| ouwx1xnb     | 1xctv42x         |       2 | id_guess      |       30 | In the first round, two-thirds of the average was close to 37. I believe that many players will expect this, and thus will choose a number around this value. I will go slightly lower, to account for the fact that many others will choose around 37.                                                                                                                                                                                                                         |
-| ouwx1xnb     | 1xctv42x         |       3 | id_guess      |       10 | Given the previous rounds' two-thirds averages of 36.89 and 14.0, there is a clear downward trend.  I anticipate other players will also recognize this pattern and adjust their guesses accordingly.  To avoid being too close to the average, I will choose a relatively low number hoping to beat any average that will be close to 0.                                                                                                                                       |
-
-If you are interested in the additional options that the command line interface offers, we suggest you take a peek by running `botex -h`.
-
-## Using botex in your own code
-
-After installing botex, you should be able to start botex on an existing oTree participant link by running the following code snippet
-
-```python
-# Enabling logging is a good idea if you want to see what is going on
-import logging
-logging.basicConfig(level=logging.INFO)
-
-import botex
-
-# Running a botex bot on a specific oTree participant link
-botex.run_single_bot(
-    botex_db = "path to a sqlite3 file that will store the bot data (does not have to exist)", 
-    session_name = "session config name of your oTree experiment (defaults to 'unknown')", 
-    session_id = "session ID of your oTree experiment (defaults to 'unknown')", 
-    url = "the URL of the participant link", 
-    model = "The LLM model that you want to use (defaults to 'gpt-4o-2024-08-06')",
-    api_key = "The API key for your model (e.g., OpenAI)"
-)
-```
-
-Alternatively, you can use botex to initialize a session on your oTree server and to start all required bots for the session in one go. This session can also contain human participants. However, in that case, you would be responsible to get the humans going to complete the session ;-)
-
-```python
-import logging
-logging.basicConfig(level=logging.INFO)
-
-import botex
-
-# Initialize an oTree session
-sdict = botex.init_otree_session(
-    config_name = "config name of your oTree experiment", 
-    npart = 6 # number of participants in the session, including bots and humans
-    nhumans = 0, # set to non-zero if you want humans to play along
-    botex_db = "path to a sqlite3 file (does not have to exist)",
-    otree_server_url = "url of your server, e.g., http://localhost:8000]",
-    otree_rest_key = "your oTree API key, if set and needed"
-)
-
-# The returned dict will contain the oTree session ID, all participant codes, 
-# human indicators, and the URLs separately for the LLM and human participants.
-# You can now start all LLM participants of the session in one go.  
-botex.run_bots_on_session(
-    session_id = sdict['session_id'],  
-    botex_db = "same path that you used for initializing the session", 
-    model = "The LLM model that you want to use (defaults to 'gpt-4o-2024-08-06')",
-    api_key = "The API key for your model (e.g., OpenAI)"
-)
-```
-
-After the bots have completed their runs, you should have their response data stored in your oTree database just as it is the case for human participants. If you are interested in exploring the botex data itself, which is stored in the sqlite3 file that you provided, we recommend that you take a look at our botex [walk-through](https://github.com/trr266/botex_examples).
-
-## Verified LLMs
-
-The model that you use for inference has to support [structured outputs](https://openai.com/index/introducing-structured-outputs-in-the-api/). We have tested botex with the following LLMs:
-
-| Vendor | Model | Link | Status | Notes |
-| --- | --- | --- | --- | --- |
-| OpenAI | gpt-4o-2024-08-06 and later | [OpenAI API](https://openai.com/api/) | OK | Requires at least paid user tier 1 |
-| OpenAI |  gpt-4o-mini-2024-07-18 and later | [OpenAI API](https://openai.com/api/) | OK | Requires at least paid user tier 1  |
-| Google | gemini/gemini-1.5-flash-8b | [Google AI Studio](https://ai.google.dev) | OK | 1,500 requests per day are free |
-| Google | gemini/gemini-1.5-flash | [Google AI Studio](https://ai.google.dev) | OK | 1,500 requests per day are free |
-| Google | gemini/gemini-1.5-pro | [Google AI Studio](https://ai.google.dev) | OK | 50 requests per day are free (not usable for larger experiments in the free tier) |
-| Open Source | Mistral-7B-Instruct-v0.3.Q4_K_M.gguf | [Hugging Face](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.3) | OK | Run as a local model (see below) |
-| Open Source | qwen2.5-7b-instruct-q4_k_m.gguf | [Hugging Face](https://huggingface.co/Qwen/Qwen2.5-7B-Instruct-GGUF)  | OK | Run as a local model (see below) |
+> Fikir Worku Edossa, Joachim Gassen, and Victor S. Maas (2024): Using Large Language Models to Explore Contextualization Effects in Economics-Based Accounting Experiments. Working Paper. [SSRN](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4891763).
 
 
-If you have success running botex with other models, please let us know so that we can add them to the list.
+## Get in touch
 
-The default model that botex uses is `gpt-4o-2024-08-06`. If you want to use a different model, you can specify it in the `run_single_bot()` or `run_bots_on_session()` call by providing the model name from the table above as `model` parameter. In any case, you have to provide the API key for the model that you want to use.
+If you are interested in this project or even have already tried it, we would love to hear from you. Simply shoot an email, reach out on BlueSky or LinkedIn, or open an issue here on GitHub!
 
 
-## Using Local Models with llama.cpp
+## Development
 
-If you want to use a local LLM instead of commercial APIs via the litellm interface, llama.cpp is the most reliable and performant option. You will need to install llama.cpp on your system and start the llama-server with a local LLM model.
+The reminder of this readme is dedicated to the development of botex. If you want to contribute to the project, please keep reading.
 
-### Installation
-
-- **MacOS/Linux**: Install `llama.cpp` via Homebrew for a straightforward setup:
-  ```bash
-  brew install llama.cpp
-  ```
-- **Windows**:
-  - The recommended approach is to download precompiled binaries from the [llama.cpp releases page](https://github.com/ggerganov/llama.cpp/releases).
-  - Alternatively, you can clone the repository and build it manually following the provided instructions.
-
-#### Precompiled Binaries
-
-Download the appropriate binary for your system from the [llama.cpp releases page](https://github.com/ggerganov/llama.cpp/releases). Refer to the release page to identify the binary suitable for your hardware and system.
-
-### Running llama-server
-
-After downloading and extracting the llama.cpp binary, you can start the llama-server with the desired LLM model from huggingface with the following command:
-
-```bash
-llama-server --model-url https://huggingface.co/bartowski/Meta-Llama-3.1-8B-Instruct-GGUF/resolve/main/Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf\?download\=true -c context length you want to use -n maximum number of tokens you want to generate at a time
-
-# Additional options:
-# -ngl number of layers to offload to gpu (if you have a GPU with a good amount of memory you should try to offload as many layers as possible)
-# -fa if you want to enable flash attention (recommended for performance)
-```
-
-### Running botex with a Local LLM
-
-Then all that you need to do is to adjust the botex calls from above by choosing `llamacpp` as a model.
-
-```python
-botex.run_bots_on_session(
-    session_id = sdict['session_id'],  
-    botex_db = "same path that you used for initializing the session", 
-    model = "llamacpp",
-)
-```
-
-Everything else from above remains the same. When starting local LLMs as bots take a good look at the log files to see how they do.
-
-## Installation for Development
-
-If you want to take a deep-dive into botex and contribute to its development you can do the following
+### Installation for Development
 
 1. Clone this repository: `git clone https://github.com/joachim-gassen/botex` 
 2. Copy `_botex.env` to `botex.env` and edit. Most importantly, you have to set your API key(s) and the configuration of the local llama.cpp instance that you want botex to start. See point 8 below if you only want to start pytest on a specific LLM setup. As the otree instance will only be used for testing, you can set any password and rest key that you like.
@@ -344,14 +177,3 @@ If something goes wrong, you can repeat the test with logging (`pytest -o log_cl
 You see that it also contains some questions and answers. They are also accessible in `test/questions_and_answers.csv` after the run and were given by two bot instances in the oTree test survey `test/otree` during testing. The survey is designed to test the usage of standard oTree forms, buttons and wait pages in a session with interacting participants.
 
 The costs of running the test on OpenAI using the "gpt-4o" model are roughly 0.10 US-$.
-
-## More information
-
-If you want to learn more about botex
-
-- take a look at our [botex examples repo](https://github.com/trr266/botex_examples), providing a code walk-through for an actual online experiment (in which you can also participate), or
-- read our current [paper](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4891763) using botex to explore the contexutalization effects in accounting experiments.
-
-## Get in touch
-
-If you are interested in this project or even have already tried it, we would love to hear from you. Simply shoot an email, comment on our linkedin post, or open an issue here on GitHub!
