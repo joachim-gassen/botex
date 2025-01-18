@@ -8,7 +8,7 @@ Like the [Run an oTree experiment with botex](running_an_experiment.md) tutorial
 
 We compare the results of the following LLMs:
 
-- [OpenAI's GPT-4p](https://openai.com)
+- [OpenAI's GPT-4o](https://openai.com)
 - [Google's Gemini-1.5 Flash](https://aistudio.google.com)
 - [LLama 3.1-8B Instruct](https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct)
 
@@ -97,7 +97,7 @@ The code above starts an oTree server, a llama.cpp server, and runs three bots i
 
 After `NSESSIONS` have been completed, the code exports the oTree data to a CSV file and stops both the oTree and the llama.cpp servers. 
 
-If you want to reproduce the analysis presented below, you would need increase `NSESSIONS` so that multiple sessions are beeing played. The analysis below is based on 50 sessions and running them has incurred OpenAI API costs of around US-$ 3.
+If you want to reproduce the analysis presented below, you would need increase `NSESSIONS` so that multiple sessions are beeing played. The analysis below is based on 50 sessions. Running these sessions cost around US-$3 in OpenAI API fees.
 
 ## Analyze the Data
 
@@ -221,7 +221,7 @@ plt.tight_layout()
 plt.show()
 ```
 
-The first plot shows the average guesses by round and player, with 95% confidence intervals, and the correct 2/3 average.
+The first plot shows the average guesses by round and player, with 95% confidence intervals, and the correct 2/3 of the average.
 
 ![Guesses by Round and Participants](../assets/images/tut_exp_3llms_fig1_guesses_by_round.png)
 
@@ -229,5 +229,5 @@ As you can see, OpenAI's 4o model seems to make the best guesses in the first ro
 
 ![Payoff by Participants](../assets/images/tut_exp_3llms_fig2_payoffs.png)
 
-The second plot shows the mean summed payoff by player, with 95% confidence intervals and Bonferroni-corrected Mann-Whitney tests for cross-participant differences. It seems that OpenAI's 4o model and Google Gemini are roughly at par (the difference between the two is no significant at conventional levels) while both clearly dominate Llama 3.1-8B Instruct.
+The second plot shows the mean summed payoff by player, with 95% confidence intervals and Bonferroni-corrected Mann-Whitney tests for cross-participant differences. It seems that OpenAI's 4o model and Google Gemini are roughly at par (the difference between the two is not significant at conventional levels), while both clearly dominate Llama 3.1-8B Instruct.
 
