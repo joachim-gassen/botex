@@ -28,7 +28,7 @@ def load_botex_env(env_file = "botex.env") -> bool:
         logger.info(f"Loaded botex environment variables from '{env_file}'")
     else:
         logger.info(
-            f"Botex environment variables parsed from '{env_file}'. "
+            f"botex environment variables parsed from '{env_file}'. "
             "No new environment variables were set."
         )
     return success

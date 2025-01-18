@@ -4,17 +4,17 @@
 
 Welcome to the GitHub repository botex, a new Python package that leverages the power of **large language models (LLMs) as participants in oTree experiments**.
 
-Botex takes a novel approach to integrating LLMs into behavioral experiments. Rather than relying on predefined prompts,[^1] **botex bots dynamically interact with their experimental environment by scraping their respective oTree participant pages**. This approach allows them to infer the experimental flow solely from the webpage's textual content. By aligning bot behavior directly with the experimental interface, botex eliminates potential discrepancies between human and bot designs. This not only opens up **exciting opportunities to explore LLM behavior** but also positions LLMs as a **powerful tool for developing and pre-testing experiments** intended for human participants.
+botex takes a novel approach to integrating LLMs into behavioral experiments. Rather than relying on predefined prompts,[^1] **botex bots dynamically interact with their experimental environment by scraping their respective oTree participant pages**. This approach allows them to infer the experimental flow solely from the webpage's textual content. By aligning bot behavior directly with the experimental interface, botex eliminates potential discrepancies between human and bot designs. This not only opens up **exciting opportunities to explore LLM behavior** but also positions LLMs as a **powerful tool for developing and pre-testing experiments** intended for human participants.
 
 [^1]:  See, for example, Grossmann, Engel and Ockenfels ([paper](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4682602), [repo](https://github.com/mrpg/ego))
 
 <p style="text-align: center;">
-  <img src="https://raw.githubusercontent.com/joachim-gassen/botex/main/docs/assets/images/index_botex_workflow.svg" alt="Botex Workflow" width="80%">
+  <img src="https://raw.githubusercontent.com/joachim-gassen/botex/main/docs/assets/images/index_botex_workflow.svg" alt="botex Workflow" width="80%">
 </p>
 
-## Why Choose Botex?
+## Why Choose botex?
 
-Botex's innovative approach offers several advantages:
+botex's innovative approach offers several advantages:
 
 - **Alignment**: By scraping oTree pages, LLMs respond to the same interface as human participants, ensuring consistency in experimental design.
 - **Pre-testing**: LLMs can act as intelligent pre-testers, providing valuable feedback during the design phase of human-centric experiments.
@@ -27,7 +27,7 @@ Botex's innovative approach offers several advantages:
 
 ## Documentation
 
-For learning how to use botex in your project, please refer to the [package documentation](https://joachim-gassen.github.io/botex/).
+For learning how to use botex in your project, please refer to the [package documentation](https://botex.trr266.de).
 
 ## Problems and Bugs
 

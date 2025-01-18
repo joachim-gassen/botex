@@ -8,7 +8,7 @@ See https://keepachangelog.com/en/1.0.0/ for a description of the changelog form
 
 - Command line interface `botex` to initialize oTree sessions and start bots from the command line
 - Added LLM API throttling to deal with LLM rate limits
-- Botex now explicitly checks for oTree validation checks and provides this feedback to LLM bots to trigger corrected responses 
+- botex now explicitly checks for oTree validation checks and provides this feedback to LLM bots to trigger corrected responses 
 - oTree pages with multiple buttons but no next button are now handled correctly
 - Option to use an already existing llama.cpp endpoint
 - Parsing of botex environment file by calling `load_botex_env()` function

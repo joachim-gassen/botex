@@ -81,7 +81,7 @@ def create_answers_response_model(questions_json):
             AnswerChoiceEnum = Enum(enum_name, options)
             answer_type = AnswerChoiceEnum
         else:
-            raise ValueError(f"Unsupported question type: {qtype}. At the moment Botex only supports 'text', 'textarea', 'float', 'number', 'radio', 'select-one', and 'button-radio' question types. Please consider raising an issue on the GitHub repository. https://github.com/joachim-gassen/botex/issues")
+            raise ValueError(f"Unsupported question type: {qtype}. At the moment botex only supports 'text', 'textarea', 'float', 'number', 'radio', 'select-one', and 'button-radio' question types. Please consider raising an issue on the GitHub repository. https://github.com/joachim-gassen/botex/issues")
         
         field_type = create_model(
             f"Answer_{id_}",

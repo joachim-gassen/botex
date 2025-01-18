@@ -208,7 +208,7 @@ def run_botex(
     # Default fallback for DB
     if not botex_db:
         click.echo(
-            "Botex database file not provided. Defaulting to 'botex.sqlite3'"
+            "botex database file not provided. Defaulting to 'botex.sqlite3'"
         )
         botex_db = 'botex.sqlite3'
 
@@ -304,7 +304,7 @@ def run_botex(
                     f"""
                     The llama.cpp server at {api_base} is not reachable. 
                     Are you sure the server is reachable at this URL? 
-                    Botex can also start the server for you if you 
+                    botex can also start the server for you if you 
                     provide the path to the llama.cpp server and the 
                     path to the local model either as command line 
                     arguments, in the config file, or as environment 

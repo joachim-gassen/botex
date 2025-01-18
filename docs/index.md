@@ -4,15 +4,15 @@
 
 Welcome to botex, a new Python package that leverages the power of **large language models (LLMs) as participants in oTree experiments**.
 
-Botex takes a novel approach to integrating LLMs into behavioral experiments. Rather than relying on predefined prompts,[^1] **botex bots dynamically interact with their experimental environment by scraping their respective oTree participant pages**. This approach allows them to infer the experimental flow solely from the webpage's textual content. By aligning bot behavior directly with the experimental interface, botex eliminates potential discrepancies between human and bot designs. This not only opens up **exciting opportunities to explore LLM behavior** but also positions LLMs as a **powerful tool for developing and pre-testing experiments** intended for human participants.
+botex takes a novel approach to integrating LLMs into behavioral experiments. Rather than relying on predefined prompts,[^1] **botex bots dynamically interact with their experimental environment by scraping their respective oTree participant pages**. This approach allows them to infer the experimental flow solely from the webpage's textual content. By aligning bot behavior directly with the experimental interface, botex eliminates potential discrepancies between human and bot designs. This not only opens up **exciting opportunities to explore LLM behavior** but also positions LLMs as a **powerful tool for developing and pre-testing experiments** intended for human participants.
 
 [^1]:  See, for example, Grossmann, Engel and Ockenfels ([paper](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4682602), [repo](https://github.com/mrpg/ego))
 
 <p style="text-align: center;">
-  <img src="assets/images/index_botex_workflow.svg" alt="Botex Workflow" width="80%">
+  <img src="assets/images/index_botex_workflow.svg" alt="botex Workflow" width="80%">
 </p>
 
-## Why Choose Botex?
+## Why Choose botex?
 
 botex's innovative approach offers several advantages:
 
