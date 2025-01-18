@@ -2,7 +2,7 @@
 
 See https://keepachangelog.com/en/1.0.0/ for a description of the changelog format.
 
-## [Unreleased]
+## [0.2.0] - 2025-01-18
 
 ### Added
 
