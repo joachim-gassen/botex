@@ -7,7 +7,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "botex"
-version = "0.1.0"
+version = "0.2.0"
 authors = [
     { name="Joachim Gassen", email="gassen@wiwi.hu-berlin.de" },
     { name="Fikir Worku Edossa", email="edossafi@wiwi.hu-berlin.de" },
@@ -23,7 +23,7 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Science/Research",
     "Topic :: Scientific/Engineering :: Artificial Intelligence"
 ]
@@ -40,7 +40,7 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://joachim-gassen.github.io/botex/"
+Homepage = "https://botex.trr266.de"
 Issues = "https://github.com/joachim-gassen/botex/issues"
 
 [project.scripts]

@@ -4,9 +4,7 @@
 
 Welcome to the GitHub repository botex, a new Python package that leverages the power of **large language models (LLMs) as participants in oTree experiments**.
 
-botex takes a novel approach to integrating LLMs into behavioral experiments. Rather than relying on predefined prompts,[^1] **botex bots dynamically interact with their experimental environment by scraping their respective oTree participant pages**. This approach allows them to infer the experimental flow solely from the webpage's textual content. By aligning bot behavior directly with the experimental interface, botex eliminates potential discrepancies between human and bot designs. This not only opens up **exciting opportunities to explore LLM behavior** but also positions LLMs as a **powerful tool for developing and pre-testing experiments** intended for human participants.
-
-[^1]:  See, for example, Grossmann, Engel and Ockenfels ([paper](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4682602), [repo](https://github.com/mrpg/ego))
+botex takes a novel approach to integrating LLMs into behavioral experiments. Rather than relying on predefined prompts (see e.g., Grossmann, Engel and Ockenfels ([paper](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4682602), [repo](https://github.com/mrpg/ego))), **botex bots dynamically interact with their experimental environment by scraping their respective oTree participant pages**. This approach allows them to infer the experimental flow solely from the webpage's textual content. By aligning bot behavior directly with the experimental interface, botex eliminates potential discrepancies between human and bot designs. This not only opens up **exciting opportunities to explore LLM behavior** but also positions LLMs as a **powerful tool for developing and pre-testing experiments** intended for human participants.
 
 <p style="text-align: center;">
   <img src="https://raw.githubusercontent.com/joachim-gassen/botex/main/docs/assets/images/index_botex_workflow.svg" alt="botex Workflow" width="80%">
@@ -31,7 +29,7 @@ For learning how to use botex in your project, please refer to the [package docu
 
 ## Problems and Bugs
 
-If you encounter any problems or bugs, please open a [GitHub issue]((https://github.com/joachim-gassen/botex/issues)) on this repository.
+If you encounter any problems or bugs, please open a [GitHub issue]((https://github.com/joachim-gassen/botex/issues)).
 
 ## Paper
 
@@ -39,11 +37,9 @@ If you use botex in your research, please cite its accompanying paper:
 
 > Fikir Worku Edossa, Joachim Gassen, and Victor S. Maas (2024): Using Large Language Models to Explore Contextualization Effects in Economics-Based Accounting Experiments. Working Paper. [SSRN](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4891763).
 
-
 ## Get in touch
 
-If you are interested in this project or even have already tried it, we would love to hear from you. Simply shoot an email, reach out on BlueSky or LinkedIn, or open an issue here on GitHub!
-
+If you are interested in this project or even have already tried it, we would love to hear from you. Simply shoot an email, reach out on BlueSky or LinkedIn, or open an [issue on GitHub](https://github.com/joachim-gassen/botex/issues)!
 
 ## Development
 

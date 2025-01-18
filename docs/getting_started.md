@@ -9,10 +9,10 @@ If you want to use botex to create LLM participants for your own oTree experimen
 
 ## Install botex
 
-Then, activate the virtual environment and install the current development version of the package in it:
+Then, activate the virtual environment and install the current stable version of the package in it:
 
 ```bash
-pip install git+https://github.com/joachim-gassen/botex.git
+pip install botex
 ```
 
 ## Install oTree
