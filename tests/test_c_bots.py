@@ -36,13 +36,13 @@ def test_can_botex_start_llamacpp_server(model):
         return
     assert os.path.exists(
         os.environ.get("LLAMACPP_SERVER_PATH")), \
-    "You are testing if botex can start a llama.cpp server, therefore you "
-    "need to provide the path to its executable in the environment variable "
+    "You are testing if botex can start a llama.cpp server, therefore you " \
+    "need to provide the path to its executable in the environment variable " \
     "LLAMACPP_SERVER_PATH. Have you configured the 'botex.env' file?"
     
     assert os.path.exists(os.environ.get("LLAMACPP_LOCAL_LLM_PATH")), \
-    "You are testing if botex can start the llama.cpp server, therefore you "
-    "need to provide the path to the local model in the environment variable "
+    "You are testing if botex can start the llama.cpp server, therefore you " \
+    "need to provide the path to the local model in the environment variable " \
     "LLAMACPP_LOCAL_LLM_PATH. Have you configured the 'botex.env' file?"
     
     global llamacpp_server_process_id

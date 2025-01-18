@@ -289,7 +289,7 @@ botex.export_participant_data(
 )
 botex.export_response_data(
     "two_thirds_botex_responses.csv",
-    botex_db='botex.sqlite',
+    botex_db=BOTEX_DB,
     session_id=session['session_id']
 )
 

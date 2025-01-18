@@ -38,7 +38,8 @@ class ChatCompletionResponse(BaseModel):
     choices: List[Choice]
 
 class LlamaCppConfig(BaseSettings):
-    model_config = SettingsConfigDict(env_ignore_empty=True)
+    model_config = SettingsConfigDict(
+        env_prefix="LLAMACPP_", env_ignore_empty=True)
     server_url: str = Field(default='http://localhost:8080')
     server_path: str | None = Field(default=None)
     local_llm_path: str | None = Field(default=None)
@@ -72,6 +73,10 @@ class LlamaCppConfig(BaseSettings):
             raise FileNotFoundError(
                 f"Model path {self.local_llm_path} not found."
             )
+        if not self.context_length:
+            self.context_length = GGUFParser(
+                self.local_llm_path
+            ).get_metadata().get("context_length", 4096)
         return self
     
 
@@ -96,26 +101,6 @@ def is_llamacpp_server_reachable(url, timeout=6):
 class LlamaCppServerManager:
     def __init__(self, config: dict | None = None):
         config = config or {}
-        if "server_path" not in config.keys():
-            config['server_path'] = os.getenv('LLAMACPP_SERVER_PATH')
-        if "local_llm_path" not in config.keys():
-            config['local_llm_path'] = os.getenv('LLAMACPP_LOCAL_LLM_PATH')
-        if "server_url" not in config.keys():
-            config['server_url'] = os.getenv('LLAMACPP_SERVER_URL')
-        if "context_length" not in config.keys():
-            config['context_length'] = os.getenv('LLAMACPP_CONTEXT_LENGTH')
-        if "number_of_layers_to_offload_to_gpu" not in config.keys():
-            config['number_of_layers_to_offload_to_gpu'] = \
-                os.getenv('LLAMACPP_NUMBER_OF_LAYERS_TO_OFFLOAD_TO_GPU')
-        if "temperature" not in config.keys():
-            config['temperature'] = os.getenv('LLAMACPP_TEMPERATURE')
-        if "maximum_tokens_to_predict" not in config.keys():
-            config['maximum_tokens_to_predict'] = \
-                os.getenv('LLAMACPP_MAXIMUM_TOKENS_TO_PREDICT')
-        if "num_slots" not in config.keys():
-            config['num_slots'] = os.getenv('LLAMACPP_CONFIG_NUM_SLOTS')
-        
-        config = {k: v for k, v in config.items() if v is not None}
         self.config = LlamaCppConfig(**config)
 
     def start_server(self) -> subprocess.Popen:
@@ -127,15 +112,14 @@ class LlamaCppServerManager:
             )
 
         parsed_url = urlparse(self.config.server_url)
+        assert self.config.context_length, "Context length should have been set by now."
         cmd = [
             self.config.server_path,
             "--host", parsed_url.hostname,
             "--port", str(parsed_url.port),
             "-ngl", str(self.config.number_of_layers_to_offload_to_gpu),
             "-m", self.config.local_llm_path,
-            "-c", str(int(self.config.num_slots) * 
-                      (int(self.config.context_length or 4096) + 
-                       int(self.config.maximum_tokens_to_predict))),
+            "-c", str(int(self.config.num_slots) * self.config.context_length),
             "-n", str(self.config.maximum_tokens_to_predict),
             "--parallel", str(self.config.num_slots),
             "-fa",
@@ -211,18 +195,39 @@ class LlamaCpp:
             response = requests.get(url)
             response.raise_for_status()
             res = response.json()
-            self.local_llm_path = res['default_generation_settings']['model']
+            if "model_path" in res:
+                self.local_llm_path = res['model_path']
+            elif "model" in res['default_generation_settings']:
+                self.local_llm_path = res['default_generation_settings']['model']
+            else:
+                logger.warning(
+                    "Unable to determine the model path from the running llama" " server. Botex can function without the model path, but "
+                    "you should consider updating your llama.cpp."
+                )
+                self.local_llm_path = "unknown"
+
             self.context_length = res['default_generation_settings']['n_ctx']
             self.num_slots = res['total_slots']
-            self.max_tokens = res['default_generation_settings']['n_predict']
+            if 'n_predict' in res['default_generation_settings']:
+                self.max_tokens = res['default_generation_settings']['n_predict']
+            else:    
+                self.max_tokens = res['default_generation_settings']['params']['n_predict']
             self.temperature = 0.8
             self.top_p = 0.9
             self.top_k = 40
-        except (requests.RequestException, KeyError) as e:
+        except requests.RequestException as req_exc:
             raise Exception(
                 "Failed to retrieve metadata from llama.cpp server "
-                "at {self.api_base}: {e}"
+                f"at {self.api_base}: {req_exc}"
             )
+        except KeyError as key_err:
+            raise Exception(
+                "Failed to parse metadata from llama.cpp server, please "
+                "consider raising an issue on the botex GitHub repository. "
+                "Please provide your llama.cpp version and the error: "
+                f"'{key_err}'"
+            )
+
 
     def json_dump_model_cfg(self):
         return {
