@@ -96,8 +96,7 @@
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="index.html" title="botex - LLM Bots for oTree Experiments" class="md-header__button md-logo" aria-label="botex - LLM Bots for oTree Experiments" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <img src="assets/images/botex_logo.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -313,8 +312,7 @@
   <label class="md-nav__title" for="__drawer">
     <a href="index.html" title="botex - LLM Bots for oTree Experiments" class="md-nav__button md-logo" aria-label="botex - LLM Bots for oTree Experiments" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <img src="assets/images/botex_logo.svg" alt="logo">
 
     </a>
     botex - LLM Bots for oTree Experiments
@@ -788,75 +786,59 @@ argument, or as environment variables.</p>
 <p><strong>Options:</strong></p>
 <div class="language-text highlight" style="background: #f0f0f0"><pre style="line-height: 125%;"><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>  -c, --config TEXT            Path to the environment file containing the
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>                               botex configuration. Defaults to &#39;botex.env&#39;.
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>  -i, --ignore                 Ignore any environment variables and config
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>                               files.
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>  -b, --botex-db TEXT          Path to the botex SQLite database file (will be
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>                               created if it does not exist). Read from
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>                               environment variable BOTEX_DB if not provided.
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>                               Defaults to &#39;botex.sqlite3&#39;.
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>  -u, --otree-server-url TEXT  oTree server URL. Read from environment
-</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>                               variable OTREE_SERVER_URL if not provided.
-</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>                               Defaults to &#39;http://localhost:8000&#39;.
-</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>
-</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>  -r, --otree-rest-key TEXT    oTree secret key for its REST API. Read from
-</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>                               environment variable OTREE_REST_KEY if not
-</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>                               provided. Only required if the oTree server is
-</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>                               running in DEMO or STUDY mode.
-</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a>
-</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a>  -m, --model TEXT             Path to the LLM model to use for botex. Read
-</span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a>                               from environment variable LLM_MODEL if not
-</span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a>                               provided. If environment variable is not set,
-</span><span id="__span-1-24"><a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a>                               you will be prompted for the model.
-</span><span id="__span-1-25"><a id="__codelineno-1-25" name="__codelineno-1-25" href="#__codelineno-1-25"></a>
-</span><span id="__span-1-26"><a id="__codelineno-1-26" name="__codelineno-1-26" href="#__codelineno-1-26"></a>  -k, --api-key TEXT           API key for the LLM model. Read from
-</span><span id="__span-1-27"><a id="__codelineno-1-27" name="__codelineno-1-27" href="#__codelineno-1-27"></a>                               environment variable API_KEY if not provided.
-</span><span id="__span-1-28"><a id="__codelineno-1-28" name="__codelineno-1-28" href="#__codelineno-1-28"></a>                               If environment variable is not set, you will be
-</span><span id="__span-1-29"><a id="__codelineno-1-29" name="__codelineno-1-29" href="#__codelineno-1-29"></a>                               prompted to enter the key.
-</span><span id="__span-1-30"><a id="__codelineno-1-30" name="__codelineno-1-30" href="#__codelineno-1-30"></a>
-</span><span id="__span-1-31"><a id="__codelineno-1-31" name="__codelineno-1-31" href="#__codelineno-1-31"></a>  -a, --api-base TEXT          Base URL for the LLM model. If not provided it
-</span><span id="__span-1-32"><a id="__codelineno-1-32" name="__codelineno-1-32" href="#__codelineno-1-32"></a>                               will default to None for LiteLLM and
-</span><span id="__span-1-33"><a id="__codelineno-1-33" name="__codelineno-1-33" href="#__codelineno-1-33"></a>                               http://localhost:8080 for llama.cpp.
-</span><span id="__span-1-34"><a id="__codelineno-1-34" name="__codelineno-1-34" href="#__codelineno-1-34"></a>
-</span><span id="__span-1-35"><a id="__codelineno-1-35" name="__codelineno-1-35" href="#__codelineno-1-35"></a>  --llamacpp-server TEXT       Path to the llama.cpp server executable.
-</span><span id="__span-1-36"><a id="__codelineno-1-36" name="__codelineno-1-36" href="#__codelineno-1-36"></a>                               Required if the model is &#39;llamacpp&#39;. Read from
-</span><span id="__span-1-37"><a id="__codelineno-1-37" name="__codelineno-1-37" href="#__codelineno-1-37"></a>                               environment variable LLAMACPP_SERVER_PATH if
-</span><span id="__span-1-38"><a id="__codelineno-1-38" name="__codelineno-1-38" href="#__codelineno-1-38"></a>                               not provided.
-</span><span id="__span-1-39"><a id="__codelineno-1-39" name="__codelineno-1-39" href="#__codelineno-1-39"></a>
-</span><span id="__span-1-40"><a id="__codelineno-1-40" name="__codelineno-1-40" href="#__codelineno-1-40"></a>  --llamacpp-local-llm TEXT    Path to the local llama.cpp model. Required if
-</span><span id="__span-1-41"><a id="__codelineno-1-41" name="__codelineno-1-41" href="#__codelineno-1-41"></a>                               the model is &#39;llamacpp&#39;. Read from environment
-</span><span id="__span-1-42"><a id="__codelineno-1-42" name="__codelineno-1-42" href="#__codelineno-1-42"></a>                               variable LLAMACPP_LOCAL_LLM_PATH if not
-</span><span id="__span-1-43"><a id="__codelineno-1-43" name="__codelineno-1-43" href="#__codelineno-1-43"></a>                               provided.
-</span><span id="__span-1-44"><a id="__codelineno-1-44" name="__codelineno-1-44" href="#__codelineno-1-44"></a>
-</span><span id="__span-1-45"><a id="__codelineno-1-45" name="__codelineno-1-45" href="#__codelineno-1-45"></a>  -s, --session-config TEXT    oTree session config to run. If not provided,
-</span><span id="__span-1-46"><a id="__codelineno-1-46" name="__codelineno-1-46" href="#__codelineno-1-46"></a>                               and also not set by the environment variable
-</span><span id="__span-1-47"><a id="__codelineno-1-47" name="__codelineno-1-47" href="#__codelineno-1-47"></a>                               OTREE_SESSION_CONFIG, you will be prompted to
-</span><span id="__span-1-48"><a id="__codelineno-1-48" name="__codelineno-1-48" href="#__codelineno-1-48"></a>                               select from the available session
-</span><span id="__span-1-49"><a id="__codelineno-1-49" name="__codelineno-1-49" href="#__codelineno-1-49"></a>                               configurations.
-</span><span id="__span-1-50"><a id="__codelineno-1-50" name="__codelineno-1-50" href="#__codelineno-1-50"></a>
-</span><span id="__span-1-51"><a id="__codelineno-1-51" name="__codelineno-1-51" href="#__codelineno-1-51"></a>  -p, --nparticipants INTEGER  Number of participants to run the session with.
-</span><span id="__span-1-52"><a id="__codelineno-1-52" name="__codelineno-1-52" href="#__codelineno-1-52"></a>                               Read from environment variable
-</span><span id="__span-1-53"><a id="__codelineno-1-53" name="__codelineno-1-53" href="#__codelineno-1-53"></a>                               OTREE_NPARTICIPANTS if not provided.
-</span><span id="__span-1-54"><a id="__codelineno-1-54" name="__codelineno-1-54" href="#__codelineno-1-54"></a>
-</span><span id="__span-1-55"><a id="__codelineno-1-55" name="__codelineno-1-55" href="#__codelineno-1-55"></a>  -n, --nhumans INTEGER        Number of human participants to include in the
-</span><span id="__span-1-56"><a id="__codelineno-1-56" name="__codelineno-1-56" href="#__codelineno-1-56"></a>                               session. Read from environment variable
-</span><span id="__span-1-57"><a id="__codelineno-1-57" name="__codelineno-1-57" href="#__codelineno-1-57"></a>                               OTREE_NHUMANS if not provided.
-</span><span id="__span-1-58"><a id="__codelineno-1-58" name="__codelineno-1-58" href="#__codelineno-1-58"></a>
-</span><span id="__span-1-59"><a id="__codelineno-1-59" name="__codelineno-1-59" href="#__codelineno-1-59"></a>  -e, --export-csv-file TEXT   CSV file to export botex data to. If not
-</span><span id="__span-1-60"><a id="__codelineno-1-60" name="__codelineno-1-60" href="#__codelineno-1-60"></a>                               provided, you will be prompted to enter a file
-</span><span id="__span-1-61"><a id="__codelineno-1-61" name="__codelineno-1-61" href="#__codelineno-1-61"></a>                               name after the session is complete.
-</span><span id="__span-1-62"><a id="__codelineno-1-62" name="__codelineno-1-62" href="#__codelineno-1-62"></a>
-</span><span id="__span-1-63"><a id="__codelineno-1-63" name="__codelineno-1-63" href="#__codelineno-1-63"></a>  -x, --no-throttle            Disables throttling requests to deal with rate
-</span><span id="__span-1-64"><a id="__codelineno-1-64" name="__codelineno-1-64" href="#__codelineno-1-64"></a>                               limiting. Defaults to False. If set to True,
-</span><span id="__span-1-65"><a id="__codelineno-1-65" name="__codelineno-1-65" href="#__codelineno-1-65"></a>                               you might run into rate limiting resulting in
-</span><span id="__span-1-66"><a id="__codelineno-1-66" name="__codelineno-1-66" href="#__codelineno-1-66"></a>                               failed bot runs.
-</span><span id="__span-1-67"><a id="__codelineno-1-67" name="__codelineno-1-67" href="#__codelineno-1-67"></a>
-</span><span id="__span-1-68"><a id="__codelineno-1-68" name="__codelineno-1-68" href="#__codelineno-1-68"></a>  -v, --verbose                Print out botex logs while running. Defaults to
-</span><span id="__span-1-69"><a id="__codelineno-1-69" name="__codelineno-1-69" href="#__codelineno-1-69"></a>                               False.
-</span><span id="__span-1-70"><a id="__codelineno-1-70" name="__codelineno-1-70" href="#__codelineno-1-70"></a>
-</span><span id="__span-1-71"><a id="__codelineno-1-71" name="__codelineno-1-71" href="#__codelineno-1-71"></a>  --help                       Show this message and exit.
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  -i, --ignore                 Ignore any environment variables and config
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>                               files.
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>  -b, --botex-db TEXT          Path to the botex SQLite database file (will be
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>                               created if it does not exist). Read from
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>                               environment variable BOTEX_DB if not provided.
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>                               Defaults to &#39;botex.sqlite3&#39;.
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>  -u, --otree-server-url TEXT  oTree server URL. Read from environment
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>                               variable OTREE_SERVER_URL if not provided.
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>                               Defaults to &#39;http://localhost:8000&#39;.
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>  -r, --otree-rest-key TEXT    oTree secret key for its REST API. Read from
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>                               environment variable OTREE_REST_KEY if not
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>                               provided. Only required if the oTree server is
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>                               running in DEMO or STUDY mode.
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>  -m, --model TEXT             Path to the LLM model to use for botex. Read
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>                               from environment variable LLM_MODEL if not
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>                               provided. If environment variable is not set,
+</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>                               you will be prompted for the model.
+</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a>  -k, --api-key TEXT           API key for the LLM model. Read from
+</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a>                               environment variable API_KEY if not provided.
+</span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a>                               If environment variable is not set, you will be
+</span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a>                               prompted to enter the key.
+</span><span id="__span-1-24"><a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a>  -a, --api-base TEXT          Base URL for the LLM model. If not provided it
+</span><span id="__span-1-25"><a id="__codelineno-1-25" name="__codelineno-1-25" href="#__codelineno-1-25"></a>                               will default to None for LiteLLM and
+</span><span id="__span-1-26"><a id="__codelineno-1-26" name="__codelineno-1-26" href="#__codelineno-1-26"></a>                               http://localhost:8080 for llama.cpp.
+</span><span id="__span-1-27"><a id="__codelineno-1-27" name="__codelineno-1-27" href="#__codelineno-1-27"></a>  --llamacpp-server TEXT       Path to the llama.cpp server executable.
+</span><span id="__span-1-28"><a id="__codelineno-1-28" name="__codelineno-1-28" href="#__codelineno-1-28"></a>                               Required if the model is &#39;llamacpp&#39;. Read from
+</span><span id="__span-1-29"><a id="__codelineno-1-29" name="__codelineno-1-29" href="#__codelineno-1-29"></a>                               environment variable LLAMACPP_SERVER_PATH if
+</span><span id="__span-1-30"><a id="__codelineno-1-30" name="__codelineno-1-30" href="#__codelineno-1-30"></a>                               not provided.
+</span><span id="__span-1-31"><a id="__codelineno-1-31" name="__codelineno-1-31" href="#__codelineno-1-31"></a>  --llamacpp-local-llm TEXT    Path to the local llama.cpp model. Required if
+</span><span id="__span-1-32"><a id="__codelineno-1-32" name="__codelineno-1-32" href="#__codelineno-1-32"></a>                               the model is &#39;llamacpp&#39;. Read from environment
+</span><span id="__span-1-33"><a id="__codelineno-1-33" name="__codelineno-1-33" href="#__codelineno-1-33"></a>                               variable LLAMACPP_LOCAL_LLM_PATH if not
+</span><span id="__span-1-34"><a id="__codelineno-1-34" name="__codelineno-1-34" href="#__codelineno-1-34"></a>                               provided.
+</span><span id="__span-1-35"><a id="__codelineno-1-35" name="__codelineno-1-35" href="#__codelineno-1-35"></a>  -s, --session-config TEXT    oTree session config to run. If not provided,
+</span><span id="__span-1-36"><a id="__codelineno-1-36" name="__codelineno-1-36" href="#__codelineno-1-36"></a>                               and also not set by the environment variable
+</span><span id="__span-1-37"><a id="__codelineno-1-37" name="__codelineno-1-37" href="#__codelineno-1-37"></a>                               OTREE_SESSION_CONFIG, you will be prompted to
+</span><span id="__span-1-38"><a id="__codelineno-1-38" name="__codelineno-1-38" href="#__codelineno-1-38"></a>                               select from the available session
+</span><span id="__span-1-39"><a id="__codelineno-1-39" name="__codelineno-1-39" href="#__codelineno-1-39"></a>                               configurations.
+</span><span id="__span-1-40"><a id="__codelineno-1-40" name="__codelineno-1-40" href="#__codelineno-1-40"></a>  -p, --nparticipants INTEGER  Number of participants to run the session with.
+</span><span id="__span-1-41"><a id="__codelineno-1-41" name="__codelineno-1-41" href="#__codelineno-1-41"></a>                               Read from environment variable
+</span><span id="__span-1-42"><a id="__codelineno-1-42" name="__codelineno-1-42" href="#__codelineno-1-42"></a>                               OTREE_NPARTICIPANTS if not provided.
+</span><span id="__span-1-43"><a id="__codelineno-1-43" name="__codelineno-1-43" href="#__codelineno-1-43"></a>  -n, --nhumans INTEGER        Number of human participants to include in the
+</span><span id="__span-1-44"><a id="__codelineno-1-44" name="__codelineno-1-44" href="#__codelineno-1-44"></a>                               session. Read from environment variable
+</span><span id="__span-1-45"><a id="__codelineno-1-45" name="__codelineno-1-45" href="#__codelineno-1-45"></a>                               OTREE_NHUMANS if not provided.
+</span><span id="__span-1-46"><a id="__codelineno-1-46" name="__codelineno-1-46" href="#__codelineno-1-46"></a>  -e, --export-csv-file TEXT   CSV file to export botex data to. If not
+</span><span id="__span-1-47"><a id="__codelineno-1-47" name="__codelineno-1-47" href="#__codelineno-1-47"></a>                               provided, you will be prompted to enter a file
+</span><span id="__span-1-48"><a id="__codelineno-1-48" name="__codelineno-1-48" href="#__codelineno-1-48"></a>                               name after the session is complete.
+</span><span id="__span-1-49"><a id="__codelineno-1-49" name="__codelineno-1-49" href="#__codelineno-1-49"></a>  -x, --no-throttle            Disables throttling requests to deal with rate
+</span><span id="__span-1-50"><a id="__codelineno-1-50" name="__codelineno-1-50" href="#__codelineno-1-50"></a>                               limiting. Defaults to False. If set to True,
+</span><span id="__span-1-51"><a id="__codelineno-1-51" name="__codelineno-1-51" href="#__codelineno-1-51"></a>                               you might run into rate limiting resulting in
+</span><span id="__span-1-52"><a id="__codelineno-1-52" name="__codelineno-1-52" href="#__codelineno-1-52"></a>                               failed bot runs.
+</span><span id="__span-1-53"><a id="__codelineno-1-53" name="__codelineno-1-53" href="#__codelineno-1-53"></a>  -v, --verbose                Print out botex logs while running. Defaults to
+</span><span id="__span-1-54"><a id="__codelineno-1-54" name="__codelineno-1-54" href="#__codelineno-1-54"></a>                               False.
+</span><span id="__span-1-55"><a id="__codelineno-1-55" name="__codelineno-1-55" href="#__codelineno-1-55"></a>  --help                       Show this message and exit.
 </span></code></pre></div>
 <h2 id="python-api-setup">Python API: Setup</h2>
 <p>The botex configuration can be provided via function parameters or by setting environment variables. The latter is useful for secrets like API keys and also makes handling the API easier if you run repeated experiments. This an be facilitated by calling the function <code>load_botex_env()</code> that reads an <code>.env</code> file (<code>botex.env</code> by default). For users that want to use local LLMs for inference, <code>botex</code>can also start and/or stop a local llama.cpp instance.</p>
@@ -1140,12 +1122,7 @@ will use the default value.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/botex/llamacpp.py</code></summary>
-              <div class="language-python highlight" style="background: #f0f0f0"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-283">283</a></span>
-<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-284">284</a></span>
-<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-285">285</a></span>
-<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-286">286</a></span>
-<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-287">287</a></span>
-<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-288">288</a></span>
+              <div class="language-python highlight" style="background: #f0f0f0"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-288">288</a></span>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-289">289</a></span>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-290">290</a></span>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-291">291</a></span>
@@ -1217,84 +1194,89 @@ will use the default value.</p>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-357">357</a></span>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-358">358</a></span>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-359">359</a></span>
-<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-360">360</a></span></pre></div></td><td class="code"><div><pre style="line-height: 125%;"><span></span><code><span id="__span-0-283"><a id="__codelineno-0-283" name="__codelineno-0-283"></a><span style="color: #007020; font-weight: bold">def</span> <span style="color: #06287e">start_llamacpp_server</span>(config: <span style="color: #007020">dict</span> <span style="color: #666666">|</span> <span style="color: #007020; font-weight: bold">None</span> <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span>) <span style="color: #666666">-&gt;</span> subprocess<span style="color: #666666">.</span>Popen:
-</span><span id="__span-0-284"><a id="__codelineno-0-284" name="__codelineno-0-284"></a><span style="color: #bbbbbb">    </span><span style="color: #4070a0; font-style: italic">&quot;&quot;&quot;</span>
-</span><span id="__span-0-285"><a id="__codelineno-0-285" name="__codelineno-0-285"></a><span style="color: #4070a0; font-style: italic">    Starts a llama.cpp server instance.</span>
-</span><span id="__span-0-286"><a id="__codelineno-0-286" name="__codelineno-0-286"></a>
-</span><span id="__span-0-287"><a id="__codelineno-0-287" name="__codelineno-0-287"></a><span style="color: #4070a0; font-style: italic">    Args:</span>
-</span><span id="__span-0-288"><a id="__codelineno-0-288" name="__codelineno-0-288"></a><span style="color: #4070a0; font-style: italic">        config (dict | None, optional): A dict containing to the least</span>
-</span><span id="__span-0-289"><a id="__codelineno-0-289" name="__codelineno-0-289"></a><span style="color: #4070a0; font-style: italic">            the keys `llamacpp_server_path` (the path to the llama.cpp </span>
-</span><span id="__span-0-290"><a id="__codelineno-0-290" name="__codelineno-0-290"></a><span style="color: #4070a0; font-style: italic">            executable) and `local_llm_path` (the path to the LLM model that you</span>
-</span><span id="__span-0-291"><a id="__codelineno-0-291" name="__codelineno-0-291"></a><span style="color: #4070a0; font-style: italic">            want llama.cpp to use). If None (the default), then these parameters</span>
-</span><span id="__span-0-292"><a id="__codelineno-0-292" name="__codelineno-0-292"></a><span style="color: #4070a0; font-style: italic">            are read from the environment variables `LLAMACPP_SERVER_PATH` and </span>
-</span><span id="__span-0-293"><a id="__codelineno-0-293" name="__codelineno-0-293"></a><span style="color: #4070a0; font-style: italic">            `LLAMACPP_LOCAL_LLM_PATH`. See notes below for additional</span>
-</span><span id="__span-0-294"><a id="__codelineno-0-294" name="__codelineno-0-294"></a><span style="color: #4070a0; font-style: italic">            configuration parameters</span>
-</span><span id="__span-0-295"><a id="__codelineno-0-295" name="__codelineno-0-295"></a>
-</span><span id="__span-0-296"><a id="__codelineno-0-296" name="__codelineno-0-296"></a><span style="color: #4070a0; font-style: italic">    Returns:</span>
-</span><span id="__span-0-297"><a id="__codelineno-0-297" name="__codelineno-0-297"></a><span style="color: #4070a0; font-style: italic">        The process of the running llama.cpp sever if start was</span>
-</span><span id="__span-0-298"><a id="__codelineno-0-298" name="__codelineno-0-298"></a><span style="color: #4070a0; font-style: italic">            successful.</span>
-</span><span id="__span-0-299"><a id="__codelineno-0-299" name="__codelineno-0-299"></a>
-</span><span id="__span-0-300"><a id="__codelineno-0-300" name="__codelineno-0-300"></a><span style="color: #4070a0; font-style: italic">    Raises:</span>
-</span><span id="__span-0-301"><a id="__codelineno-0-301" name="__codelineno-0-301"></a><span style="color: #4070a0; font-style: italic">        Exception: If the server is already running or if starting the server </span>
-</span><span id="__span-0-302"><a id="__codelineno-0-302" name="__codelineno-0-302"></a><span style="color: #4070a0; font-style: italic">            fails.            </span>
-</span><span id="__span-0-303"><a id="__codelineno-0-303" name="__codelineno-0-303"></a>
-</span><span id="__span-0-304"><a id="__codelineno-0-304" name="__codelineno-0-304"></a><span style="color: #4070a0; font-style: italic">    ??? tip &quot;Additional details&quot;</span>
-</span><span id="__span-0-305"><a id="__codelineno-0-305" name="__codelineno-0-305"></a><span style="color: #4070a0; font-style: italic">        You can provide other configuration parameters for the </span>
-</span><span id="__span-0-306"><a id="__codelineno-0-306" name="__codelineno-0-306"></a><span style="color: #4070a0; font-style: italic">        local model in the model configuration dictionary. These include:</span>
-</span><span id="__span-0-307"><a id="__codelineno-0-307" name="__codelineno-0-307"></a>
-</span><span id="__span-0-308"><a id="__codelineno-0-308" name="__codelineno-0-308"></a><span style="color: #4070a0; font-style: italic">            -   `server_url` (str): The base URL for the llama.cpp </span>
-</span><span id="__span-0-309"><a id="__codelineno-0-309" name="__codelineno-0-309"></a><span style="color: #4070a0; font-style: italic">                server, defaults to `&quot;http://localhost:8080&quot;`.</span>
-</span><span id="__span-0-310"><a id="__codelineno-0-310" name="__codelineno-0-310"></a>
-</span><span id="__span-0-311"><a id="__codelineno-0-311" name="__codelineno-0-311"></a><span style="color: #4070a0; font-style: italic">            -   `context_length` (int): The context length for the model. </span>
-</span><span id="__span-0-312"><a id="__codelineno-0-312" name="__codelineno-0-312"></a><span style="color: #4070a0; font-style: italic">                If `None`, BotEx will try to get the context length from the </span>
-</span><span id="__span-0-313"><a id="__codelineno-0-313" name="__codelineno-0-313"></a><span style="color: #4070a0; font-style: italic">                local model metadata; if that is not possible, it defaults </span>
-</span><span id="__span-0-314"><a id="__codelineno-0-314" name="__codelineno-0-314"></a><span style="color: #4070a0; font-style: italic">                to `4096`.</span>
+<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-360">360</a></span>
+<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-361">361</a></span>
+<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-362">362</a></span>
+<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-363">363</a></span>
+<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-364">364</a></span>
+<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-365">365</a></span></pre></div></td><td class="code"><div><pre style="line-height: 125%;"><span></span><code><span id="__span-0-288"><a id="__codelineno-0-288" name="__codelineno-0-288"></a><span style="color: #007020; font-weight: bold">def</span> <span style="color: #06287e">start_llamacpp_server</span>(config: <span style="color: #007020">dict</span> <span style="color: #666666">|</span> <span style="color: #007020; font-weight: bold">None</span> <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span>) <span style="color: #666666">-&gt;</span> subprocess<span style="color: #666666">.</span>Popen:
+</span><span id="__span-0-289"><a id="__codelineno-0-289" name="__codelineno-0-289"></a><span style="color: #bbbbbb">    </span><span style="color: #4070a0; font-style: italic">&quot;&quot;&quot;</span>
+</span><span id="__span-0-290"><a id="__codelineno-0-290" name="__codelineno-0-290"></a><span style="color: #4070a0; font-style: italic">    Starts a llama.cpp server instance.</span>
+</span><span id="__span-0-291"><a id="__codelineno-0-291" name="__codelineno-0-291"></a>
+</span><span id="__span-0-292"><a id="__codelineno-0-292" name="__codelineno-0-292"></a><span style="color: #4070a0; font-style: italic">    Args:</span>
+</span><span id="__span-0-293"><a id="__codelineno-0-293" name="__codelineno-0-293"></a><span style="color: #4070a0; font-style: italic">        config (dict | None, optional): A dict containing to the least</span>
+</span><span id="__span-0-294"><a id="__codelineno-0-294" name="__codelineno-0-294"></a><span style="color: #4070a0; font-style: italic">            the keys `llamacpp_server_path` (the path to the llama.cpp </span>
+</span><span id="__span-0-295"><a id="__codelineno-0-295" name="__codelineno-0-295"></a><span style="color: #4070a0; font-style: italic">            executable) and `local_llm_path` (the path to the LLM model that you</span>
+</span><span id="__span-0-296"><a id="__codelineno-0-296" name="__codelineno-0-296"></a><span style="color: #4070a0; font-style: italic">            want llama.cpp to use). If None (the default), then these parameters</span>
+</span><span id="__span-0-297"><a id="__codelineno-0-297" name="__codelineno-0-297"></a><span style="color: #4070a0; font-style: italic">            are read from the environment variables `LLAMACPP_SERVER_PATH` and </span>
+</span><span id="__span-0-298"><a id="__codelineno-0-298" name="__codelineno-0-298"></a><span style="color: #4070a0; font-style: italic">            `LLAMACPP_LOCAL_LLM_PATH`. See notes below for additional</span>
+</span><span id="__span-0-299"><a id="__codelineno-0-299" name="__codelineno-0-299"></a><span style="color: #4070a0; font-style: italic">            configuration parameters</span>
+</span><span id="__span-0-300"><a id="__codelineno-0-300" name="__codelineno-0-300"></a>
+</span><span id="__span-0-301"><a id="__codelineno-0-301" name="__codelineno-0-301"></a><span style="color: #4070a0; font-style: italic">    Returns:</span>
+</span><span id="__span-0-302"><a id="__codelineno-0-302" name="__codelineno-0-302"></a><span style="color: #4070a0; font-style: italic">        The process of the running llama.cpp sever if start was</span>
+</span><span id="__span-0-303"><a id="__codelineno-0-303" name="__codelineno-0-303"></a><span style="color: #4070a0; font-style: italic">            successful.</span>
+</span><span id="__span-0-304"><a id="__codelineno-0-304" name="__codelineno-0-304"></a>
+</span><span id="__span-0-305"><a id="__codelineno-0-305" name="__codelineno-0-305"></a><span style="color: #4070a0; font-style: italic">    Raises:</span>
+</span><span id="__span-0-306"><a id="__codelineno-0-306" name="__codelineno-0-306"></a><span style="color: #4070a0; font-style: italic">        Exception: If the server is already running or if starting the server </span>
+</span><span id="__span-0-307"><a id="__codelineno-0-307" name="__codelineno-0-307"></a><span style="color: #4070a0; font-style: italic">            fails.            </span>
+</span><span id="__span-0-308"><a id="__codelineno-0-308" name="__codelineno-0-308"></a>
+</span><span id="__span-0-309"><a id="__codelineno-0-309" name="__codelineno-0-309"></a><span style="color: #4070a0; font-style: italic">    ??? tip &quot;Additional details&quot;</span>
+</span><span id="__span-0-310"><a id="__codelineno-0-310" name="__codelineno-0-310"></a><span style="color: #4070a0; font-style: italic">        You can provide other configuration parameters for the </span>
+</span><span id="__span-0-311"><a id="__codelineno-0-311" name="__codelineno-0-311"></a><span style="color: #4070a0; font-style: italic">        local model in the model configuration dictionary. These include:</span>
+</span><span id="__span-0-312"><a id="__codelineno-0-312" name="__codelineno-0-312"></a>
+</span><span id="__span-0-313"><a id="__codelineno-0-313" name="__codelineno-0-313"></a><span style="color: #4070a0; font-style: italic">            -   `server_url` (str): The base URL for the llama.cpp </span>
+</span><span id="__span-0-314"><a id="__codelineno-0-314" name="__codelineno-0-314"></a><span style="color: #4070a0; font-style: italic">                server, defaults to `&quot;http://localhost:8080&quot;`.</span>
 </span><span id="__span-0-315"><a id="__codelineno-0-315" name="__codelineno-0-315"></a>
-</span><span id="__span-0-316"><a id="__codelineno-0-316" name="__codelineno-0-316"></a><span style="color: #4070a0; font-style: italic">            -   `number_of_layers_to_offload_to_gpu` (int): The number of </span>
-</span><span id="__span-0-317"><a id="__codelineno-0-317" name="__codelineno-0-317"></a><span style="color: #4070a0; font-style: italic">                layers to offload to the GPU, defaults to `0`.</span>
-</span><span id="__span-0-318"><a id="__codelineno-0-318" name="__codelineno-0-318"></a>
-</span><span id="__span-0-319"><a id="__codelineno-0-319" name="__codelineno-0-319"></a><span style="color: #4070a0; font-style: italic">            - ` temperature` (float): The temperature for the model, </span>
-</span><span id="__span-0-320"><a id="__codelineno-0-320" name="__codelineno-0-320"></a><span style="color: #4070a0; font-style: italic">                defaults to `0.5`.</span>
-</span><span id="__span-0-321"><a id="__codelineno-0-321" name="__codelineno-0-321"></a>
-</span><span id="__span-0-322"><a id="__codelineno-0-322" name="__codelineno-0-322"></a><span style="color: #4070a0; font-style: italic">            -   `maximum_tokens_to_predict` (int): The maximum number of </span>
-</span><span id="__span-0-323"><a id="__codelineno-0-323" name="__codelineno-0-323"></a><span style="color: #4070a0; font-style: italic">                tokens to predict, defaults to `10000`.</span>
-</span><span id="__span-0-324"><a id="__codelineno-0-324" name="__codelineno-0-324"></a>
-</span><span id="__span-0-325"><a id="__codelineno-0-325" name="__codelineno-0-325"></a><span style="color: #4070a0; font-style: italic">            -   `top_p` (float): The top-p value for the model, </span>
-</span><span id="__span-0-326"><a id="__codelineno-0-326" name="__codelineno-0-326"></a><span style="color: #4070a0; font-style: italic">                defaults to `0.9`.</span>
-</span><span id="__span-0-327"><a id="__codelineno-0-327" name="__codelineno-0-327"></a>
-</span><span id="__span-0-328"><a id="__codelineno-0-328" name="__codelineno-0-328"></a><span style="color: #4070a0; font-style: italic">            -   `top_k` (int): The top-k value for the model, </span>
-</span><span id="__span-0-329"><a id="__codelineno-0-329" name="__codelineno-0-329"></a><span style="color: #4070a0; font-style: italic">                defaults to `40`.</span>
-</span><span id="__span-0-330"><a id="__codelineno-0-330" name="__codelineno-0-330"></a>
-</span><span id="__span-0-331"><a id="__codelineno-0-331" name="__codelineno-0-331"></a><span style="color: #4070a0; font-style: italic">            -   `num_slots` (int): The number of slots for the model, </span>
-</span><span id="__span-0-332"><a id="__codelineno-0-332" name="__codelineno-0-332"></a><span style="color: #4070a0; font-style: italic">                defaults to `1`.</span>
-</span><span id="__span-0-333"><a id="__codelineno-0-333" name="__codelineno-0-333"></a>
-</span><span id="__span-0-334"><a id="__codelineno-0-334" name="__codelineno-0-334"></a>
-</span><span id="__span-0-335"><a id="__codelineno-0-335" name="__codelineno-0-335"></a><span style="color: #4070a0; font-style: italic">        For all these keys, if not provided in the configuration dictionary, </span>
-</span><span id="__span-0-336"><a id="__codelineno-0-336" name="__codelineno-0-336"></a><span style="color: #4070a0; font-style: italic">        botex will try to get the value from environment variables (in all </span>
-</span><span id="__span-0-337"><a id="__codelineno-0-337" name="__codelineno-0-337"></a><span style="color: #4070a0; font-style: italic">        capital letters, prefixed by LLAMACPP_); if that is not possible, it </span>
-</span><span id="__span-0-338"><a id="__codelineno-0-338" name="__codelineno-0-338"></a><span style="color: #4070a0; font-style: italic">        will use the default value.</span>
+</span><span id="__span-0-316"><a id="__codelineno-0-316" name="__codelineno-0-316"></a><span style="color: #4070a0; font-style: italic">            -   `context_length` (int): The context length for the model. </span>
+</span><span id="__span-0-317"><a id="__codelineno-0-317" name="__codelineno-0-317"></a><span style="color: #4070a0; font-style: italic">                If `None`, BotEx will try to get the context length from the </span>
+</span><span id="__span-0-318"><a id="__codelineno-0-318" name="__codelineno-0-318"></a><span style="color: #4070a0; font-style: italic">                local model metadata; if that is not possible, it defaults </span>
+</span><span id="__span-0-319"><a id="__codelineno-0-319" name="__codelineno-0-319"></a><span style="color: #4070a0; font-style: italic">                to `4096`.</span>
+</span><span id="__span-0-320"><a id="__codelineno-0-320" name="__codelineno-0-320"></a>
+</span><span id="__span-0-321"><a id="__codelineno-0-321" name="__codelineno-0-321"></a><span style="color: #4070a0; font-style: italic">            -   `number_of_layers_to_offload_to_gpu` (int): The number of </span>
+</span><span id="__span-0-322"><a id="__codelineno-0-322" name="__codelineno-0-322"></a><span style="color: #4070a0; font-style: italic">                layers to offload to the GPU, defaults to `0`.</span>
+</span><span id="__span-0-323"><a id="__codelineno-0-323" name="__codelineno-0-323"></a>
+</span><span id="__span-0-324"><a id="__codelineno-0-324" name="__codelineno-0-324"></a><span style="color: #4070a0; font-style: italic">            - ` temperature` (float): The temperature for the model, </span>
+</span><span id="__span-0-325"><a id="__codelineno-0-325" name="__codelineno-0-325"></a><span style="color: #4070a0; font-style: italic">                defaults to `0.5`.</span>
+</span><span id="__span-0-326"><a id="__codelineno-0-326" name="__codelineno-0-326"></a>
+</span><span id="__span-0-327"><a id="__codelineno-0-327" name="__codelineno-0-327"></a><span style="color: #4070a0; font-style: italic">            -   `maximum_tokens_to_predict` (int): The maximum number of </span>
+</span><span id="__span-0-328"><a id="__codelineno-0-328" name="__codelineno-0-328"></a><span style="color: #4070a0; font-style: italic">                tokens to predict, defaults to `10000`.</span>
+</span><span id="__span-0-329"><a id="__codelineno-0-329" name="__codelineno-0-329"></a>
+</span><span id="__span-0-330"><a id="__codelineno-0-330" name="__codelineno-0-330"></a><span style="color: #4070a0; font-style: italic">            -   `top_p` (float): The top-p value for the model, </span>
+</span><span id="__span-0-331"><a id="__codelineno-0-331" name="__codelineno-0-331"></a><span style="color: #4070a0; font-style: italic">                defaults to `0.9`.</span>
+</span><span id="__span-0-332"><a id="__codelineno-0-332" name="__codelineno-0-332"></a>
+</span><span id="__span-0-333"><a id="__codelineno-0-333" name="__codelineno-0-333"></a><span style="color: #4070a0; font-style: italic">            -   `top_k` (int): The top-k value for the model, </span>
+</span><span id="__span-0-334"><a id="__codelineno-0-334" name="__codelineno-0-334"></a><span style="color: #4070a0; font-style: italic">                defaults to `40`.</span>
+</span><span id="__span-0-335"><a id="__codelineno-0-335" name="__codelineno-0-335"></a>
+</span><span id="__span-0-336"><a id="__codelineno-0-336" name="__codelineno-0-336"></a><span style="color: #4070a0; font-style: italic">            -   `num_slots` (int): The number of slots for the model, </span>
+</span><span id="__span-0-337"><a id="__codelineno-0-337" name="__codelineno-0-337"></a><span style="color: #4070a0; font-style: italic">                defaults to `1`.</span>
+</span><span id="__span-0-338"><a id="__codelineno-0-338" name="__codelineno-0-338"></a>
 </span><span id="__span-0-339"><a id="__codelineno-0-339" name="__codelineno-0-339"></a>
-</span><span id="__span-0-340"><a id="__codelineno-0-340" name="__codelineno-0-340"></a>
-</span><span id="__span-0-341"><a id="__codelineno-0-341" name="__codelineno-0-341"></a><span style="color: #4070a0; font-style: italic">    ??? example &quot;Example&quot;</span>
-</span><span id="__span-0-342"><a id="__codelineno-0-342" name="__codelineno-0-342"></a><span style="color: #4070a0; font-style: italic">        ```python</span>
-</span><span id="__span-0-343"><a id="__codelineno-0-343" name="__codelineno-0-343"></a><span style="color: #4070a0; font-style: italic">        from botex.llamacpp import start_llamacpp_server</span>
+</span><span id="__span-0-340"><a id="__codelineno-0-340" name="__codelineno-0-340"></a><span style="color: #4070a0; font-style: italic">        For all these keys, if not provided in the configuration dictionary, </span>
+</span><span id="__span-0-341"><a id="__codelineno-0-341" name="__codelineno-0-341"></a><span style="color: #4070a0; font-style: italic">        botex will try to get the value from environment variables (in all </span>
+</span><span id="__span-0-342"><a id="__codelineno-0-342" name="__codelineno-0-342"></a><span style="color: #4070a0; font-style: italic">        capital letters, prefixed by LLAMACPP_); if that is not possible, it </span>
+</span><span id="__span-0-343"><a id="__codelineno-0-343" name="__codelineno-0-343"></a><span style="color: #4070a0; font-style: italic">        will use the default value.</span>
 </span><span id="__span-0-344"><a id="__codelineno-0-344" name="__codelineno-0-344"></a>
-</span><span id="__span-0-345"><a id="__codelineno-0-345" name="__codelineno-0-345"></a><span style="color: #4070a0; font-style: italic">        config = {</span>
-</span><span id="__span-0-346"><a id="__codelineno-0-346" name="__codelineno-0-346"></a><span style="color: #4070a0; font-style: italic">            &quot;server_path&quot;: &quot;/path/to/llama.cpp&quot;,</span>
-</span><span id="__span-0-347"><a id="__codelineno-0-347" name="__codelineno-0-347"></a><span style="color: #4070a0; font-style: italic">            &quot;local_llm_path&quot;: &quot;/path/to/local/model&quot;,</span>
-</span><span id="__span-0-348"><a id="__codelineno-0-348" name="__codelineno-0-348"></a><span style="color: #4070a0; font-style: italic">            &quot;server_url&quot;: &quot;http://localhost:8080&quot;,</span>
-</span><span id="__span-0-349"><a id="__codelineno-0-349" name="__codelineno-0-349"></a><span style="color: #4070a0; font-style: italic">            &quot;context_length&quot;: 4096,</span>
-</span><span id="__span-0-350"><a id="__codelineno-0-350" name="__codelineno-0-350"></a><span style="color: #4070a0; font-style: italic">            &quot;number_of_layers_to_offload_to_gpu&quot;: 0,</span>
-</span><span id="__span-0-351"><a id="__codelineno-0-351" name="__codelineno-0-351"></a><span style="color: #4070a0; font-style: italic">            &quot;temperature&quot;: 0.8,</span>
-</span><span id="__span-0-352"><a id="__codelineno-0-352" name="__codelineno-0-352"></a><span style="color: #4070a0; font-style: italic">            &quot;maximum_tokens_to_predict&quot;: 10000,</span>
-</span><span id="__span-0-353"><a id="__codelineno-0-353" name="__codelineno-0-353"></a><span style="color: #4070a0; font-style: italic">            &quot;top_p&quot;: 0.9,</span>
-</span><span id="__span-0-354"><a id="__codelineno-0-354" name="__codelineno-0-354"></a><span style="color: #4070a0; font-style: italic">            &quot;top_k&quot;: 40,</span>
-</span><span id="__span-0-355"><a id="__codelineno-0-355" name="__codelineno-0-355"></a><span style="color: #4070a0; font-style: italic">            &quot;num_slots&quot;: 1</span>
-</span><span id="__span-0-356"><a id="__codelineno-0-356" name="__codelineno-0-356"></a><span style="color: #4070a0; font-style: italic">        }</span>
-</span><span id="__span-0-357"><a id="__codelineno-0-357" name="__codelineno-0-357"></a><span style="color: #4070a0; font-style: italic">        ```</span>
-</span><span id="__span-0-358"><a id="__codelineno-0-358" name="__codelineno-0-358"></a><span style="color: #4070a0; font-style: italic">    &quot;&quot;&quot;</span>
-</span><span id="__span-0-359"><a id="__codelineno-0-359" name="__codelineno-0-359"></a>    manager <span style="color: #666666">=</span> LlamaCppServerManager(config)
-</span><span id="__span-0-360"><a id="__codelineno-0-360" name="__codelineno-0-360"></a>    <span style="color: #007020; font-weight: bold">return</span> manager<span style="color: #666666">.</span>start_server()
+</span><span id="__span-0-345"><a id="__codelineno-0-345" name="__codelineno-0-345"></a>
+</span><span id="__span-0-346"><a id="__codelineno-0-346" name="__codelineno-0-346"></a><span style="color: #4070a0; font-style: italic">    ??? example &quot;Example&quot;</span>
+</span><span id="__span-0-347"><a id="__codelineno-0-347" name="__codelineno-0-347"></a><span style="color: #4070a0; font-style: italic">        ```python</span>
+</span><span id="__span-0-348"><a id="__codelineno-0-348" name="__codelineno-0-348"></a><span style="color: #4070a0; font-style: italic">        from botex.llamacpp import start_llamacpp_server</span>
+</span><span id="__span-0-349"><a id="__codelineno-0-349" name="__codelineno-0-349"></a>
+</span><span id="__span-0-350"><a id="__codelineno-0-350" name="__codelineno-0-350"></a><span style="color: #4070a0; font-style: italic">        config = {</span>
+</span><span id="__span-0-351"><a id="__codelineno-0-351" name="__codelineno-0-351"></a><span style="color: #4070a0; font-style: italic">            &quot;server_path&quot;: &quot;/path/to/llama.cpp&quot;,</span>
+</span><span id="__span-0-352"><a id="__codelineno-0-352" name="__codelineno-0-352"></a><span style="color: #4070a0; font-style: italic">            &quot;local_llm_path&quot;: &quot;/path/to/local/model&quot;,</span>
+</span><span id="__span-0-353"><a id="__codelineno-0-353" name="__codelineno-0-353"></a><span style="color: #4070a0; font-style: italic">            &quot;server_url&quot;: &quot;http://localhost:8080&quot;,</span>
+</span><span id="__span-0-354"><a id="__codelineno-0-354" name="__codelineno-0-354"></a><span style="color: #4070a0; font-style: italic">            &quot;context_length&quot;: 4096,</span>
+</span><span id="__span-0-355"><a id="__codelineno-0-355" name="__codelineno-0-355"></a><span style="color: #4070a0; font-style: italic">            &quot;number_of_layers_to_offload_to_gpu&quot;: 0,</span>
+</span><span id="__span-0-356"><a id="__codelineno-0-356" name="__codelineno-0-356"></a><span style="color: #4070a0; font-style: italic">            &quot;temperature&quot;: 0.8,</span>
+</span><span id="__span-0-357"><a id="__codelineno-0-357" name="__codelineno-0-357"></a><span style="color: #4070a0; font-style: italic">            &quot;maximum_tokens_to_predict&quot;: 10000,</span>
+</span><span id="__span-0-358"><a id="__codelineno-0-358" name="__codelineno-0-358"></a><span style="color: #4070a0; font-style: italic">            &quot;top_p&quot;: 0.9,</span>
+</span><span id="__span-0-359"><a id="__codelineno-0-359" name="__codelineno-0-359"></a><span style="color: #4070a0; font-style: italic">            &quot;top_k&quot;: 40,</span>
+</span><span id="__span-0-360"><a id="__codelineno-0-360" name="__codelineno-0-360"></a><span style="color: #4070a0; font-style: italic">            &quot;num_slots&quot;: 1</span>
+</span><span id="__span-0-361"><a id="__codelineno-0-361" name="__codelineno-0-361"></a><span style="color: #4070a0; font-style: italic">        }</span>
+</span><span id="__span-0-362"><a id="__codelineno-0-362" name="__codelineno-0-362"></a><span style="color: #4070a0; font-style: italic">        ```</span>
+</span><span id="__span-0-363"><a id="__codelineno-0-363" name="__codelineno-0-363"></a><span style="color: #4070a0; font-style: italic">    &quot;&quot;&quot;</span>
+</span><span id="__span-0-364"><a id="__codelineno-0-364" name="__codelineno-0-364"></a>    manager <span style="color: #666666">=</span> LlamaCppServerManager(config)
+</span><span id="__span-0-365"><a id="__codelineno-0-365" name="__codelineno-0-365"></a>    <span style="color: #007020; font-weight: bold">return</span> manager<span style="color: #666666">.</span>start_server()
 </span></code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -1367,27 +1349,27 @@ will use the default value.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/botex/llamacpp.py</code></summary>
-              <div class="language-python highlight" style="background: #f0f0f0"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-362">362</a></span>
-<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-363">363</a></span>
-<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-364">364</a></span>
-<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-365">365</a></span>
-<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-366">366</a></span>
-<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-367">367</a></span>
+              <div class="language-python highlight" style="background: #f0f0f0"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-367">367</a></span>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-368">368</a></span>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-369">369</a></span>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-370">370</a></span>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-371">371</a></span>
-<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-372">372</a></span></pre></div></td><td class="code"><div><pre style="line-height: 125%;"><span></span><code><span id="__span-0-362"><a id="__codelineno-0-362" name="__codelineno-0-362"></a><span style="color: #007020; font-weight: bold">def</span> <span style="color: #06287e">stop_llamacpp_server</span>(process: subprocess<span style="color: #666666">.</span>Popen) <span style="color: #666666">-&gt;</span> <span style="color: #007020; font-weight: bold">None</span>:
-</span><span id="__span-0-363"><a id="__codelineno-0-363" name="__codelineno-0-363"></a><span style="color: #bbbbbb">    </span><span style="color: #4070a0; font-style: italic">&quot;&quot;&quot;</span>
-</span><span id="__span-0-364"><a id="__codelineno-0-364" name="__codelineno-0-364"></a><span style="color: #4070a0; font-style: italic">    Stops a running llama.cpp server instance.</span>
-</span><span id="__span-0-365"><a id="__codelineno-0-365" name="__codelineno-0-365"></a>
-</span><span id="__span-0-366"><a id="__codelineno-0-366" name="__codelineno-0-366"></a><span style="color: #4070a0; font-style: italic">    Args:</span>
-</span><span id="__span-0-367"><a id="__codelineno-0-367" name="__codelineno-0-367"></a><span style="color: #4070a0; font-style: italic">        process (subprocess.Popen): The process of the running llama.cpp server.</span>
-</span><span id="__span-0-368"><a id="__codelineno-0-368" name="__codelineno-0-368"></a>
-</span><span id="__span-0-369"><a id="__codelineno-0-369" name="__codelineno-0-369"></a><span style="color: #4070a0; font-style: italic">    Returns:</span>
-</span><span id="__span-0-370"><a id="__codelineno-0-370" name="__codelineno-0-370"></a><span style="color: #4070a0; font-style: italic">        None (stops the running llama.cpp server)</span>
-</span><span id="__span-0-371"><a id="__codelineno-0-371" name="__codelineno-0-371"></a><span style="color: #4070a0; font-style: italic">    &quot;&quot;&quot;</span>
-</span><span id="__span-0-372"><a id="__codelineno-0-372" name="__codelineno-0-372"></a>    LlamaCppServerManager<span style="color: #666666">.</span>stop_server(process)
+<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-372">372</a></span>
+<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-373">373</a></span>
+<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-374">374</a></span>
+<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-375">375</a></span>
+<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-376">376</a></span>
+<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-377">377</a></span></pre></div></td><td class="code"><div><pre style="line-height: 125%;"><span></span><code><span id="__span-0-367"><a id="__codelineno-0-367" name="__codelineno-0-367"></a><span style="color: #007020; font-weight: bold">def</span> <span style="color: #06287e">stop_llamacpp_server</span>(process: subprocess<span style="color: #666666">.</span>Popen) <span style="color: #666666">-&gt;</span> <span style="color: #007020; font-weight: bold">None</span>:
+</span><span id="__span-0-368"><a id="__codelineno-0-368" name="__codelineno-0-368"></a><span style="color: #bbbbbb">    </span><span style="color: #4070a0; font-style: italic">&quot;&quot;&quot;</span>
+</span><span id="__span-0-369"><a id="__codelineno-0-369" name="__codelineno-0-369"></a><span style="color: #4070a0; font-style: italic">    Stops a running llama.cpp server instance.</span>
+</span><span id="__span-0-370"><a id="__codelineno-0-370" name="__codelineno-0-370"></a>
+</span><span id="__span-0-371"><a id="__codelineno-0-371" name="__codelineno-0-371"></a><span style="color: #4070a0; font-style: italic">    Args:</span>
+</span><span id="__span-0-372"><a id="__codelineno-0-372" name="__codelineno-0-372"></a><span style="color: #4070a0; font-style: italic">        process (subprocess.Popen): The process of the running llama.cpp server.</span>
+</span><span id="__span-0-373"><a id="__codelineno-0-373" name="__codelineno-0-373"></a>
+</span><span id="__span-0-374"><a id="__codelineno-0-374" name="__codelineno-0-374"></a><span style="color: #4070a0; font-style: italic">    Returns:</span>
+</span><span id="__span-0-375"><a id="__codelineno-0-375" name="__codelineno-0-375"></a><span style="color: #4070a0; font-style: italic">        None (stops the running llama.cpp server)</span>
+</span><span id="__span-0-376"><a id="__codelineno-0-376" name="__codelineno-0-376"></a><span style="color: #4070a0; font-style: italic">    &quot;&quot;&quot;</span>
+</span><span id="__span-0-377"><a id="__codelineno-0-377" name="__codelineno-0-377"></a>    LlamaCppServerManager<span style="color: #666666">.</span>stop_server(process)
 </span></code></pre></div></td></tr></table></div>
             </details>
     </div>
