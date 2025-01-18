@@ -23,6 +23,7 @@ See https://keepachangelog.com/en/1.0.0/ for a description of the changelog form
 - Prompting has been improved by streamlining language and adjusting it to the usage of structured outputs.
 - The API of the main functions has been standardized and moved closer to the API of LiteLLM.
 - `run_bots_on_session()` and `run_single_bot()` now return the resulting thread object(s) if `wait` is set to `False`.
+- botex now logs to its own logger.
 
 ### Fixed
 
