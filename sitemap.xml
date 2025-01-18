@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-         <loc>https://joachim-gassen.github.io/botex/index.html</loc>
+         <loc>https://botex.trr266.de/index.html</loc>
          <lastmod>2025-01-18</lastmod>
     </url>
     <url>
-         <loc>https://joachim-gassen.github.io/botex/getting_started.html</loc>
+         <loc>https://botex.trr266.de/getting_started.html</loc>
          <lastmod>2025-01-18</lastmod>
     </url>
     <url>
-         <loc>https://joachim-gassen.github.io/botex/reference.html</loc>
+         <loc>https://botex.trr266.de/reference.html</loc>
          <lastmod>2025-01-18</lastmod>
     </url>
     <url>
-         <loc>https://joachim-gassen.github.io/botex/tutorials/exp_3llms.html</loc>
+         <loc>https://botex.trr266.de/tutorials/exp_3llms.html</loc>
          <lastmod>2025-01-18</lastmod>
     </url>
     <url>
-         <loc>https://joachim-gassen.github.io/botex/tutorials/running_an_experiment.html</loc>
+         <loc>https://botex.trr266.de/tutorials/running_an_experiment.html</loc>
          <lastmod>2025-01-18</lastmod>
     </url>
 </urlset>
