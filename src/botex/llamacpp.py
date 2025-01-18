@@ -197,8 +197,15 @@ class LlamaCpp:
             res = response.json()
             if "model_path" in res:
                 self.local_llm_path = res['model_path']
-            else:
+            elif "model" in res['default_generation_settings']:
                 self.local_llm_path = res['default_generation_settings']['model']
+            else:
+                logger.warning(
+                    "Unable to determine the model path from the running llama" " server. Botex can function without the model path, but "
+                    "you should consider updating your llama.cpp."
+                )
+                self.local_llm_path = "unknown"
+
             self.context_length = res['default_generation_settings']['n_ctx']
             self.num_slots = res['total_slots']
             if 'n_predict' in res['default_generation_settings']:
