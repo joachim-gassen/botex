@@ -20,7 +20,7 @@ pip install botex
 The easiest way to get botex up and running is to use its [command line interface](reference.md#command-line-interface). It guides you through the process to start botex on a running oTree instance. To set oTree up, you can run the following in the same virtual environment that you set up botex in:
 
 ```bash
-pip install otree #you might observe a pip dependency error, but you can ignore it
+pip install otree # You might observe a pip dependency error, but you can ignore it
 otree startproject otree # Say yes for sample games
 cd otree 
 otree devserver
@@ -52,7 +52,7 @@ Available session configurations:
 Select a configuration by number: 
 ```
 
-We suggest that you choose the Guess two Thirds game.
+We suggest that you choose the Guess Two Thirds game.
 
 ```text
 Select a configuration by number: 1
@@ -80,7 +80,7 @@ The botex bots will now start to scrape their oTree participant pages and play t
 
 ![Session Monitor](assets/images/gstarted_otree_monitor.png)
 
-You see, the bots already made their first move and wait for you ('P2'). Time to act. Open the human URL in your browser and play the game. You will see the bots' moves in the session monitor as you progress. 
+You will see that the bots already made their first move and are waiting for you ('P2'). Time to act. Open the human URL in your browser and play the game. You will see the bots' moves in the session monitor as you progress. 
 
 ## Exporting botex Data
 
