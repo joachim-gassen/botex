@@ -775,7 +775,7 @@
 <li><strong>Export data</strong>: Functions to export data from the botex and oTree databases.</li>
 </ol>
 <h2 id="command-line-interface">Command Line Interface</h2>
-<p>The <code>botex</code> command line interface provides the option to set up and run oTree experiments with bots from the command line. It also allows the user to export data from both, the botex and the oTree databases.</p>
+<p>The <code>botex</code> command line interface provides the option to set up and run oTree experiments with bots from the command line. It also allows the user to export data from both the botex and the oTree database.</p>
 <h2 id="botex">botex</h2>
 <p>Run an oTree session with botex. All necessary arguments can be provided either
 as command line arguments, in the environment file referenced by the <code>-c</code>
@@ -841,7 +841,7 @@ argument, or as environment variables.</p>
 </span><span id="__span-1-55"><a id="__codelineno-1-55" name="__codelineno-1-55" href="#__codelineno-1-55"></a>  --help                       Show this message and exit.
 </span></code></pre></div>
 <h2 id="python-api-setup">Python API: Setup</h2>
-<p>The botex configuration can be provided via function parameters or by setting environment variables. The latter is useful for secrets like API keys and also makes handling the API easier if you run repeated experiments. This an be facilitated by calling the function <code>load_botex_env()</code> that reads an <code>.env</code> file (<code>botex.env</code> by default). For users that want to use local LLMs for inference, <code>botex</code>can also start and/or stop a local llama.cpp instance.</p>
+<p>The botex configuration can be provided via function parameters or by setting environment variables. The latter is useful for secrets like API keys and also makes handling the API easier if you run repeated experiments. This can be facilitated by calling the function <code>load_botex_env()</code> that reads an <code>.env</code> file (<code>botex.env</code> by default). For users who want to use local LLMs for inference, <code>botex</code> can also start and/or stop a local llama.cpp instance.</p>
 <h3 id="load_botex_env"><code>load_botex_env</code></h3>
 
 
@@ -4203,7 +4203,7 @@ The Thread running the bot if wait is False.</p>
     </div>
 
 </div><h2 id="python-api-export-data">Python API: Export data</h2>
-<p>Running oTree experiments with botex generates two data sources:</p>
+<p>Running oTree experiments with botex generates two databases:</p>
 <ol>
 <li>The 'normal' experiment data that oTree collects.</li>
 <li>Additional data that botex collects, such as the prompting sequence between botex and the bots, as well as the answers and the reasoning behind the answers that the LLM bots provide.</li>

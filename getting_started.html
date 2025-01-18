@@ -619,7 +619,7 @@
 </span></code></pre></div>
 <h2 id="install-otree">Install oTree</h2>
 <p>The easiest way to get botex up and running is to use its <a href="reference.html#command-line-interface">command line interface</a>. It guides you through the process to start botex on a running oTree instance. To set oTree up, you can run the following in the same virtual environment that you set up botex in:</p>
-<div class="language-bash highlight" style="background: #f0f0f0"><pre style="line-height: 125%;"><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>pip<span style="color: #bbbbbb"> </span>install<span style="color: #bbbbbb"> </span>otree<span style="color: #bbbbbb"> </span><span style="color: #60a0b0; font-style: italic">#you might observe a pip dependency error, but you can ignore it</span>
+<div class="language-bash highlight" style="background: #f0f0f0"><pre style="line-height: 125%;"><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>pip<span style="color: #bbbbbb"> </span>install<span style="color: #bbbbbb"> </span>otree<span style="color: #bbbbbb"> </span><span style="color: #60a0b0; font-style: italic"># You might observe a pip dependency error, but you can ignore it</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>otree<span style="color: #bbbbbb"> </span>startproject<span style="color: #bbbbbb"> </span>otree<span style="color: #bbbbbb"> </span><span style="color: #60a0b0; font-style: italic"># Say yes for sample games</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span style="color: #007020">cd</span><span style="color: #bbbbbb"> </span>otree<span style="color: #bbbbbb"> </span>
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>otree<span style="color: #bbbbbb"> </span>devserver
@@ -643,7 +643,7 @@ Then start the botex command line interface by running <code>botex</code>. You s
 </span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>2: survey
 </span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>Select a configuration by number: 
 </span></code></pre></div>
-<p>We suggest that you choose the Guess two Thirds game.</p>
+<p>We suggest that you choose the Guess Two Thirds game.</p>
 <div class="language-text highlight" style="background: #f0f0f0"><pre style="line-height: 125%;"><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>Select a configuration by number: 1
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>Selected session configuration: guess_two_thirds
@@ -662,7 +662,7 @@ Then start the botex command line interface by running <code>botex</code>. You s
 <h2 id="running-the-experiment">Running the Experiment</h2>
 <p>The botex bots will now start to scrape their oTree participant pages and play the game. You can monitor their progress by opening the session monitor URL in your browser. You should see something like this:</p>
 <p><img alt="Session Monitor" src="assets/images/gstarted_otree_monitor.png" /></p>
-<p>You see, the bots already made their first move and wait for you ('P2'). Time to act. Open the human URL in your browser and play the game. You will see the bots' moves in the session monitor as you progress. </p>
+<p>You will see that the bots already made their first move and are waiting for you ('P2'). Time to act. Open the human URL in your browser and play the game. You will see the bots' moves in the session monitor as you progress. </p>
 <h2 id="exporting-botex-data">Exporting botex Data</h2>
 <p>After you and the bots have completed the game, you can download the oTree data by using the oTree web frontend just like you would for a 'normal' experiment. In addition, the app asks whether you want to export the botex data. We suggest that you do, providing a file name to save the LLM response data in the current working directory.</p>
 <div class="language-text highlight" style="background: #f0f0f0"><pre style="line-height: 125%;"><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>Session complete.
