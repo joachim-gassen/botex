@@ -173,3 +173,17 @@ If something goes wrong, you can repeat the test with logging (`pytest -o log_cl
 You see that it also contains some questions and answers. They are also accessible in `test/questions_and_answers.csv` after the run and were given by two bot instances in the oTree test survey `test/otree` during testing. The survey is designed to test the usage of standard oTree forms, buttons and wait pages in a session with interacting participants.
 
 The costs of running the test on OpenAI using the "gpt-4o" model are roughly 0.10 US-$.
+
+### Building the Documentation
+
+We use `mike` to build versioned documentation. The idea is that we update the minor version of the package whenever the user facing API of the package changes. This is the workflow for updating the documentation:
+
+```bash
+mike deploy 0.2 latest
+mike serve 
+# See whether you like what you see
+git push origin gh-pages
+# to push the changes to GitHub pages
+```
+
+After that, the documentation should be available at `https://botex.trr266.de`. The default is set to `latest`.

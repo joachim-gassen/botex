@@ -70,11 +70,14 @@ plugins:
     - mkdocstrings
     - privacy
     - social
+    - mike
 use_directory_urls: false
 extra:
   analytics:
     provider: google
     property: G-G220WZ1YW7
+  version:
+    provider: mike
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/joachim-gassen/botex
