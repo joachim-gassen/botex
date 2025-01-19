@@ -753,34 +753,10 @@ in the the oTree session config. Default is None. </p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>dict with the keys 'session_id', 'participant_code', 'is_human', </p>
-              </div>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>'bot_urls', and 'human_urls' containing the session ID, participant </p>
-              </div>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>codes, human indicators, and the URLs for the human and bot </p>
-              </div>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>participants.</p>
+                <p>dict with the keys 'session_id', 'participant_code', 'is_human', 
+'bot_urls', and 'human_urls' containing the session ID, participant 
+codes, human indicators, and the URLs for the human and bot 
+participants.</p>
               </div>
             </td>
           </tr>
@@ -937,9 +913,9 @@ in the the oTree session config. Default is None. </p>
 </span><span id="__span-0-91"><a id="__codelineno-0-91" name="__codelineno-0-91"></a>
 </span><span id="__span-0-92"><a id="__codelineno-0-92" name="__codelineno-0-92"></a><span style="color: #4070a0; font-style: italic">    Returns:</span>
 </span><span id="__span-0-93"><a id="__codelineno-0-93" name="__codelineno-0-93"></a><span style="color: #4070a0; font-style: italic">        dict with the keys &#39;session_id&#39;, &#39;participant_code&#39;, &#39;is_human&#39;, </span>
-</span><span id="__span-0-94"><a id="__codelineno-0-94" name="__codelineno-0-94"></a><span style="color: #4070a0; font-style: italic">        &#39;bot_urls&#39;, and &#39;human_urls&#39; containing the session ID, participant </span>
-</span><span id="__span-0-95"><a id="__codelineno-0-95" name="__codelineno-0-95"></a><span style="color: #4070a0; font-style: italic">        codes, human indicators, and the URLs for the human and bot </span>
-</span><span id="__span-0-96"><a id="__codelineno-0-96" name="__codelineno-0-96"></a><span style="color: #4070a0; font-style: italic">        participants.</span>
+</span><span id="__span-0-94"><a id="__codelineno-0-94" name="__codelineno-0-94"></a><span style="color: #4070a0; font-style: italic">            &#39;bot_urls&#39;, and &#39;human_urls&#39; containing the session ID, participant </span>
+</span><span id="__span-0-95"><a id="__codelineno-0-95" name="__codelineno-0-95"></a><span style="color: #4070a0; font-style: italic">            codes, human indicators, and the URLs for the human and bot </span>
+</span><span id="__span-0-96"><a id="__codelineno-0-96" name="__codelineno-0-96"></a><span style="color: #4070a0; font-style: italic">            participants.</span>
 </span><span id="__span-0-97"><a id="__codelineno-0-97" name="__codelineno-0-97"></a><span style="color: #4070a0; font-style: italic">    &quot;&quot;&quot;</span>
 </span><span id="__span-0-98"><a id="__codelineno-0-98" name="__codelineno-0-98"></a>
 </span><span id="__span-0-99"><a id="__codelineno-0-99" name="__codelineno-0-99"></a>    <span style="color: #007020; font-weight: bold">def</span> <span style="color: #06287e">call_api</span>(method, <span style="color: #666666">*</span>path_parts, <span style="color: #666666">**</span>params) <span style="color: #666666">-&gt;</span> <span style="color: #007020">dict</span>:
@@ -1206,7 +1182,7 @@ environment variable BOTEX_DB.</p>
           </tr>
           <tr class="doc-section-item">
             <td>
-                <code>bots_urls</code>
+                <code>bot_urls</code>
             </td>
             <td>
                   <code>list</code>
@@ -1218,12 +1194,12 @@ Will be retrieved from the database if None (the default).</p>
               </div>
             </td>
             <td>
-                <em>required</em>
+                  <code>None</code>
             </td>
           </tr>
           <tr class="doc-section-item">
             <td>
-                <code>bot_db</code>
+                <code>botex_db</code>
             </td>
             <td>
                   <code>str</code>
@@ -1236,7 +1212,7 @@ variable BOTEX_DB.</p>
               </div>
             </td>
             <td>
-                <em>required</em>
+                  <code>None</code>
             </td>
           </tr>
           <tr class="doc-section-item">
@@ -1507,9 +1483,9 @@ running to make sure that the user is aware of the issue.</p>
 </span><span id="__span-0-215"><a id="__codelineno-0-215" name="__codelineno-0-215"></a>
 </span><span id="__span-0-216"><a id="__codelineno-0-216" name="__codelineno-0-216"></a><span style="color: #4070a0; font-style: italic">    Args:</span>
 </span><span id="__span-0-217"><a id="__codelineno-0-217" name="__codelineno-0-217"></a><span style="color: #4070a0; font-style: italic">        session_id (str): The ID of the oTree session.</span>
-</span><span id="__span-0-218"><a id="__codelineno-0-218" name="__codelineno-0-218"></a><span style="color: #4070a0; font-style: italic">        bots_urls (list): A list of URLs for the bot participants.</span>
+</span><span id="__span-0-218"><a id="__codelineno-0-218" name="__codelineno-0-218"></a><span style="color: #4070a0; font-style: italic">        bot_urls (list): A list of URLs for the bot participants.</span>
 </span><span id="__span-0-219"><a id="__codelineno-0-219" name="__codelineno-0-219"></a><span style="color: #4070a0; font-style: italic">            Will be retrieved from the database if None (the default).</span>
-</span><span id="__span-0-220"><a id="__codelineno-0-220" name="__codelineno-0-220"></a><span style="color: #4070a0; font-style: italic">        bot_db (str): The name of the SQLite database file for BotEx data.</span>
+</span><span id="__span-0-220"><a id="__codelineno-0-220" name="__codelineno-0-220"></a><span style="color: #4070a0; font-style: italic">        botex_db (str): The name of the SQLite database file for BotEx data.</span>
 </span><span id="__span-0-221"><a id="__codelineno-0-221" name="__codelineno-0-221"></a><span style="color: #4070a0; font-style: italic">            If None (the default), it will be obtained from the environment </span>
 </span><span id="__span-0-222"><a id="__codelineno-0-222" name="__codelineno-0-222"></a><span style="color: #4070a0; font-style: italic">            variable BOTEX_DB.</span>
 </span><span id="__span-0-223"><a id="__codelineno-0-223" name="__codelineno-0-223"></a><span style="color: #4070a0; font-style: italic">        full_conv_history (bool): Whether to keep the full conversation history.</span>
