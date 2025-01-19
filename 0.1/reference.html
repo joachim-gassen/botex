@@ -750,6 +750,7 @@ in the the oTree session config. Default is None. </p>
       <tbody>
           <tr class="doc-section-item">
             <td>
+                  <code>dict</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -884,7 +885,7 @@ participants.</p>
 </span><span id="__span-0-62"><a id="__codelineno-0-62" name="__codelineno-0-62"></a>        otree_server_url <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span>,
 </span><span id="__span-0-63"><a id="__codelineno-0-63" name="__codelineno-0-63"></a>        otree_rest_key <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span>,
 </span><span id="__span-0-64"><a id="__codelineno-0-64" name="__codelineno-0-64"></a>        modified_session_config_fields <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span>,
-</span><span id="__span-0-65"><a id="__codelineno-0-65" name="__codelineno-0-65"></a>    ):
+</span><span id="__span-0-65"><a id="__codelineno-0-65" name="__codelineno-0-65"></a>    ) <span style="color: #666666">-&gt;</span> <span style="color: #007020">dict</span>:
 </span><span id="__span-0-66"><a id="__codelineno-0-66" name="__codelineno-0-66"></a><span style="color: #bbbbbb">    </span><span style="color: #4070a0; font-style: italic">&quot;&quot;&quot;</span>
 </span><span id="__span-0-67"><a id="__codelineno-0-67" name="__codelineno-0-67"></a><span style="color: #4070a0; font-style: italic">    Initialize an oTree session with a given number of participants.</span>
 </span><span id="__span-0-68"><a id="__codelineno-0-68" name="__codelineno-0-68"></a>
@@ -1065,6 +1066,7 @@ environment variable BOTEX_DB.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
+                  <code>list</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -1106,36 +1108,40 @@ environment variable BOTEX_DB.</p>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-197">197</a></span>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-198">198</a></span>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-199">199</a></span>
-<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-200">200</a></span></pre></div></td><td class="code"><div><pre style="line-height: 125%;"><span></span><code><span id="__span-0-171"><a id="__codelineno-0-171" name="__codelineno-0-171"></a><span style="color: #007020; font-weight: bold">def</span> <span style="color: #06287e">get_bot_urls</span>(session_id, botex_db <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span>, already_started <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">False</span>):
-</span><span id="__span-0-172"><a id="__codelineno-0-172" name="__codelineno-0-172"></a><span style="color: #bbbbbb">    </span><span style="color: #4070a0; font-style: italic">&quot;&quot;&quot;</span>
-</span><span id="__span-0-173"><a id="__codelineno-0-173" name="__codelineno-0-173"></a><span style="color: #4070a0; font-style: italic">    Get the URLs for the bot participants in an oTree session.</span>
-</span><span id="__span-0-174"><a id="__codelineno-0-174" name="__codelineno-0-174"></a>
-</span><span id="__span-0-175"><a id="__codelineno-0-175" name="__codelineno-0-175"></a><span style="color: #4070a0; font-style: italic">    Args:</span>
-</span><span id="__span-0-176"><a id="__codelineno-0-176" name="__codelineno-0-176"></a><span style="color: #4070a0; font-style: italic">        session_id (str): The ID of the oTree session.</span>
-</span><span id="__span-0-177"><a id="__codelineno-0-177" name="__codelineno-0-177"></a><span style="color: #4070a0; font-style: italic">        botex_db (str): The name of the SQLite database file to store BotEx </span>
-</span><span id="__span-0-178"><a id="__codelineno-0-178" name="__codelineno-0-178"></a><span style="color: #4070a0; font-style: italic">            data. If None (the default), it will be obtained from the </span>
-</span><span id="__span-0-179"><a id="__codelineno-0-179" name="__codelineno-0-179"></a><span style="color: #4070a0; font-style: italic">            environment variable BOTEX_DB.</span>
-</span><span id="__span-0-180"><a id="__codelineno-0-180" name="__codelineno-0-180"></a>
-</span><span id="__span-0-181"><a id="__codelineno-0-181" name="__codelineno-0-181"></a><span style="color: #4070a0; font-style: italic">    Returns:</span>
-</span><span id="__span-0-182"><a id="__codelineno-0-182" name="__codelineno-0-182"></a><span style="color: #4070a0; font-style: italic">        List of URLs for the bot participants.</span>
-</span><span id="__span-0-183"><a id="__codelineno-0-183" name="__codelineno-0-183"></a><span style="color: #4070a0; font-style: italic">    &quot;&quot;&quot;</span>
-</span><span id="__span-0-184"><a id="__codelineno-0-184" name="__codelineno-0-184"></a>
-</span><span id="__span-0-185"><a id="__codelineno-0-185" name="__codelineno-0-185"></a>    <span style="color: #007020; font-weight: bold">if</span> botex_db <span style="color: #007020; font-weight: bold">is</span> <span style="color: #007020; font-weight: bold">None</span>: botex_db <span style="color: #666666">=</span> environ<span style="color: #666666">.</span>get(<span style="color: #4070a0">&#39;BOTEX_DB&#39;</span>)
-</span><span id="__span-0-186"><a id="__codelineno-0-186" name="__codelineno-0-186"></a>    conn <span style="color: #666666">=</span> sqlite3<span style="color: #666666">.</span>connect(botex_db)
-</span><span id="__span-0-187"><a id="__codelineno-0-187" name="__codelineno-0-187"></a>    cursor <span style="color: #666666">=</span> conn<span style="color: #666666">.</span>cursor()
-</span><span id="__span-0-188"><a id="__codelineno-0-188" name="__codelineno-0-188"></a>    cursor<span style="color: #666666">.</span>execute(
-</span><span id="__span-0-189"><a id="__codelineno-0-189" name="__codelineno-0-189"></a><span style="color: #bbbbbb">        </span><span style="color: #4070a0; font-style: italic">&quot;&quot;&quot;</span>
-</span><span id="__span-0-190"><a id="__codelineno-0-190" name="__codelineno-0-190"></a><span style="color: #4070a0; font-style: italic">        SELECT url,time_in,time_out FROM participants </span>
-</span><span id="__span-0-191"><a id="__codelineno-0-191" name="__codelineno-0-191"></a><span style="color: #4070a0; font-style: italic">        WHERE session_id = ? AND is_human = 0</span>
-</span><span id="__span-0-192"><a id="__codelineno-0-192" name="__codelineno-0-192"></a><span style="color: #4070a0; font-style: italic">        &quot;&quot;&quot;</span>, (session_id,)
-</span><span id="__span-0-193"><a id="__codelineno-0-193" name="__codelineno-0-193"></a>    )
-</span><span id="__span-0-194"><a id="__codelineno-0-194" name="__codelineno-0-194"></a>    <span style="color: #007020; font-weight: bold">if</span> already_started:
-</span><span id="__span-0-195"><a id="__codelineno-0-195" name="__codelineno-0-195"></a>        urls <span style="color: #666666">=</span> [row[<span style="color: #40a070">0</span>] <span style="color: #007020; font-weight: bold">for</span> row <span style="color: #007020; font-weight: bold">in</span> cursor<span style="color: #666666">.</span>fetchall() <span style="color: #007020; font-weight: bold">if</span> row[<span style="color: #40a070">2</span>] <span style="color: #007020; font-weight: bold">is</span> <span style="color: #007020; font-weight: bold">None</span>]
-</span><span id="__span-0-196"><a id="__codelineno-0-196" name="__codelineno-0-196"></a>    <span style="color: #007020; font-weight: bold">else</span>:
-</span><span id="__span-0-197"><a id="__codelineno-0-197" name="__codelineno-0-197"></a>        urls <span style="color: #666666">=</span> [row[<span style="color: #40a070">0</span>] <span style="color: #007020; font-weight: bold">for</span> row <span style="color: #007020; font-weight: bold">in</span> cursor<span style="color: #666666">.</span>fetchall() <span style="color: #007020; font-weight: bold">if</span> row[<span style="color: #40a070">1</span>] <span style="color: #007020; font-weight: bold">is</span> <span style="color: #007020; font-weight: bold">None</span>]
-</span><span id="__span-0-198"><a id="__codelineno-0-198" name="__codelineno-0-198"></a>    cursor<span style="color: #666666">.</span>close()
-</span><span id="__span-0-199"><a id="__codelineno-0-199" name="__codelineno-0-199"></a>    conn<span style="color: #666666">.</span>close()
-</span><span id="__span-0-200"><a id="__codelineno-0-200" name="__codelineno-0-200"></a>    <span style="color: #007020; font-weight: bold">return</span> urls
+<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-200">200</a></span>
+<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-201">201</a></span>
+<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-202">202</a></span></pre></div></td><td class="code"><div><pre style="line-height: 125%;"><span></span><code><span id="__span-0-171"><a id="__codelineno-0-171" name="__codelineno-0-171"></a><span style="color: #007020; font-weight: bold">def</span> <span style="color: #06287e">get_bot_urls</span>(
+</span><span id="__span-0-172"><a id="__codelineno-0-172" name="__codelineno-0-172"></a>        session_id, botex_db <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span>, already_started <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">False</span>
+</span><span id="__span-0-173"><a id="__codelineno-0-173" name="__codelineno-0-173"></a>    ) <span style="color: #666666">-&gt;</span> <span style="color: #007020">list</span>:
+</span><span id="__span-0-174"><a id="__codelineno-0-174" name="__codelineno-0-174"></a><span style="color: #bbbbbb">    </span><span style="color: #4070a0; font-style: italic">&quot;&quot;&quot;</span>
+</span><span id="__span-0-175"><a id="__codelineno-0-175" name="__codelineno-0-175"></a><span style="color: #4070a0; font-style: italic">    Get the URLs for the bot participants in an oTree session.</span>
+</span><span id="__span-0-176"><a id="__codelineno-0-176" name="__codelineno-0-176"></a>
+</span><span id="__span-0-177"><a id="__codelineno-0-177" name="__codelineno-0-177"></a><span style="color: #4070a0; font-style: italic">    Args:</span>
+</span><span id="__span-0-178"><a id="__codelineno-0-178" name="__codelineno-0-178"></a><span style="color: #4070a0; font-style: italic">        session_id (str): The ID of the oTree session.</span>
+</span><span id="__span-0-179"><a id="__codelineno-0-179" name="__codelineno-0-179"></a><span style="color: #4070a0; font-style: italic">        botex_db (str): The name of the SQLite database file to store BotEx </span>
+</span><span id="__span-0-180"><a id="__codelineno-0-180" name="__codelineno-0-180"></a><span style="color: #4070a0; font-style: italic">            data. If None (the default), it will be obtained from the </span>
+</span><span id="__span-0-181"><a id="__codelineno-0-181" name="__codelineno-0-181"></a><span style="color: #4070a0; font-style: italic">            environment variable BOTEX_DB.</span>
+</span><span id="__span-0-182"><a id="__codelineno-0-182" name="__codelineno-0-182"></a>
+</span><span id="__span-0-183"><a id="__codelineno-0-183" name="__codelineno-0-183"></a><span style="color: #4070a0; font-style: italic">    Returns:</span>
+</span><span id="__span-0-184"><a id="__codelineno-0-184" name="__codelineno-0-184"></a><span style="color: #4070a0; font-style: italic">        List of URLs for the bot participants.</span>
+</span><span id="__span-0-185"><a id="__codelineno-0-185" name="__codelineno-0-185"></a><span style="color: #4070a0; font-style: italic">    &quot;&quot;&quot;</span>
+</span><span id="__span-0-186"><a id="__codelineno-0-186" name="__codelineno-0-186"></a>
+</span><span id="__span-0-187"><a id="__codelineno-0-187" name="__codelineno-0-187"></a>    <span style="color: #007020; font-weight: bold">if</span> botex_db <span style="color: #007020; font-weight: bold">is</span> <span style="color: #007020; font-weight: bold">None</span>: botex_db <span style="color: #666666">=</span> environ<span style="color: #666666">.</span>get(<span style="color: #4070a0">&#39;BOTEX_DB&#39;</span>)
+</span><span id="__span-0-188"><a id="__codelineno-0-188" name="__codelineno-0-188"></a>    conn <span style="color: #666666">=</span> sqlite3<span style="color: #666666">.</span>connect(botex_db)
+</span><span id="__span-0-189"><a id="__codelineno-0-189" name="__codelineno-0-189"></a>    cursor <span style="color: #666666">=</span> conn<span style="color: #666666">.</span>cursor()
+</span><span id="__span-0-190"><a id="__codelineno-0-190" name="__codelineno-0-190"></a>    cursor<span style="color: #666666">.</span>execute(
+</span><span id="__span-0-191"><a id="__codelineno-0-191" name="__codelineno-0-191"></a><span style="color: #bbbbbb">        </span><span style="color: #4070a0; font-style: italic">&quot;&quot;&quot;</span>
+</span><span id="__span-0-192"><a id="__codelineno-0-192" name="__codelineno-0-192"></a><span style="color: #4070a0; font-style: italic">        SELECT url,time_in,time_out FROM participants </span>
+</span><span id="__span-0-193"><a id="__codelineno-0-193" name="__codelineno-0-193"></a><span style="color: #4070a0; font-style: italic">        WHERE session_id = ? AND is_human = 0</span>
+</span><span id="__span-0-194"><a id="__codelineno-0-194" name="__codelineno-0-194"></a><span style="color: #4070a0; font-style: italic">        &quot;&quot;&quot;</span>, (session_id,)
+</span><span id="__span-0-195"><a id="__codelineno-0-195" name="__codelineno-0-195"></a>    )
+</span><span id="__span-0-196"><a id="__codelineno-0-196" name="__codelineno-0-196"></a>    <span style="color: #007020; font-weight: bold">if</span> already_started:
+</span><span id="__span-0-197"><a id="__codelineno-0-197" name="__codelineno-0-197"></a>        urls <span style="color: #666666">=</span> [row[<span style="color: #40a070">0</span>] <span style="color: #007020; font-weight: bold">for</span> row <span style="color: #007020; font-weight: bold">in</span> cursor<span style="color: #666666">.</span>fetchall() <span style="color: #007020; font-weight: bold">if</span> row[<span style="color: #40a070">2</span>] <span style="color: #007020; font-weight: bold">is</span> <span style="color: #007020; font-weight: bold">None</span>]
+</span><span id="__span-0-198"><a id="__codelineno-0-198" name="__codelineno-0-198"></a>    <span style="color: #007020; font-weight: bold">else</span>:
+</span><span id="__span-0-199"><a id="__codelineno-0-199" name="__codelineno-0-199"></a>        urls <span style="color: #666666">=</span> [row[<span style="color: #40a070">0</span>] <span style="color: #007020; font-weight: bold">for</span> row <span style="color: #007020; font-weight: bold">in</span> cursor<span style="color: #666666">.</span>fetchall() <span style="color: #007020; font-weight: bold">if</span> row[<span style="color: #40a070">1</span>] <span style="color: #007020; font-weight: bold">is</span> <span style="color: #007020; font-weight: bold">None</span>]
+</span><span id="__span-0-200"><a id="__codelineno-0-200" name="__codelineno-0-200"></a>    cursor<span style="color: #666666">.</span>close()
+</span><span id="__span-0-201"><a id="__codelineno-0-201" name="__codelineno-0-201"></a>    conn<span style="color: #666666">.</span>close()
+</span><span id="__span-0-202"><a id="__codelineno-0-202" name="__codelineno-0-202"></a>    <span style="color: #007020; font-weight: bold">return</span> urls
 </span></code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -1367,6 +1373,7 @@ running to make sure that the user is aware of the issue.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
+                  <code>None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -1379,9 +1386,7 @@ running to make sure that the user is aware of the issue.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/botex/otree.py</code></summary>
-              <div class="language-python highlight" style="background: #f0f0f0"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-202">202</a></span>
-<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-203">203</a></span>
-<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-204">204</a></span>
+              <div class="language-python highlight" style="background: #f0f0f0"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-204">204</a></span>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-205">205</a></span>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-206">206</a></span>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-207">207</a></span>
@@ -1467,95 +1472,97 @@ running to make sure that the user is aware of the issue.</p>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-287">287</a></span>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-288">288</a></span>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-289">289</a></span>
-<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-290">290</a></span></pre></div></td><td class="code"><div><pre style="line-height: 125%;"><span></span><code><span id="__span-0-202"><a id="__codelineno-0-202" name="__codelineno-0-202"></a><span style="color: #007020; font-weight: bold">def</span> <span style="color: #06287e">run_bots_on_session</span>(
-</span><span id="__span-0-203"><a id="__codelineno-0-203" name="__codelineno-0-203"></a>        session_id, bot_urls <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span>, 
-</span><span id="__span-0-204"><a id="__codelineno-0-204" name="__codelineno-0-204"></a>        botex_db <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span>, 
-</span><span id="__span-0-205"><a id="__codelineno-0-205" name="__codelineno-0-205"></a>        model <span style="color: #666666">=</span> <span style="color: #4070a0">&quot;gpt-4o&quot;</span>,
-</span><span id="__span-0-206"><a id="__codelineno-0-206" name="__codelineno-0-206"></a>        full_conv_history <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">False</span>,
-</span><span id="__span-0-207"><a id="__codelineno-0-207" name="__codelineno-0-207"></a>        openai_api_key <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span>,
-</span><span id="__span-0-208"><a id="__codelineno-0-208" name="__codelineno-0-208"></a>        already_started <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">False</span>,
-</span><span id="__span-0-209"><a id="__codelineno-0-209" name="__codelineno-0-209"></a>        wait <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">True</span>,
-</span><span id="__span-0-210"><a id="__codelineno-0-210" name="__codelineno-0-210"></a>        local_model_cfg<span style="color: #666666">=</span>{},
-</span><span id="__span-0-211"><a id="__codelineno-0-211" name="__codelineno-0-211"></a>        user_prompts: <span style="color: #007020">dict</span> <span style="color: #666666">|</span> <span style="color: #007020; font-weight: bold">None</span> <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span>
-</span><span id="__span-0-212"><a id="__codelineno-0-212" name="__codelineno-0-212"></a>    ):
-</span><span id="__span-0-213"><a id="__codelineno-0-213" name="__codelineno-0-213"></a><span style="color: #bbbbbb">    </span><span style="color: #4070a0; font-style: italic">&quot;&quot;&quot;</span>
-</span><span id="__span-0-214"><a id="__codelineno-0-214" name="__codelineno-0-214"></a><span style="color: #4070a0; font-style: italic">    Run BotEx bots on an oTree session.</span>
-</span><span id="__span-0-215"><a id="__codelineno-0-215" name="__codelineno-0-215"></a>
-</span><span id="__span-0-216"><a id="__codelineno-0-216" name="__codelineno-0-216"></a><span style="color: #4070a0; font-style: italic">    Args:</span>
-</span><span id="__span-0-217"><a id="__codelineno-0-217" name="__codelineno-0-217"></a><span style="color: #4070a0; font-style: italic">        session_id (str): The ID of the oTree session.</span>
-</span><span id="__span-0-218"><a id="__codelineno-0-218" name="__codelineno-0-218"></a><span style="color: #4070a0; font-style: italic">        bot_urls (list): A list of URLs for the bot participants.</span>
-</span><span id="__span-0-219"><a id="__codelineno-0-219" name="__codelineno-0-219"></a><span style="color: #4070a0; font-style: italic">            Will be retrieved from the database if None (the default).</span>
-</span><span id="__span-0-220"><a id="__codelineno-0-220" name="__codelineno-0-220"></a><span style="color: #4070a0; font-style: italic">        botex_db (str): The name of the SQLite database file for BotEx data.</span>
-</span><span id="__span-0-221"><a id="__codelineno-0-221" name="__codelineno-0-221"></a><span style="color: #4070a0; font-style: italic">            If None (the default), it will be obtained from the environment </span>
-</span><span id="__span-0-222"><a id="__codelineno-0-222" name="__codelineno-0-222"></a><span style="color: #4070a0; font-style: italic">            variable BOTEX_DB.</span>
-</span><span id="__span-0-223"><a id="__codelineno-0-223" name="__codelineno-0-223"></a><span style="color: #4070a0; font-style: italic">        full_conv_history (bool): Whether to keep the full conversation history.</span>
-</span><span id="__span-0-224"><a id="__codelineno-0-224" name="__codelineno-0-224"></a><span style="color: #4070a0; font-style: italic">            This will increase token use and only work with very short </span>
-</span><span id="__span-0-225"><a id="__codelineno-0-225" name="__codelineno-0-225"></a><span style="color: #4070a0; font-style: italic">            experiments. Default is False.</span>
-</span><span id="__span-0-226"><a id="__codelineno-0-226" name="__codelineno-0-226"></a><span style="color: #4070a0; font-style: italic">        model (str): The model to use for the bot. Default is &quot;gpt-4o&quot;</span>
-</span><span id="__span-0-227"><a id="__codelineno-0-227" name="__codelineno-0-227"></a><span style="color: #4070a0; font-style: italic">            from OpenAI. You will need an OpenAI key and be prepared to pay to </span>
-</span><span id="__span-0-228"><a id="__codelineno-0-228" name="__codelineno-0-228"></a><span style="color: #4070a0; font-style: italic">            use this model. If set to &quot;local&quot;, you need to provide a </span>
-</span><span id="__span-0-229"><a id="__codelineno-0-229" name="__codelineno-0-229"></a><span style="color: #4070a0; font-style: italic">            configuration for the local model in local_model_cfg.</span>
-</span><span id="__span-0-230"><a id="__codelineno-0-230" name="__codelineno-0-230"></a><span style="color: #4070a0; font-style: italic">        openai_api_key (str): The API key for the OpenAI service. If None </span>
-</span><span id="__span-0-231"><a id="__codelineno-0-231" name="__codelineno-0-231"></a><span style="color: #4070a0; font-style: italic">            (the default), it will be obtained from the environment variable </span>
-</span><span id="__span-0-232"><a id="__codelineno-0-232" name="__codelineno-0-232"></a><span style="color: #4070a0; font-style: italic">            OPENAI_API_KEY.</span>
-</span><span id="__span-0-233"><a id="__codelineno-0-233" name="__codelineno-0-233"></a><span style="color: #4070a0; font-style: italic">        already_started (bool): If True, the function will also run bots that </span>
-</span><span id="__span-0-234"><a id="__codelineno-0-234" name="__codelineno-0-234"></a><span style="color: #4070a0; font-style: italic">            have already started but not yet finished. This is useful if bots </span>
-</span><span id="__span-0-235"><a id="__codelineno-0-235" name="__codelineno-0-235"></a><span style="color: #4070a0; font-style: italic">            did not startup properly because of network issues. Default is </span>
-</span><span id="__span-0-236"><a id="__codelineno-0-236" name="__codelineno-0-236"></a><span style="color: #4070a0; font-style: italic">            False.</span>
-</span><span id="__span-0-237"><a id="__codelineno-0-237" name="__codelineno-0-237"></a><span style="color: #4070a0; font-style: italic">        wait (bool): If True (the default), the function will wait for the bots </span>
-</span><span id="__span-0-238"><a id="__codelineno-0-238" name="__codelineno-0-238"></a><span style="color: #4070a0; font-style: italic">            to finish.</span>
-</span><span id="__span-0-239"><a id="__codelineno-0-239" name="__codelineno-0-239"></a><span style="color: #4070a0; font-style: italic">        local_model_cfg (dict): Configuration for the local model. If model is </span>
-</span><span id="__span-0-240"><a id="__codelineno-0-240" name="__codelineno-0-240"></a><span style="color: #4070a0; font-style: italic">            &quot;local&quot;, as a bare minimum it should contain, </span>
-</span><span id="__span-0-241"><a id="__codelineno-0-241" name="__codelineno-0-241"></a><span style="color: #4070a0; font-style: italic">            the &quot;path_to_llama_server&quot;, and &quot;local_llm_path&quot; keys. </span>
-</span><span id="__span-0-242"><a id="__codelineno-0-242" name="__codelineno-0-242"></a><span style="color: #4070a0; font-style: italic">            If these ar not present, the function will</span>
-</span><span id="__span-0-243"><a id="__codelineno-0-243" name="__codelineno-0-243"></a><span style="color: #4070a0; font-style: italic">            try to get them from the environment variables PATH_TO_LLAMA_SERVER</span>
-</span><span id="__span-0-244"><a id="__codelineno-0-244" name="__codelineno-0-244"></a><span style="color: #4070a0; font-style: italic">            and LOCAL_LLM_PATH.</span>
-</span><span id="__span-0-245"><a id="__codelineno-0-245" name="__codelineno-0-245"></a><span style="color: #4070a0; font-style: italic">        user_prompts (dict): A dictionary of user prompts to override the </span>
-</span><span id="__span-0-246"><a id="__codelineno-0-246" name="__codelineno-0-246"></a><span style="color: #4070a0; font-style: italic">            default prompts that the bot uses. The keys should be one or more of </span>
-</span><span id="__span-0-247"><a id="__codelineno-0-247" name="__codelineno-0-247"></a><span style="color: #4070a0; font-style: italic">            the following: [&#39;start&#39;, &#39;analyze_first_page_no_q&#39;, </span>
-</span><span id="__span-0-248"><a id="__codelineno-0-248" name="__codelineno-0-248"></a><span style="color: #4070a0; font-style: italic">            &#39;analyze_first_page_q&#39;, &#39;analyze_page_no_q&#39;, &#39;analyze_page_q&#39;, </span>
-</span><span id="__span-0-249"><a id="__codelineno-0-249" name="__codelineno-0-249"></a><span style="color: #4070a0; font-style: italic">            &#39;analyze_page_no_q_full_hist&#39;, &#39;analyze_page_q_full_hist&#39;, </span>
-</span><span id="__span-0-250"><a id="__codelineno-0-250" name="__codelineno-0-250"></a><span style="color: #4070a0; font-style: italic">            &#39;page_not_changed&#39;, &#39;system&#39;, &#39;resp_too_long&#39;, &#39;json_error&#39;, &#39;end&#39;.] </span>
-</span><span id="__span-0-251"><a id="__codelineno-0-251" name="__codelineno-0-251"></a><span style="color: #4070a0; font-style: italic">            If a key is not present in the dictionary, the default prompt will </span>
-</span><span id="__span-0-252"><a id="__codelineno-0-252" name="__codelineno-0-252"></a><span style="color: #4070a0; font-style: italic">            be used. If a key that is not in the default prompts is present in </span>
-</span><span id="__span-0-253"><a id="__codelineno-0-253" name="__codelineno-0-253"></a><span style="color: #4070a0; font-style: italic">            the dictionary, then the bot will exit with a warning and not </span>
-</span><span id="__span-0-254"><a id="__codelineno-0-254" name="__codelineno-0-254"></a><span style="color: #4070a0; font-style: italic">            running to make sure that the user is aware of the issue.</span>
-</span><span id="__span-0-255"><a id="__codelineno-0-255" name="__codelineno-0-255"></a>
-</span><span id="__span-0-256"><a id="__codelineno-0-256" name="__codelineno-0-256"></a><span style="color: #4070a0; font-style: italic">    Returns: </span>
-</span><span id="__span-0-257"><a id="__codelineno-0-257" name="__codelineno-0-257"></a><span style="color: #4070a0; font-style: italic">        None (bot conversation logs are stored in database)</span>
-</span><span id="__span-0-258"><a id="__codelineno-0-258" name="__codelineno-0-258"></a><span style="color: #4070a0; font-style: italic">    &quot;&quot;&quot;</span>
-</span><span id="__span-0-259"><a id="__codelineno-0-259" name="__codelineno-0-259"></a>
-</span><span id="__span-0-260"><a id="__codelineno-0-260" name="__codelineno-0-260"></a>    <span style="color: #007020; font-weight: bold">if</span> botex_db <span style="color: #007020; font-weight: bold">is</span> <span style="color: #007020; font-weight: bold">None</span>: botex_db <span style="color: #666666">=</span> environ<span style="color: #666666">.</span>get(<span style="color: #4070a0">&#39;BOTEX_DB&#39;</span>)
-</span><span id="__span-0-261"><a id="__codelineno-0-261" name="__codelineno-0-261"></a>    <span style="color: #007020; font-weight: bold">if</span> openai_api_key <span style="color: #007020; font-weight: bold">is</span> <span style="color: #007020; font-weight: bold">None</span>: openai_api_key <span style="color: #666666">=</span> environ<span style="color: #666666">.</span>get(<span style="color: #4070a0">&#39;OPENAI_API_KEY&#39;</span>)
-</span><span id="__span-0-262"><a id="__codelineno-0-262" name="__codelineno-0-262"></a>    <span style="color: #007020; font-weight: bold">if</span> bot_urls <span style="color: #007020; font-weight: bold">is</span> <span style="color: #007020; font-weight: bold">None</span>: 
-</span><span id="__span-0-263"><a id="__codelineno-0-263" name="__codelineno-0-263"></a>        bot_urls <span style="color: #666666">=</span> get_bot_urls(session_id, botex_db, already_started)
-</span><span id="__span-0-264"><a id="__codelineno-0-264" name="__codelineno-0-264"></a>    <span style="color: #007020; font-weight: bold">if</span> model <span style="color: #666666">==</span> <span style="color: #4070a0">&quot;local&quot;</span>:
-</span><span id="__span-0-265"><a id="__codelineno-0-265" name="__codelineno-0-265"></a>        <span style="color: #007020; font-weight: bold">if</span> <span style="color: #007020; font-weight: bold">not</span> <span style="color: #4070a0">&quot;path_to_llama_server&quot;</span> <span style="color: #007020; font-weight: bold">in</span> local_model_cfg:
-</span><span id="__span-0-266"><a id="__codelineno-0-266" name="__codelineno-0-266"></a>            local_model_cfg[<span style="color: #4070a0">&quot;path_to_llama_server&quot;</span>] <span style="color: #666666">=</span> environ<span style="color: #666666">.</span>get(<span style="color: #4070a0">&#39;PATH_TO_LLAMA_SERVER&#39;</span>)
-</span><span id="__span-0-267"><a id="__codelineno-0-267" name="__codelineno-0-267"></a>        <span style="color: #007020; font-weight: bold">if</span> <span style="color: #007020; font-weight: bold">not</span> <span style="color: #4070a0">&quot;local_llm_path&quot;</span> <span style="color: #007020; font-weight: bold">in</span> local_model_cfg:
-</span><span id="__span-0-268"><a id="__codelineno-0-268" name="__codelineno-0-268"></a>            local_model_cfg[<span style="color: #4070a0">&quot;local_llm_path&quot;</span>] <span style="color: #666666">=</span> environ<span style="color: #666666">.</span>get(<span style="color: #4070a0">&#39;LOCAL_LLM_PATH&#39;</span>)    
-</span><span id="__span-0-269"><a id="__codelineno-0-269" name="__codelineno-0-269"></a>        local_llm <span style="color: #666666">=</span> LocalLLM(<span style="color: #666666">**</span>local_model_cfg)
-</span><span id="__span-0-270"><a id="__codelineno-0-270" name="__codelineno-0-270"></a>        llm_server <span style="color: #666666">=</span> local_llm<span style="color: #666666">.</span>start_server()
-</span><span id="__span-0-271"><a id="__codelineno-0-271" name="__codelineno-0-271"></a>    <span style="color: #007020; font-weight: bold">else</span>:
-</span><span id="__span-0-272"><a id="__codelineno-0-272" name="__codelineno-0-272"></a>        local_llm <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span> 
-</span><span id="__span-0-273"><a id="__codelineno-0-273" name="__codelineno-0-273"></a>    threads <span style="color: #666666">=</span> [
-</span><span id="__span-0-274"><a id="__codelineno-0-274" name="__codelineno-0-274"></a>        Thread(
-</span><span id="__span-0-275"><a id="__codelineno-0-275" name="__codelineno-0-275"></a>            target <span style="color: #666666">=</span> run_bot, 
-</span><span id="__span-0-276"><a id="__codelineno-0-276" name="__codelineno-0-276"></a>            kwargs <span style="color: #666666">=</span> {
-</span><span id="__span-0-277"><a id="__codelineno-0-277" name="__codelineno-0-277"></a>                <span style="color: #4070a0">&#39;botex_db&#39;</span>: botex_db, <span style="color: #4070a0">&#39;session_id&#39;</span>: session_id, 
-</span><span id="__span-0-278"><a id="__codelineno-0-278" name="__codelineno-0-278"></a>                <span style="color: #4070a0">&#39;url&#39;</span>: url, <span style="color: #4070a0">&#39;full_conv_history&#39;</span>: full_conv_history, 
-</span><span id="__span-0-279"><a id="__codelineno-0-279" name="__codelineno-0-279"></a>                <span style="color: #4070a0">&#39;model&#39;</span>: model, <span style="color: #4070a0">&#39;openai_api_key&#39;</span>: openai_api_key, 
-</span><span id="__span-0-280"><a id="__codelineno-0-280" name="__codelineno-0-280"></a>                <span style="color: #4070a0">&#39;local_llm&#39;</span>: local_llm, <span style="color: #4070a0">&#39;user_prompts&#39;</span>: user_prompts
-</span><span id="__span-0-281"><a id="__codelineno-0-281" name="__codelineno-0-281"></a>            }
-</span><span id="__span-0-282"><a id="__codelineno-0-282" name="__codelineno-0-282"></a>        ) <span style="color: #007020; font-weight: bold">for</span> url <span style="color: #007020; font-weight: bold">in</span> bot_urls 
-</span><span id="__span-0-283"><a id="__codelineno-0-283" name="__codelineno-0-283"></a>    ]
-</span><span id="__span-0-284"><a id="__codelineno-0-284" name="__codelineno-0-284"></a>    <span style="color: #007020; font-weight: bold">for</span> t <span style="color: #007020; font-weight: bold">in</span> threads: t<span style="color: #666666">.</span>start()
-</span><span id="__span-0-285"><a id="__codelineno-0-285" name="__codelineno-0-285"></a>    <span style="color: #007020; font-weight: bold">if</span> wait: 
-</span><span id="__span-0-286"><a id="__codelineno-0-286" name="__codelineno-0-286"></a>        <span style="color: #007020; font-weight: bold">for</span> t <span style="color: #007020; font-weight: bold">in</span> threads: t<span style="color: #666666">.</span>join()
-</span><span id="__span-0-287"><a id="__codelineno-0-287" name="__codelineno-0-287"></a>
-</span><span id="__span-0-288"><a id="__codelineno-0-288" name="__codelineno-0-288"></a>    <span style="color: #007020; font-weight: bold">if</span> local_llm:
-</span><span id="__span-0-289"><a id="__codelineno-0-289" name="__codelineno-0-289"></a>        <span style="color: #007020; font-weight: bold">assert</span> llm_server, <span style="color: #4070a0">&quot;Local LLM server not started, but should have been.&quot;</span>
-</span><span id="__span-0-290"><a id="__codelineno-0-290" name="__codelineno-0-290"></a>        local_llm<span style="color: #666666">.</span>stop_server(llm_server)
+<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-290">290</a></span>
+<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-291">291</a></span>
+<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-292">292</a></span></pre></div></td><td class="code"><div><pre style="line-height: 125%;"><span></span><code><span id="__span-0-204"><a id="__codelineno-0-204" name="__codelineno-0-204"></a><span style="color: #007020; font-weight: bold">def</span> <span style="color: #06287e">run_bots_on_session</span>(
+</span><span id="__span-0-205"><a id="__codelineno-0-205" name="__codelineno-0-205"></a>        session_id, bot_urls <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span>, 
+</span><span id="__span-0-206"><a id="__codelineno-0-206" name="__codelineno-0-206"></a>        botex_db <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span>, 
+</span><span id="__span-0-207"><a id="__codelineno-0-207" name="__codelineno-0-207"></a>        model <span style="color: #666666">=</span> <span style="color: #4070a0">&quot;gpt-4o&quot;</span>,
+</span><span id="__span-0-208"><a id="__codelineno-0-208" name="__codelineno-0-208"></a>        full_conv_history <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">False</span>,
+</span><span id="__span-0-209"><a id="__codelineno-0-209" name="__codelineno-0-209"></a>        openai_api_key <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span>,
+</span><span id="__span-0-210"><a id="__codelineno-0-210" name="__codelineno-0-210"></a>        already_started <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">False</span>,
+</span><span id="__span-0-211"><a id="__codelineno-0-211" name="__codelineno-0-211"></a>        wait <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">True</span>,
+</span><span id="__span-0-212"><a id="__codelineno-0-212" name="__codelineno-0-212"></a>        local_model_cfg<span style="color: #666666">=</span>{},
+</span><span id="__span-0-213"><a id="__codelineno-0-213" name="__codelineno-0-213"></a>        user_prompts: <span style="color: #007020">dict</span> <span style="color: #666666">|</span> <span style="color: #007020; font-weight: bold">None</span> <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span>
+</span><span id="__span-0-214"><a id="__codelineno-0-214" name="__codelineno-0-214"></a>    ) <span style="color: #666666">-&gt;</span> <span style="color: #007020; font-weight: bold">None</span>:
+</span><span id="__span-0-215"><a id="__codelineno-0-215" name="__codelineno-0-215"></a><span style="color: #bbbbbb">    </span><span style="color: #4070a0; font-style: italic">&quot;&quot;&quot;</span>
+</span><span id="__span-0-216"><a id="__codelineno-0-216" name="__codelineno-0-216"></a><span style="color: #4070a0; font-style: italic">    Run BotEx bots on an oTree session.</span>
+</span><span id="__span-0-217"><a id="__codelineno-0-217" name="__codelineno-0-217"></a>
+</span><span id="__span-0-218"><a id="__codelineno-0-218" name="__codelineno-0-218"></a><span style="color: #4070a0; font-style: italic">    Args:</span>
+</span><span id="__span-0-219"><a id="__codelineno-0-219" name="__codelineno-0-219"></a><span style="color: #4070a0; font-style: italic">        session_id (str): The ID of the oTree session.</span>
+</span><span id="__span-0-220"><a id="__codelineno-0-220" name="__codelineno-0-220"></a><span style="color: #4070a0; font-style: italic">        bot_urls (list): A list of URLs for the bot participants.</span>
+</span><span id="__span-0-221"><a id="__codelineno-0-221" name="__codelineno-0-221"></a><span style="color: #4070a0; font-style: italic">            Will be retrieved from the database if None (the default).</span>
+</span><span id="__span-0-222"><a id="__codelineno-0-222" name="__codelineno-0-222"></a><span style="color: #4070a0; font-style: italic">        botex_db (str): The name of the SQLite database file for BotEx data.</span>
+</span><span id="__span-0-223"><a id="__codelineno-0-223" name="__codelineno-0-223"></a><span style="color: #4070a0; font-style: italic">            If None (the default), it will be obtained from the environment </span>
+</span><span id="__span-0-224"><a id="__codelineno-0-224" name="__codelineno-0-224"></a><span style="color: #4070a0; font-style: italic">            variable BOTEX_DB.</span>
+</span><span id="__span-0-225"><a id="__codelineno-0-225" name="__codelineno-0-225"></a><span style="color: #4070a0; font-style: italic">        full_conv_history (bool): Whether to keep the full conversation history.</span>
+</span><span id="__span-0-226"><a id="__codelineno-0-226" name="__codelineno-0-226"></a><span style="color: #4070a0; font-style: italic">            This will increase token use and only work with very short </span>
+</span><span id="__span-0-227"><a id="__codelineno-0-227" name="__codelineno-0-227"></a><span style="color: #4070a0; font-style: italic">            experiments. Default is False.</span>
+</span><span id="__span-0-228"><a id="__codelineno-0-228" name="__codelineno-0-228"></a><span style="color: #4070a0; font-style: italic">        model (str): The model to use for the bot. Default is &quot;gpt-4o&quot;</span>
+</span><span id="__span-0-229"><a id="__codelineno-0-229" name="__codelineno-0-229"></a><span style="color: #4070a0; font-style: italic">            from OpenAI. You will need an OpenAI key and be prepared to pay to </span>
+</span><span id="__span-0-230"><a id="__codelineno-0-230" name="__codelineno-0-230"></a><span style="color: #4070a0; font-style: italic">            use this model. If set to &quot;local&quot;, you need to provide a </span>
+</span><span id="__span-0-231"><a id="__codelineno-0-231" name="__codelineno-0-231"></a><span style="color: #4070a0; font-style: italic">            configuration for the local model in local_model_cfg.</span>
+</span><span id="__span-0-232"><a id="__codelineno-0-232" name="__codelineno-0-232"></a><span style="color: #4070a0; font-style: italic">        openai_api_key (str): The API key for the OpenAI service. If None </span>
+</span><span id="__span-0-233"><a id="__codelineno-0-233" name="__codelineno-0-233"></a><span style="color: #4070a0; font-style: italic">            (the default), it will be obtained from the environment variable </span>
+</span><span id="__span-0-234"><a id="__codelineno-0-234" name="__codelineno-0-234"></a><span style="color: #4070a0; font-style: italic">            OPENAI_API_KEY.</span>
+</span><span id="__span-0-235"><a id="__codelineno-0-235" name="__codelineno-0-235"></a><span style="color: #4070a0; font-style: italic">        already_started (bool): If True, the function will also run bots that </span>
+</span><span id="__span-0-236"><a id="__codelineno-0-236" name="__codelineno-0-236"></a><span style="color: #4070a0; font-style: italic">            have already started but not yet finished. This is useful if bots </span>
+</span><span id="__span-0-237"><a id="__codelineno-0-237" name="__codelineno-0-237"></a><span style="color: #4070a0; font-style: italic">            did not startup properly because of network issues. Default is </span>
+</span><span id="__span-0-238"><a id="__codelineno-0-238" name="__codelineno-0-238"></a><span style="color: #4070a0; font-style: italic">            False.</span>
+</span><span id="__span-0-239"><a id="__codelineno-0-239" name="__codelineno-0-239"></a><span style="color: #4070a0; font-style: italic">        wait (bool): If True (the default), the function will wait for the bots </span>
+</span><span id="__span-0-240"><a id="__codelineno-0-240" name="__codelineno-0-240"></a><span style="color: #4070a0; font-style: italic">            to finish.</span>
+</span><span id="__span-0-241"><a id="__codelineno-0-241" name="__codelineno-0-241"></a><span style="color: #4070a0; font-style: italic">        local_model_cfg (dict): Configuration for the local model. If model is </span>
+</span><span id="__span-0-242"><a id="__codelineno-0-242" name="__codelineno-0-242"></a><span style="color: #4070a0; font-style: italic">            &quot;local&quot;, as a bare minimum it should contain, </span>
+</span><span id="__span-0-243"><a id="__codelineno-0-243" name="__codelineno-0-243"></a><span style="color: #4070a0; font-style: italic">            the &quot;path_to_llama_server&quot;, and &quot;local_llm_path&quot; keys. </span>
+</span><span id="__span-0-244"><a id="__codelineno-0-244" name="__codelineno-0-244"></a><span style="color: #4070a0; font-style: italic">            If these ar not present, the function will</span>
+</span><span id="__span-0-245"><a id="__codelineno-0-245" name="__codelineno-0-245"></a><span style="color: #4070a0; font-style: italic">            try to get them from the environment variables PATH_TO_LLAMA_SERVER</span>
+</span><span id="__span-0-246"><a id="__codelineno-0-246" name="__codelineno-0-246"></a><span style="color: #4070a0; font-style: italic">            and LOCAL_LLM_PATH.</span>
+</span><span id="__span-0-247"><a id="__codelineno-0-247" name="__codelineno-0-247"></a><span style="color: #4070a0; font-style: italic">        user_prompts (dict): A dictionary of user prompts to override the </span>
+</span><span id="__span-0-248"><a id="__codelineno-0-248" name="__codelineno-0-248"></a><span style="color: #4070a0; font-style: italic">            default prompts that the bot uses. The keys should be one or more of </span>
+</span><span id="__span-0-249"><a id="__codelineno-0-249" name="__codelineno-0-249"></a><span style="color: #4070a0; font-style: italic">            the following: [&#39;start&#39;, &#39;analyze_first_page_no_q&#39;, </span>
+</span><span id="__span-0-250"><a id="__codelineno-0-250" name="__codelineno-0-250"></a><span style="color: #4070a0; font-style: italic">            &#39;analyze_first_page_q&#39;, &#39;analyze_page_no_q&#39;, &#39;analyze_page_q&#39;, </span>
+</span><span id="__span-0-251"><a id="__codelineno-0-251" name="__codelineno-0-251"></a><span style="color: #4070a0; font-style: italic">            &#39;analyze_page_no_q_full_hist&#39;, &#39;analyze_page_q_full_hist&#39;, </span>
+</span><span id="__span-0-252"><a id="__codelineno-0-252" name="__codelineno-0-252"></a><span style="color: #4070a0; font-style: italic">            &#39;page_not_changed&#39;, &#39;system&#39;, &#39;resp_too_long&#39;, &#39;json_error&#39;, &#39;end&#39;.] </span>
+</span><span id="__span-0-253"><a id="__codelineno-0-253" name="__codelineno-0-253"></a><span style="color: #4070a0; font-style: italic">            If a key is not present in the dictionary, the default prompt will </span>
+</span><span id="__span-0-254"><a id="__codelineno-0-254" name="__codelineno-0-254"></a><span style="color: #4070a0; font-style: italic">            be used. If a key that is not in the default prompts is present in </span>
+</span><span id="__span-0-255"><a id="__codelineno-0-255" name="__codelineno-0-255"></a><span style="color: #4070a0; font-style: italic">            the dictionary, then the bot will exit with a warning and not </span>
+</span><span id="__span-0-256"><a id="__codelineno-0-256" name="__codelineno-0-256"></a><span style="color: #4070a0; font-style: italic">            running to make sure that the user is aware of the issue.</span>
+</span><span id="__span-0-257"><a id="__codelineno-0-257" name="__codelineno-0-257"></a>
+</span><span id="__span-0-258"><a id="__codelineno-0-258" name="__codelineno-0-258"></a><span style="color: #4070a0; font-style: italic">    Returns: </span>
+</span><span id="__span-0-259"><a id="__codelineno-0-259" name="__codelineno-0-259"></a><span style="color: #4070a0; font-style: italic">        None (bot conversation logs are stored in database)</span>
+</span><span id="__span-0-260"><a id="__codelineno-0-260" name="__codelineno-0-260"></a><span style="color: #4070a0; font-style: italic">    &quot;&quot;&quot;</span>
+</span><span id="__span-0-261"><a id="__codelineno-0-261" name="__codelineno-0-261"></a>
+</span><span id="__span-0-262"><a id="__codelineno-0-262" name="__codelineno-0-262"></a>    <span style="color: #007020; font-weight: bold">if</span> botex_db <span style="color: #007020; font-weight: bold">is</span> <span style="color: #007020; font-weight: bold">None</span>: botex_db <span style="color: #666666">=</span> environ<span style="color: #666666">.</span>get(<span style="color: #4070a0">&#39;BOTEX_DB&#39;</span>)
+</span><span id="__span-0-263"><a id="__codelineno-0-263" name="__codelineno-0-263"></a>    <span style="color: #007020; font-weight: bold">if</span> openai_api_key <span style="color: #007020; font-weight: bold">is</span> <span style="color: #007020; font-weight: bold">None</span>: openai_api_key <span style="color: #666666">=</span> environ<span style="color: #666666">.</span>get(<span style="color: #4070a0">&#39;OPENAI_API_KEY&#39;</span>)
+</span><span id="__span-0-264"><a id="__codelineno-0-264" name="__codelineno-0-264"></a>    <span style="color: #007020; font-weight: bold">if</span> bot_urls <span style="color: #007020; font-weight: bold">is</span> <span style="color: #007020; font-weight: bold">None</span>: 
+</span><span id="__span-0-265"><a id="__codelineno-0-265" name="__codelineno-0-265"></a>        bot_urls <span style="color: #666666">=</span> get_bot_urls(session_id, botex_db, already_started)
+</span><span id="__span-0-266"><a id="__codelineno-0-266" name="__codelineno-0-266"></a>    <span style="color: #007020; font-weight: bold">if</span> model <span style="color: #666666">==</span> <span style="color: #4070a0">&quot;local&quot;</span>:
+</span><span id="__span-0-267"><a id="__codelineno-0-267" name="__codelineno-0-267"></a>        <span style="color: #007020; font-weight: bold">if</span> <span style="color: #007020; font-weight: bold">not</span> <span style="color: #4070a0">&quot;path_to_llama_server&quot;</span> <span style="color: #007020; font-weight: bold">in</span> local_model_cfg:
+</span><span id="__span-0-268"><a id="__codelineno-0-268" name="__codelineno-0-268"></a>            local_model_cfg[<span style="color: #4070a0">&quot;path_to_llama_server&quot;</span>] <span style="color: #666666">=</span> environ<span style="color: #666666">.</span>get(<span style="color: #4070a0">&#39;PATH_TO_LLAMA_SERVER&#39;</span>)
+</span><span id="__span-0-269"><a id="__codelineno-0-269" name="__codelineno-0-269"></a>        <span style="color: #007020; font-weight: bold">if</span> <span style="color: #007020; font-weight: bold">not</span> <span style="color: #4070a0">&quot;local_llm_path&quot;</span> <span style="color: #007020; font-weight: bold">in</span> local_model_cfg:
+</span><span id="__span-0-270"><a id="__codelineno-0-270" name="__codelineno-0-270"></a>            local_model_cfg[<span style="color: #4070a0">&quot;local_llm_path&quot;</span>] <span style="color: #666666">=</span> environ<span style="color: #666666">.</span>get(<span style="color: #4070a0">&#39;LOCAL_LLM_PATH&#39;</span>)    
+</span><span id="__span-0-271"><a id="__codelineno-0-271" name="__codelineno-0-271"></a>        local_llm <span style="color: #666666">=</span> LocalLLM(<span style="color: #666666">**</span>local_model_cfg)
+</span><span id="__span-0-272"><a id="__codelineno-0-272" name="__codelineno-0-272"></a>        llm_server <span style="color: #666666">=</span> local_llm<span style="color: #666666">.</span>start_server()
+</span><span id="__span-0-273"><a id="__codelineno-0-273" name="__codelineno-0-273"></a>    <span style="color: #007020; font-weight: bold">else</span>:
+</span><span id="__span-0-274"><a id="__codelineno-0-274" name="__codelineno-0-274"></a>        local_llm <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span> 
+</span><span id="__span-0-275"><a id="__codelineno-0-275" name="__codelineno-0-275"></a>    threads <span style="color: #666666">=</span> [
+</span><span id="__span-0-276"><a id="__codelineno-0-276" name="__codelineno-0-276"></a>        Thread(
+</span><span id="__span-0-277"><a id="__codelineno-0-277" name="__codelineno-0-277"></a>            target <span style="color: #666666">=</span> run_bot, 
+</span><span id="__span-0-278"><a id="__codelineno-0-278" name="__codelineno-0-278"></a>            kwargs <span style="color: #666666">=</span> {
+</span><span id="__span-0-279"><a id="__codelineno-0-279" name="__codelineno-0-279"></a>                <span style="color: #4070a0">&#39;botex_db&#39;</span>: botex_db, <span style="color: #4070a0">&#39;session_id&#39;</span>: session_id, 
+</span><span id="__span-0-280"><a id="__codelineno-0-280" name="__codelineno-0-280"></a>                <span style="color: #4070a0">&#39;url&#39;</span>: url, <span style="color: #4070a0">&#39;full_conv_history&#39;</span>: full_conv_history, 
+</span><span id="__span-0-281"><a id="__codelineno-0-281" name="__codelineno-0-281"></a>                <span style="color: #4070a0">&#39;model&#39;</span>: model, <span style="color: #4070a0">&#39;openai_api_key&#39;</span>: openai_api_key, 
+</span><span id="__span-0-282"><a id="__codelineno-0-282" name="__codelineno-0-282"></a>                <span style="color: #4070a0">&#39;local_llm&#39;</span>: local_llm, <span style="color: #4070a0">&#39;user_prompts&#39;</span>: user_prompts
+</span><span id="__span-0-283"><a id="__codelineno-0-283" name="__codelineno-0-283"></a>            }
+</span><span id="__span-0-284"><a id="__codelineno-0-284" name="__codelineno-0-284"></a>        ) <span style="color: #007020; font-weight: bold">for</span> url <span style="color: #007020; font-weight: bold">in</span> bot_urls 
+</span><span id="__span-0-285"><a id="__codelineno-0-285" name="__codelineno-0-285"></a>    ]
+</span><span id="__span-0-286"><a id="__codelineno-0-286" name="__codelineno-0-286"></a>    <span style="color: #007020; font-weight: bold">for</span> t <span style="color: #007020; font-weight: bold">in</span> threads: t<span style="color: #666666">.</span>start()
+</span><span id="__span-0-287"><a id="__codelineno-0-287" name="__codelineno-0-287"></a>    <span style="color: #007020; font-weight: bold">if</span> wait: 
+</span><span id="__span-0-288"><a id="__codelineno-0-288" name="__codelineno-0-288"></a>        <span style="color: #007020; font-weight: bold">for</span> t <span style="color: #007020; font-weight: bold">in</span> threads: t<span style="color: #666666">.</span>join()
+</span><span id="__span-0-289"><a id="__codelineno-0-289" name="__codelineno-0-289"></a>
+</span><span id="__span-0-290"><a id="__codelineno-0-290" name="__codelineno-0-290"></a>    <span style="color: #007020; font-weight: bold">if</span> local_llm:
+</span><span id="__span-0-291"><a id="__codelineno-0-291" name="__codelineno-0-291"></a>        <span style="color: #007020; font-weight: bold">assert</span> llm_server, <span style="color: #4070a0">&quot;Local LLM server not started, but should have been.&quot;</span>
+</span><span id="__span-0-292"><a id="__codelineno-0-292" name="__codelineno-0-292"></a>        local_llm<span style="color: #666666">.</span>stop_server(llm_server)
 </span></code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -1751,6 +1758,7 @@ not None, the bot will use the local model instead of the OpenAI model.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
+                  <code>None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -1763,9 +1771,7 @@ not None, the bot will use the local model instead of the OpenAI model.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/botex/otree.py</code></summary>
-              <div class="language-python highlight" style="background: #f0f0f0"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-293">293</a></span>
-<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-294">294</a></span>
-<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-295">295</a></span>
+              <div class="language-python highlight" style="background: #f0f0f0"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-295">295</a></span>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-296">296</a></span>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-297">297</a></span>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-298">298</a></span>
@@ -1828,72 +1834,74 @@ not None, the bot will use the local model instead of the OpenAI model.</p>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-355">355</a></span>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-356">356</a></span>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-357">357</a></span>
-<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-358">358</a></span></pre></div></td><td class="code"><div><pre style="line-height: 125%;"><span></span><code><span id="__span-0-293"><a id="__codelineno-0-293" name="__codelineno-0-293"></a><span style="color: #007020; font-weight: bold">def</span> <span style="color: #06287e">run_single_bot</span>(
-</span><span id="__span-0-294"><a id="__codelineno-0-294" name="__codelineno-0-294"></a>    url, session_name <span style="color: #666666">=</span> <span style="color: #4070a0">&quot;unknown&quot;</span>, session_id <span style="color: #666666">=</span> <span style="color: #4070a0">&quot;unknown&quot;</span>, 
-</span><span id="__span-0-295"><a id="__codelineno-0-295" name="__codelineno-0-295"></a>    participant_id <span style="color: #666666">=</span> <span style="color: #4070a0">&quot;unknown&quot;</span>,
-</span><span id="__span-0-296"><a id="__codelineno-0-296" name="__codelineno-0-296"></a>    botex_db <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span>, full_conv_history <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">False</span>,
-</span><span id="__span-0-297"><a id="__codelineno-0-297" name="__codelineno-0-297"></a>    model <span style="color: #666666">=</span> <span style="color: #4070a0">&quot;gpt-4o&quot;</span>, openai_api_key <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span>,
-</span><span id="__span-0-298"><a id="__codelineno-0-298" name="__codelineno-0-298"></a>    local_llm: LocalLLM <span style="color: #666666">|</span> <span style="color: #007020; font-weight: bold">None</span> <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span>, user_prompts: <span style="color: #007020">dict</span> <span style="color: #666666">|</span> <span style="color: #007020; font-weight: bold">None</span> <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span>
-</span><span id="__span-0-299"><a id="__codelineno-0-299" name="__codelineno-0-299"></a>):
-</span><span id="__span-0-300"><a id="__codelineno-0-300" name="__codelineno-0-300"></a><span style="color: #bbbbbb">    </span><span style="color: #4070a0; font-style: italic">&quot;&quot;&quot;</span>
-</span><span id="__span-0-301"><a id="__codelineno-0-301" name="__codelineno-0-301"></a><span style="color: #4070a0; font-style: italic">    Runs a single botex bot manually.</span>
-</span><span id="__span-0-302"><a id="__codelineno-0-302" name="__codelineno-0-302"></a>
-</span><span id="__span-0-303"><a id="__codelineno-0-303" name="__codelineno-0-303"></a><span style="color: #4070a0; font-style: italic">    Args:</span>
-</span><span id="__span-0-304"><a id="__codelineno-0-304" name="__codelineno-0-304"></a><span style="color: #4070a0; font-style: italic">        url (str): The participant URL to start the bot on.</span>
-</span><span id="__span-0-305"><a id="__codelineno-0-305" name="__codelineno-0-305"></a><span style="color: #4070a0; font-style: italic">        session_name (str): The name of the oTree session. Defaults to &quot;unknown&quot;</span>
-</span><span id="__span-0-306"><a id="__codelineno-0-306" name="__codelineno-0-306"></a><span style="color: #4070a0; font-style: italic">        session_id (str): The oTree ID of the oTree session. </span>
-</span><span id="__span-0-307"><a id="__codelineno-0-307" name="__codelineno-0-307"></a><span style="color: #4070a0; font-style: italic">            Defaults to &quot;unknown&quot;.</span>
-</span><span id="__span-0-308"><a id="__codelineno-0-308" name="__codelineno-0-308"></a><span style="color: #4070a0; font-style: italic">        participant_id (str): The oTree ID of the participant. </span>
+<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-358">358</a></span>
+<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-359">359</a></span>
+<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-360">360</a></span></pre></div></td><td class="code"><div><pre style="line-height: 125%;"><span></span><code><span id="__span-0-295"><a id="__codelineno-0-295" name="__codelineno-0-295"></a><span style="color: #007020; font-weight: bold">def</span> <span style="color: #06287e">run_single_bot</span>(
+</span><span id="__span-0-296"><a id="__codelineno-0-296" name="__codelineno-0-296"></a>    url, session_name <span style="color: #666666">=</span> <span style="color: #4070a0">&quot;unknown&quot;</span>, session_id <span style="color: #666666">=</span> <span style="color: #4070a0">&quot;unknown&quot;</span>, 
+</span><span id="__span-0-297"><a id="__codelineno-0-297" name="__codelineno-0-297"></a>    participant_id <span style="color: #666666">=</span> <span style="color: #4070a0">&quot;unknown&quot;</span>,
+</span><span id="__span-0-298"><a id="__codelineno-0-298" name="__codelineno-0-298"></a>    botex_db <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span>, full_conv_history <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">False</span>,
+</span><span id="__span-0-299"><a id="__codelineno-0-299" name="__codelineno-0-299"></a>    model <span style="color: #666666">=</span> <span style="color: #4070a0">&quot;gpt-4o&quot;</span>, openai_api_key <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span>,
+</span><span id="__span-0-300"><a id="__codelineno-0-300" name="__codelineno-0-300"></a>    local_llm: LocalLLM <span style="color: #666666">|</span> <span style="color: #007020; font-weight: bold">None</span> <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span>, user_prompts: <span style="color: #007020">dict</span> <span style="color: #666666">|</span> <span style="color: #007020; font-weight: bold">None</span> <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span>
+</span><span id="__span-0-301"><a id="__codelineno-0-301" name="__codelineno-0-301"></a>)  <span style="color: #666666">-&gt;</span> <span style="color: #007020; font-weight: bold">None</span> :
+</span><span id="__span-0-302"><a id="__codelineno-0-302" name="__codelineno-0-302"></a><span style="color: #bbbbbb">    </span><span style="color: #4070a0; font-style: italic">&quot;&quot;&quot;</span>
+</span><span id="__span-0-303"><a id="__codelineno-0-303" name="__codelineno-0-303"></a><span style="color: #4070a0; font-style: italic">    Runs a single botex bot manually.</span>
+</span><span id="__span-0-304"><a id="__codelineno-0-304" name="__codelineno-0-304"></a>
+</span><span id="__span-0-305"><a id="__codelineno-0-305" name="__codelineno-0-305"></a><span style="color: #4070a0; font-style: italic">    Args:</span>
+</span><span id="__span-0-306"><a id="__codelineno-0-306" name="__codelineno-0-306"></a><span style="color: #4070a0; font-style: italic">        url (str): The participant URL to start the bot on.</span>
+</span><span id="__span-0-307"><a id="__codelineno-0-307" name="__codelineno-0-307"></a><span style="color: #4070a0; font-style: italic">        session_name (str): The name of the oTree session. Defaults to &quot;unknown&quot;</span>
+</span><span id="__span-0-308"><a id="__codelineno-0-308" name="__codelineno-0-308"></a><span style="color: #4070a0; font-style: italic">        session_id (str): The oTree ID of the oTree session. </span>
 </span><span id="__span-0-309"><a id="__codelineno-0-309" name="__codelineno-0-309"></a><span style="color: #4070a0; font-style: italic">            Defaults to &quot;unknown&quot;.</span>
-</span><span id="__span-0-310"><a id="__codelineno-0-310" name="__codelineno-0-310"></a><span style="color: #4070a0; font-style: italic">        botex_db (str): The name of the SQLite database file to store botex </span>
-</span><span id="__span-0-311"><a id="__codelineno-0-311" name="__codelineno-0-311"></a><span style="color: #4070a0; font-style: italic">            data.</span>
-</span><span id="__span-0-312"><a id="__codelineno-0-312" name="__codelineno-0-312"></a><span style="color: #4070a0; font-style: italic">        full_conv_history (bool): Whether to keep the full conversation history.</span>
-</span><span id="__span-0-313"><a id="__codelineno-0-313" name="__codelineno-0-313"></a><span style="color: #4070a0; font-style: italic">            This will increase token use and only work with very short </span>
-</span><span id="__span-0-314"><a id="__codelineno-0-314" name="__codelineno-0-314"></a><span style="color: #4070a0; font-style: italic">            experiments. Default is False.</span>
-</span><span id="__span-0-315"><a id="__codelineno-0-315" name="__codelineno-0-315"></a><span style="color: #4070a0; font-style: italic">        model (str): The model to use for the bot. Default is &quot;gpt-4o&quot;</span>
-</span><span id="__span-0-316"><a id="__codelineno-0-316" name="__codelineno-0-316"></a><span style="color: #4070a0; font-style: italic">            from OpenAI. You will need an OpenAI key and be prepared to pay to </span>
-</span><span id="__span-0-317"><a id="__codelineno-0-317" name="__codelineno-0-317"></a><span style="color: #4070a0; font-style: italic">            use this model.</span>
-</span><span id="__span-0-318"><a id="__codelineno-0-318" name="__codelineno-0-318"></a><span style="color: #4070a0; font-style: italic">        openai_api_key (str): The API key for the OpenAI service.</span>
-</span><span id="__span-0-319"><a id="__codelineno-0-319" name="__codelineno-0-319"></a><span style="color: #4070a0; font-style: italic">        local_llm (LocalLLM): A LocalLLM object to use for the bot. If this is </span>
-</span><span id="__span-0-320"><a id="__codelineno-0-320" name="__codelineno-0-320"></a><span style="color: #4070a0; font-style: italic">            not None, the bot will use the local model instead of the OpenAI model.</span>
-</span><span id="__span-0-321"><a id="__codelineno-0-321" name="__codelineno-0-321"></a>
-</span><span id="__span-0-322"><a id="__codelineno-0-322" name="__codelineno-0-322"></a><span style="color: #4070a0; font-style: italic">    Returns: </span>
-</span><span id="__span-0-323"><a id="__codelineno-0-323" name="__codelineno-0-323"></a><span style="color: #4070a0; font-style: italic">        None (conversation is stored in the botex database)</span>
-</span><span id="__span-0-324"><a id="__codelineno-0-324" name="__codelineno-0-324"></a><span style="color: #4070a0; font-style: italic">    &quot;&quot;&quot;</span>
-</span><span id="__span-0-325"><a id="__codelineno-0-325" name="__codelineno-0-325"></a>    <span style="color: #007020; font-weight: bold">if</span> botex_db <span style="color: #007020; font-weight: bold">is</span> <span style="color: #007020; font-weight: bold">None</span>: botex_db <span style="color: #666666">=</span> environ<span style="color: #666666">.</span>get(<span style="color: #4070a0">&#39;BOTEX_DB&#39;</span>)
-</span><span id="__span-0-326"><a id="__codelineno-0-326" name="__codelineno-0-326"></a>    <span style="color: #007020; font-weight: bold">if</span> openai_api_key <span style="color: #007020; font-weight: bold">is</span> <span style="color: #007020; font-weight: bold">None</span>: openai_api_key <span style="color: #666666">=</span> environ<span style="color: #666666">.</span>get(<span style="color: #4070a0">&#39;OPENAI_API_KEY&#39;</span>)
-</span><span id="__span-0-327"><a id="__codelineno-0-327" name="__codelineno-0-327"></a>    <span style="color: #007020; font-weight: bold">if</span> model <span style="color: #666666">==</span> <span style="color: #4070a0">&quot;local&quot;</span>:
-</span><span id="__span-0-328"><a id="__codelineno-0-328" name="__codelineno-0-328"></a>        <span style="color: #007020; font-weight: bold">if</span> <span style="color: #007020; font-weight: bold">not</span> <span style="color: #4070a0">&quot;path_to_llama_server&quot;</span> <span style="color: #007020; font-weight: bold">in</span> local_model_cfg:
-</span><span id="__span-0-329"><a id="__codelineno-0-329" name="__codelineno-0-329"></a>            local_model_cfg[<span style="color: #4070a0">&quot;path_to_llama_server&quot;</span>] <span style="color: #666666">=</span> environ<span style="color: #666666">.</span>get(<span style="color: #4070a0">&#39;PATH_TO_LLAMA_SERVER&#39;</span>)
-</span><span id="__span-0-330"><a id="__codelineno-0-330" name="__codelineno-0-330"></a>        <span style="color: #007020; font-weight: bold">if</span> <span style="color: #007020; font-weight: bold">not</span> <span style="color: #4070a0">&quot;local_llm_path&quot;</span> <span style="color: #007020; font-weight: bold">in</span> local_model_cfg:
-</span><span id="__span-0-331"><a id="__codelineno-0-331" name="__codelineno-0-331"></a>            local_model_cfg[<span style="color: #4070a0">&quot;local_llm_path&quot;</span>] <span style="color: #666666">=</span> environ<span style="color: #666666">.</span>get(<span style="color: #4070a0">&#39;LOCAL_LLM_PATH&#39;</span>)    
-</span><span id="__span-0-332"><a id="__codelineno-0-332" name="__codelineno-0-332"></a>        local_llm <span style="color: #666666">=</span> LocalLLM(<span style="color: #666666">**</span>local_model_cfg)
-</span><span id="__span-0-333"><a id="__codelineno-0-333" name="__codelineno-0-333"></a>        llm_server <span style="color: #666666">=</span> local_llm<span style="color: #666666">.</span>start_server()
-</span><span id="__span-0-334"><a id="__codelineno-0-334" name="__codelineno-0-334"></a>    <span style="color: #007020; font-weight: bold">else</span>:
-</span><span id="__span-0-335"><a id="__codelineno-0-335" name="__codelineno-0-335"></a>        local_llm <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span> 
-</span><span id="__span-0-336"><a id="__codelineno-0-336" name="__codelineno-0-336"></a>
-</span><span id="__span-0-337"><a id="__codelineno-0-337" name="__codelineno-0-337"></a>    <span style="color: #007020; font-weight: bold">if</span> local_llm:
-</span><span id="__span-0-338"><a id="__codelineno-0-338" name="__codelineno-0-338"></a>        <span style="color: #007020; font-weight: bold">assert</span> llm_server, <span style="color: #4070a0">&quot;Local LLM server not started, but should have been.&quot;</span>
-</span><span id="__span-0-339"><a id="__codelineno-0-339" name="__codelineno-0-339"></a>        local_llm<span style="color: #666666">.</span>stop_server(llm_server)
-</span><span id="__span-0-340"><a id="__codelineno-0-340" name="__codelineno-0-340"></a>
-</span><span id="__span-0-341"><a id="__codelineno-0-341" name="__codelineno-0-341"></a>    is_human <span style="color: #666666">=</span> <span style="color: #40a070">0</span>
+</span><span id="__span-0-310"><a id="__codelineno-0-310" name="__codelineno-0-310"></a><span style="color: #4070a0; font-style: italic">        participant_id (str): The oTree ID of the participant. </span>
+</span><span id="__span-0-311"><a id="__codelineno-0-311" name="__codelineno-0-311"></a><span style="color: #4070a0; font-style: italic">            Defaults to &quot;unknown&quot;.</span>
+</span><span id="__span-0-312"><a id="__codelineno-0-312" name="__codelineno-0-312"></a><span style="color: #4070a0; font-style: italic">        botex_db (str): The name of the SQLite database file to store botex </span>
+</span><span id="__span-0-313"><a id="__codelineno-0-313" name="__codelineno-0-313"></a><span style="color: #4070a0; font-style: italic">            data.</span>
+</span><span id="__span-0-314"><a id="__codelineno-0-314" name="__codelineno-0-314"></a><span style="color: #4070a0; font-style: italic">        full_conv_history (bool): Whether to keep the full conversation history.</span>
+</span><span id="__span-0-315"><a id="__codelineno-0-315" name="__codelineno-0-315"></a><span style="color: #4070a0; font-style: italic">            This will increase token use and only work with very short </span>
+</span><span id="__span-0-316"><a id="__codelineno-0-316" name="__codelineno-0-316"></a><span style="color: #4070a0; font-style: italic">            experiments. Default is False.</span>
+</span><span id="__span-0-317"><a id="__codelineno-0-317" name="__codelineno-0-317"></a><span style="color: #4070a0; font-style: italic">        model (str): The model to use for the bot. Default is &quot;gpt-4o&quot;</span>
+</span><span id="__span-0-318"><a id="__codelineno-0-318" name="__codelineno-0-318"></a><span style="color: #4070a0; font-style: italic">            from OpenAI. You will need an OpenAI key and be prepared to pay to </span>
+</span><span id="__span-0-319"><a id="__codelineno-0-319" name="__codelineno-0-319"></a><span style="color: #4070a0; font-style: italic">            use this model.</span>
+</span><span id="__span-0-320"><a id="__codelineno-0-320" name="__codelineno-0-320"></a><span style="color: #4070a0; font-style: italic">        openai_api_key (str): The API key for the OpenAI service.</span>
+</span><span id="__span-0-321"><a id="__codelineno-0-321" name="__codelineno-0-321"></a><span style="color: #4070a0; font-style: italic">        local_llm (LocalLLM): A LocalLLM object to use for the bot. If this is </span>
+</span><span id="__span-0-322"><a id="__codelineno-0-322" name="__codelineno-0-322"></a><span style="color: #4070a0; font-style: italic">            not None, the bot will use the local model instead of the OpenAI model.</span>
+</span><span id="__span-0-323"><a id="__codelineno-0-323" name="__codelineno-0-323"></a>
+</span><span id="__span-0-324"><a id="__codelineno-0-324" name="__codelineno-0-324"></a><span style="color: #4070a0; font-style: italic">    Returns: </span>
+</span><span id="__span-0-325"><a id="__codelineno-0-325" name="__codelineno-0-325"></a><span style="color: #4070a0; font-style: italic">        None (conversation is stored in the botex database)</span>
+</span><span id="__span-0-326"><a id="__codelineno-0-326" name="__codelineno-0-326"></a><span style="color: #4070a0; font-style: italic">    &quot;&quot;&quot;</span>
+</span><span id="__span-0-327"><a id="__codelineno-0-327" name="__codelineno-0-327"></a>    <span style="color: #007020; font-weight: bold">if</span> botex_db <span style="color: #007020; font-weight: bold">is</span> <span style="color: #007020; font-weight: bold">None</span>: botex_db <span style="color: #666666">=</span> environ<span style="color: #666666">.</span>get(<span style="color: #4070a0">&#39;BOTEX_DB&#39;</span>)
+</span><span id="__span-0-328"><a id="__codelineno-0-328" name="__codelineno-0-328"></a>    <span style="color: #007020; font-weight: bold">if</span> openai_api_key <span style="color: #007020; font-weight: bold">is</span> <span style="color: #007020; font-weight: bold">None</span>: openai_api_key <span style="color: #666666">=</span> environ<span style="color: #666666">.</span>get(<span style="color: #4070a0">&#39;OPENAI_API_KEY&#39;</span>)
+</span><span id="__span-0-329"><a id="__codelineno-0-329" name="__codelineno-0-329"></a>    <span style="color: #007020; font-weight: bold">if</span> model <span style="color: #666666">==</span> <span style="color: #4070a0">&quot;local&quot;</span>:
+</span><span id="__span-0-330"><a id="__codelineno-0-330" name="__codelineno-0-330"></a>        <span style="color: #007020; font-weight: bold">if</span> <span style="color: #007020; font-weight: bold">not</span> <span style="color: #4070a0">&quot;path_to_llama_server&quot;</span> <span style="color: #007020; font-weight: bold">in</span> local_model_cfg:
+</span><span id="__span-0-331"><a id="__codelineno-0-331" name="__codelineno-0-331"></a>            local_model_cfg[<span style="color: #4070a0">&quot;path_to_llama_server&quot;</span>] <span style="color: #666666">=</span> environ<span style="color: #666666">.</span>get(<span style="color: #4070a0">&#39;PATH_TO_LLAMA_SERVER&#39;</span>)
+</span><span id="__span-0-332"><a id="__codelineno-0-332" name="__codelineno-0-332"></a>        <span style="color: #007020; font-weight: bold">if</span> <span style="color: #007020; font-weight: bold">not</span> <span style="color: #4070a0">&quot;local_llm_path&quot;</span> <span style="color: #007020; font-weight: bold">in</span> local_model_cfg:
+</span><span id="__span-0-333"><a id="__codelineno-0-333" name="__codelineno-0-333"></a>            local_model_cfg[<span style="color: #4070a0">&quot;local_llm_path&quot;</span>] <span style="color: #666666">=</span> environ<span style="color: #666666">.</span>get(<span style="color: #4070a0">&#39;LOCAL_LLM_PATH&#39;</span>)    
+</span><span id="__span-0-334"><a id="__codelineno-0-334" name="__codelineno-0-334"></a>        local_llm <span style="color: #666666">=</span> LocalLLM(<span style="color: #666666">**</span>local_model_cfg)
+</span><span id="__span-0-335"><a id="__codelineno-0-335" name="__codelineno-0-335"></a>        llm_server <span style="color: #666666">=</span> local_llm<span style="color: #666666">.</span>start_server()
+</span><span id="__span-0-336"><a id="__codelineno-0-336" name="__codelineno-0-336"></a>    <span style="color: #007020; font-weight: bold">else</span>:
+</span><span id="__span-0-337"><a id="__codelineno-0-337" name="__codelineno-0-337"></a>        local_llm <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span> 
+</span><span id="__span-0-338"><a id="__codelineno-0-338" name="__codelineno-0-338"></a>
+</span><span id="__span-0-339"><a id="__codelineno-0-339" name="__codelineno-0-339"></a>    <span style="color: #007020; font-weight: bold">if</span> local_llm:
+</span><span id="__span-0-340"><a id="__codelineno-0-340" name="__codelineno-0-340"></a>        <span style="color: #007020; font-weight: bold">assert</span> llm_server, <span style="color: #4070a0">&quot;Local LLM server not started, but should have been.&quot;</span>
+</span><span id="__span-0-341"><a id="__codelineno-0-341" name="__codelineno-0-341"></a>        local_llm<span style="color: #666666">.</span>stop_server(llm_server)
 </span><span id="__span-0-342"><a id="__codelineno-0-342" name="__codelineno-0-342"></a>
-</span><span id="__span-0-343"><a id="__codelineno-0-343" name="__codelineno-0-343"></a>    conn <span style="color: #666666">=</span> setup_botex_db(botex_db)
-</span><span id="__span-0-344"><a id="__codelineno-0-344" name="__codelineno-0-344"></a>    cursor <span style="color: #666666">=</span> conn<span style="color: #666666">.</span>cursor()
-</span><span id="__span-0-345"><a id="__codelineno-0-345" name="__codelineno-0-345"></a>    cursor<span style="color: #666666">.</span>execute(
-</span><span id="__span-0-346"><a id="__codelineno-0-346" name="__codelineno-0-346"></a><span style="color: #bbbbbb">        </span><span style="color: #4070a0; font-style: italic">&quot;&quot;&quot;</span>
-</span><span id="__span-0-347"><a id="__codelineno-0-347" name="__codelineno-0-347"></a><span style="color: #4070a0; font-style: italic">        INSERT INTO participants (</span>
-</span><span id="__span-0-348"><a id="__codelineno-0-348" name="__codelineno-0-348"></a><span style="color: #4070a0; font-style: italic">            session_name, session_id, participant_id, is_human, url) </span>
-</span><span id="__span-0-349"><a id="__codelineno-0-349" name="__codelineno-0-349"></a><span style="color: #4070a0; font-style: italic">            VALUES (?, ?, ?, ?, ?) </span>
-</span><span id="__span-0-350"><a id="__codelineno-0-350" name="__codelineno-0-350"></a><span style="color: #4070a0; font-style: italic">        &quot;&quot;&quot;</span>, (session_name, session_id, participant_id, is_human, url,)
-</span><span id="__span-0-351"><a id="__codelineno-0-351" name="__codelineno-0-351"></a>    )
-</span><span id="__span-0-352"><a id="__codelineno-0-352" name="__codelineno-0-352"></a>    conn<span style="color: #666666">.</span>commit()
-</span><span id="__span-0-353"><a id="__codelineno-0-353" name="__codelineno-0-353"></a>    cursor<span style="color: #666666">.</span>close()
-</span><span id="__span-0-354"><a id="__codelineno-0-354" name="__codelineno-0-354"></a>
-</span><span id="__span-0-355"><a id="__codelineno-0-355" name="__codelineno-0-355"></a>    run_bot(
-</span><span id="__span-0-356"><a id="__codelineno-0-356" name="__codelineno-0-356"></a>        botex_db, session_id, url, full_conv_history,
-</span><span id="__span-0-357"><a id="__codelineno-0-357" name="__codelineno-0-357"></a>        model, openai_api_key, local_llm, user_prompts
-</span><span id="__span-0-358"><a id="__codelineno-0-358" name="__codelineno-0-358"></a>    )
+</span><span id="__span-0-343"><a id="__codelineno-0-343" name="__codelineno-0-343"></a>    is_human <span style="color: #666666">=</span> <span style="color: #40a070">0</span>
+</span><span id="__span-0-344"><a id="__codelineno-0-344" name="__codelineno-0-344"></a>
+</span><span id="__span-0-345"><a id="__codelineno-0-345" name="__codelineno-0-345"></a>    conn <span style="color: #666666">=</span> setup_botex_db(botex_db)
+</span><span id="__span-0-346"><a id="__codelineno-0-346" name="__codelineno-0-346"></a>    cursor <span style="color: #666666">=</span> conn<span style="color: #666666">.</span>cursor()
+</span><span id="__span-0-347"><a id="__codelineno-0-347" name="__codelineno-0-347"></a>    cursor<span style="color: #666666">.</span>execute(
+</span><span id="__span-0-348"><a id="__codelineno-0-348" name="__codelineno-0-348"></a><span style="color: #bbbbbb">        </span><span style="color: #4070a0; font-style: italic">&quot;&quot;&quot;</span>
+</span><span id="__span-0-349"><a id="__codelineno-0-349" name="__codelineno-0-349"></a><span style="color: #4070a0; font-style: italic">        INSERT INTO participants (</span>
+</span><span id="__span-0-350"><a id="__codelineno-0-350" name="__codelineno-0-350"></a><span style="color: #4070a0; font-style: italic">            session_name, session_id, participant_id, is_human, url) </span>
+</span><span id="__span-0-351"><a id="__codelineno-0-351" name="__codelineno-0-351"></a><span style="color: #4070a0; font-style: italic">            VALUES (?, ?, ?, ?, ?) </span>
+</span><span id="__span-0-352"><a id="__codelineno-0-352" name="__codelineno-0-352"></a><span style="color: #4070a0; font-style: italic">        &quot;&quot;&quot;</span>, (session_name, session_id, participant_id, is_human, url,)
+</span><span id="__span-0-353"><a id="__codelineno-0-353" name="__codelineno-0-353"></a>    )
+</span><span id="__span-0-354"><a id="__codelineno-0-354" name="__codelineno-0-354"></a>    conn<span style="color: #666666">.</span>commit()
+</span><span id="__span-0-355"><a id="__codelineno-0-355" name="__codelineno-0-355"></a>    cursor<span style="color: #666666">.</span>close()
+</span><span id="__span-0-356"><a id="__codelineno-0-356" name="__codelineno-0-356"></a>
+</span><span id="__span-0-357"><a id="__codelineno-0-357" name="__codelineno-0-357"></a>    run_bot(
+</span><span id="__span-0-358"><a id="__codelineno-0-358" name="__codelineno-0-358"></a>        botex_db, session_id, url, full_conv_history,
+</span><span id="__span-0-359"><a id="__codelineno-0-359" name="__codelineno-0-359"></a>        model, openai_api_key, local_llm, user_prompts
+</span><span id="__span-0-360"><a id="__codelineno-0-360" name="__codelineno-0-360"></a>    )
 </span></code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -1978,6 +1986,7 @@ the environment variable BOTEX_DB.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
+                  <code>list</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -2017,7 +2026,7 @@ the environment variable BOTEX_DB.</p>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-76">76</a></span>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-77">77</a></span>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-78">78</a></span>
-<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-79">79</a></span></pre></div></td><td class="code"><div><pre style="line-height: 125%;"><span></span><code><span id="__span-0-52"><a id="__codelineno-0-52" name="__codelineno-0-52"></a><span style="color: #007020; font-weight: bold">def</span> <span style="color: #06287e">read_participants_from_botex_db</span>(session_id <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span>, botex_db <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span>):
+<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-79">79</a></span></pre></div></td><td class="code"><div><pre style="line-height: 125%;"><span></span><code><span id="__span-0-52"><a id="__codelineno-0-52" name="__codelineno-0-52"></a><span style="color: #007020; font-weight: bold">def</span> <span style="color: #06287e">read_participants_from_botex_db</span>(session_id <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span>, botex_db <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span>) <span style="color: #666666">-&gt;</span> <span style="color: #007020">list</span>:
 </span><span id="__span-0-53"><a id="__codelineno-0-53" name="__codelineno-0-53"></a><span style="color: #bbbbbb">    </span><span style="color: #4070a0; font-style: italic">&quot;&quot;&quot;</span>
 </span><span id="__span-0-54"><a id="__codelineno-0-54" name="__codelineno-0-54"></a><span style="color: #4070a0; font-style: italic">    Read the participants table from the botex database.</span>
 </span><span id="__span-0-55"><a id="__codelineno-0-55" name="__codelineno-0-55"></a>
@@ -2124,6 +2133,7 @@ the environment variable BOTEX_DB.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
+                  <code>list</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -2168,7 +2178,7 @@ the environment variable BOTEX_DB.</p>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-111">111</a></span>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-112">112</a></span></pre></div></td><td class="code"><div><pre style="line-height: 125%;"><span></span><code><span id="__span-0-82"><a id="__codelineno-0-82" name="__codelineno-0-82"></a><span style="color: #007020; font-weight: bold">def</span> <span style="color: #06287e">read_conversations_from_botex_db</span>(
 </span><span id="__span-0-83"><a id="__codelineno-0-83" name="__codelineno-0-83"></a>        session_id <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span>, botex_db <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span>
-</span><span id="__span-0-84"><a id="__codelineno-0-84" name="__codelineno-0-84"></a>    ):
+</span><span id="__span-0-84"><a id="__codelineno-0-84" name="__codelineno-0-84"></a>    ) <span style="color: #666666">-&gt;</span> <span style="color: #007020">list</span>:
 </span><span id="__span-0-85"><a id="__codelineno-0-85" name="__codelineno-0-85"></a><span style="color: #bbbbbb">    </span><span style="color: #4070a0; font-style: italic">&quot;&quot;&quot;</span>
 </span><span id="__span-0-86"><a id="__codelineno-0-86" name="__codelineno-0-86"></a><span style="color: #4070a0; font-style: italic">    Reads the conversations table from the botex database. </span>
 </span><span id="__span-0-87"><a id="__codelineno-0-87" name="__codelineno-0-87"></a><span style="color: #4070a0; font-style: italic">    The conversation table contains the messages exchanged </span>
@@ -2274,6 +2284,7 @@ the environment variable BOTEX_DB.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
+                  <code>list</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -2313,7 +2324,7 @@ the environment variable BOTEX_DB.</p>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-138">138</a></span>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-139">139</a></span>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-140">140</a></span>
-<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-141">141</a></span></pre></div></td><td class="code"><div><pre style="line-height: 125%;"><span></span><code><span id="__span-0-114"><a id="__codelineno-0-114" name="__codelineno-0-114"></a><span style="color: #007020; font-weight: bold">def</span> <span style="color: #06287e">read_responses_from_botex_db</span>(session_id <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span>, botex_db <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span>):
+<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-141">141</a></span></pre></div></td><td class="code"><div><pre style="line-height: 125%;"><span></span><code><span id="__span-0-114"><a id="__codelineno-0-114" name="__codelineno-0-114"></a><span style="color: #007020; font-weight: bold">def</span> <span style="color: #06287e">read_responses_from_botex_db</span>(session_id <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span>, botex_db <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span>) <span style="color: #666666">-&gt;</span> <span style="color: #007020">list</span>:
 </span><span id="__span-0-115"><a id="__codelineno-0-115" name="__codelineno-0-115"></a><span style="color: #bbbbbb">    </span><span style="color: #4070a0; font-style: italic">&quot;&quot;&quot;</span>
 </span><span id="__span-0-116"><a id="__codelineno-0-116" name="__codelineno-0-116"></a><span style="color: #4070a0; font-style: italic">    Extracts the responses and their rationales from the botex conversation data. </span>
 </span><span id="__span-0-117"><a id="__codelineno-0-117" name="__codelineno-0-117"></a>
@@ -2418,6 +2429,7 @@ the environment variable BOTEX_DB.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
+                  <code>None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -2447,7 +2459,7 @@ the environment variable BOTEX_DB.</p>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-159">159</a></span>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-160">160</a></span>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-161">161</a></span>
-<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-162">162</a></span></pre></div></td><td class="code"><div><pre style="line-height: 125%;"><span></span><code><span id="__span-0-145"><a id="__codelineno-0-145" name="__codelineno-0-145"></a><span style="color: #007020; font-weight: bold">def</span> <span style="color: #06287e">export_participant_data</span>(csv_file, botex_db <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span>):
+<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-162">162</a></span></pre></div></td><td class="code"><div><pre style="line-height: 125%;"><span></span><code><span id="__span-0-145"><a id="__codelineno-0-145" name="__codelineno-0-145"></a><span style="color: #007020; font-weight: bold">def</span> <span style="color: #06287e">export_participant_data</span>(csv_file, botex_db <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span>) <span style="color: #666666">-&gt;</span> <span style="color: #007020; font-weight: bold">None</span>:
 </span><span id="__span-0-146"><a id="__codelineno-0-146" name="__codelineno-0-146"></a><span style="color: #bbbbbb">    </span><span style="color: #4070a0; font-style: italic">&quot;&quot;&quot;</span>
 </span><span id="__span-0-147"><a id="__codelineno-0-147" name="__codelineno-0-147"></a><span style="color: #4070a0; font-style: italic">    Export the participants table from the botex database to a CSV file.</span>
 </span><span id="__span-0-148"><a id="__codelineno-0-148" name="__codelineno-0-148"></a>
@@ -2543,6 +2555,7 @@ the environment variable BOTEX_DB.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
+                  <code>None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -2574,7 +2587,7 @@ the environment variable BOTEX_DB.</p>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-182">182</a></span>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-183">183</a></span>
 <span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-184">184</a></span>
-<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-185">185</a></span></pre></div></td><td class="code"><div><pre style="line-height: 125%;"><span></span><code><span id="__span-0-166"><a id="__codelineno-0-166" name="__codelineno-0-166"></a><span style="color: #007020; font-weight: bold">def</span> <span style="color: #06287e">export_response_data</span>(csv_file, botex_db <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span>):
+<span style="color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px;"><a href="#__codelineno-0-185">185</a></span></pre></div></td><td class="code"><div><pre style="line-height: 125%;"><span></span><code><span id="__span-0-166"><a id="__codelineno-0-166" name="__codelineno-0-166"></a><span style="color: #007020; font-weight: bold">def</span> <span style="color: #06287e">export_response_data</span>(csv_file, botex_db <span style="color: #666666">=</span> <span style="color: #007020; font-weight: bold">None</span>) <span style="color: #666666">-&gt;</span> <span style="color: #007020; font-weight: bold">None</span>:
 </span><span id="__span-0-167"><a id="__codelineno-0-167" name="__codelineno-0-167"></a><span style="color: #bbbbbb">    </span><span style="color: #4070a0; font-style: italic">&quot;&quot;&quot;</span>
 </span><span id="__span-0-168"><a id="__codelineno-0-168" name="__codelineno-0-168"></a><span style="color: #4070a0; font-style: italic">    Export the responses parsed from the bot conversations in the botex</span>
 </span><span id="__span-0-169"><a id="__codelineno-0-169" name="__codelineno-0-169"></a><span style="color: #4070a0; font-style: italic">    database to a CSV file.</span>
