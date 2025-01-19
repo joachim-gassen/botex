@@ -9,8 +9,14 @@
         font-size: 36px;
         font-weight: 800;
       }
+      .st1 {
+        fill: #d0d0d0;
+        font-family: Arial-Black, 'Arial Black';
+        font-size: 36px;
+        font-weight: 800;
+      }
     </style>
   </defs>
   <text class="st0" transform="translate(6.05 32.4)"><tspan x="0" y="0">b</tspan></text>
-  <text class="st0" transform="translate(16.49 41.49)"><tspan x="0" y="0">x</tspan></text>
+  <text class="st1" transform="translate(16.49 41.49)"><tspan x="0" y="0">x</tspan></text>
 </svg>
