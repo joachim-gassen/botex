@@ -1,4 +1,8 @@
 # botex: Using LLMs as Experimental Participants in oTree 
+[![PyPI](https://img.shields.io/pypi/v/botex.svg)](https://pypi.python.org/pypi/botex)
+[![PyPI Downloads](https://static.pepy.tech/badge/botex)](https://pepy.tech/projects/botex)
+[![Versions](https://img.shields.io/pypi/pyversions/botex.svg)](https://github.com/joachim-gassen/botex)
+[![License](https://img.shields.io/github/license/joachim-gassen/botex.svg)](https://github.com/joachim-gassen/botex/blob/main/LICENSE)
 
 ## Overview
 
