@@ -1,6 +1,6 @@
 # Project information
 site_name: botex - LLM Bots for oTree Experiments
-site_url: https://joachim-gassen.github.io/botex/
+site_url: https://botex.trr266.de
 site_author: Fikir Worku Edossa and Joachim Gassen
 site_description: >-
   A Python Package for using LLMs as Participants in oTree Experiments
@@ -12,7 +12,7 @@ repo_url: https://github.com/joachim-gassen/botex
 # Copyright
 copyright: "Copyright &copy; 2024 - 2025 Fikir Worku Edossa and Joachim Gassen <a href=https://www.accounting-for-transparency.de>TRR 266 Accounting for Transparency</a>."
 nav:
-    - Home: index.md
+    - What it is: index.md
     - Getting Started: getting_started.md
     - Tutorials: 
         - Run an oTree Experiment with botex: tutorials/running_an_experiment.md
@@ -69,8 +69,12 @@ plugins:
     - search
     - mkdocstrings
     - privacy
+    - social
 use_directory_urls: false
 extra:
+  analytics:
+    provider: google
+    property: G-G220WZ1YW7
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/joachim-gassen/botex
