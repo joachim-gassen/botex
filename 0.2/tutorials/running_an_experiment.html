@@ -749,14 +749,13 @@
 </span><span id="__span-6-22"><a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a><span style="color: #60a0b0; font-style: italic"># Run the bots on the session</span>
 </span><span id="__span-6-23"><a id="__codelineno-6-23" name="__codelineno-6-23" href="#__codelineno-6-23"></a>botex<span style="color: #666666">.</span>run_bots_on_session(
 </span><span id="__span-6-24"><a id="__codelineno-6-24" name="__codelineno-6-24" href="#__codelineno-6-24"></a>    session_id<span style="color: #666666">=</span>session[<span style="color: #4070a0">&#39;session_id&#39;</span>],
-</span><span id="__span-6-25"><a id="__codelineno-6-25" name="__codelineno-6-25" href="#__codelineno-6-25"></a>    otree_server_url<span style="color: #666666">=</span><span style="color: #4070a0">&quot;http://localhost:8000&quot;</span>,
-</span><span id="__span-6-26"><a id="__codelineno-6-26" name="__codelineno-6-26" href="#__codelineno-6-26"></a>    botex_db <span style="color: #666666">=</span> <span style="color: #4070a0">&#39;botex.sqlite3&#39;</span>,
-</span><span id="__span-6-27"><a id="__codelineno-6-27" name="__codelineno-6-27" href="#__codelineno-6-27"></a>    model<span style="color: #666666">=</span><span style="color: #4070a0">&quot;gemini/gemini-1.5-flash&quot;</span>,
-</span><span id="__span-6-28"><a id="__codelineno-6-28" name="__codelineno-6-28" href="#__codelineno-6-28"></a>    api_key<span style="color: #666666">=</span><span style="color: #4070a0">&quot;***&quot;</span>
-</span><span id="__span-6-29"><a id="__codelineno-6-29" name="__codelineno-6-29" href="#__codelineno-6-29"></a>)
-</span><span id="__span-6-30"><a id="__codelineno-6-30" name="__codelineno-6-30" href="#__codelineno-6-30"></a>
-</span><span id="__span-6-31"><a id="__codelineno-6-31" name="__codelineno-6-31" href="#__codelineno-6-31"></a><span style="color: #60a0b0; font-style: italic"># Stop the oTree server</span>
-</span><span id="__span-6-32"><a id="__codelineno-6-32" name="__codelineno-6-32" href="#__codelineno-6-32"></a>botex<span style="color: #666666">.</span>stop_otree_server(otree_process)
+</span><span id="__span-6-25"><a id="__codelineno-6-25" name="__codelineno-6-25" href="#__codelineno-6-25"></a>    botex_db <span style="color: #666666">=</span> <span style="color: #4070a0">&#39;botex.sqlite3&#39;</span>,
+</span><span id="__span-6-26"><a id="__codelineno-6-26" name="__codelineno-6-26" href="#__codelineno-6-26"></a>    model<span style="color: #666666">=</span><span style="color: #4070a0">&quot;gemini/gemini-1.5-flash&quot;</span>,
+</span><span id="__span-6-27"><a id="__codelineno-6-27" name="__codelineno-6-27" href="#__codelineno-6-27"></a>    api_key<span style="color: #666666">=</span><span style="color: #4070a0">&quot;***&quot;</span>
+</span><span id="__span-6-28"><a id="__codelineno-6-28" name="__codelineno-6-28" href="#__codelineno-6-28"></a>)
+</span><span id="__span-6-29"><a id="__codelineno-6-29" name="__codelineno-6-29" href="#__codelineno-6-29"></a>
+</span><span id="__span-6-30"><a id="__codelineno-6-30" name="__codelineno-6-30" href="#__codelineno-6-30"></a><span style="color: #60a0b0; font-style: italic"># Stop the oTree server</span>
+</span><span id="__span-6-31"><a id="__codelineno-6-31" name="__codelineno-6-31" href="#__codelineno-6-31"></a>botex<span style="color: #666666">.</span>stop_otree_server(otree_process)
 </span></code></pre></div>
 <p>If it works, you will be greeted with a very long log ouput, detailing the botex bots' interactions with the oTree server. If you want to see less of this, you can adjust the logging level to <code>logging.WARNING</code> or disable logging. However, we suggest that you take a good look at the log output to familiarize yourself with the workflow of the botex bots.</p>
 <p>The output should start and end like this:</p>
@@ -848,39 +847,38 @@
 </span><span id="__span-9-48"><a id="__codelineno-9-48" name="__codelineno-9-48" href="#__codelineno-9-48"></a>)
 </span><span id="__span-9-49"><a id="__codelineno-9-49" name="__codelineno-9-49" href="#__codelineno-9-49"></a>botex<span style="color: #666666">.</span>run_bots_on_session(
 </span><span id="__span-9-50"><a id="__codelineno-9-50" name="__codelineno-9-50" href="#__codelineno-9-50"></a>    session_id<span style="color: #666666">=</span>session[<span style="color: #4070a0">&#39;session_id&#39;</span>],
-</span><span id="__span-9-51"><a id="__codelineno-9-51" name="__codelineno-9-51" href="#__codelineno-9-51"></a>    otree_server_url<span style="color: #666666">=</span>OTREE_URL,
-</span><span id="__span-9-52"><a id="__codelineno-9-52" name="__codelineno-9-52" href="#__codelineno-9-52"></a>    botex_db<span style="color: #666666">=</span>BOTEX_DB,
-</span><span id="__span-9-53"><a id="__codelineno-9-53" name="__codelineno-9-53" href="#__codelineno-9-53"></a>    model<span style="color: #666666">=</span>LLM_MODEL,
-</span><span id="__span-9-54"><a id="__codelineno-9-54" name="__codelineno-9-54" href="#__codelineno-9-54"></a>    api_key<span style="color: #666666">=</span>LLM_API_KEY,
-</span><span id="__span-9-55"><a id="__codelineno-9-55" name="__codelineno-9-55" href="#__codelineno-9-55"></a>    throttle<span style="color: #666666">=</span><span style="color: #007020; font-weight: bold">True</span>
-</span><span id="__span-9-56"><a id="__codelineno-9-56" name="__codelineno-9-56" href="#__codelineno-9-56"></a>)
-</span><span id="__span-9-57"><a id="__codelineno-9-57" name="__codelineno-9-57" href="#__codelineno-9-57"></a>
-</span><span id="__span-9-58"><a id="__codelineno-9-58" name="__codelineno-9-58" href="#__codelineno-9-58"></a><span style="color: #60a0b0; font-style: italic"># Export oTree data - you only need to set admin name and password if you</span>
-</span><span id="__span-9-59"><a id="__codelineno-9-59" name="__codelineno-9-59" href="#__codelineno-9-59"></a><span style="color: #60a0b0; font-style: italic"># have set a higher authentication level (&#39;DEMO&#39; or &#39;STUDY&#39;) in oTree</span>
-</span><span id="__span-9-60"><a id="__codelineno-9-60" name="__codelineno-9-60" href="#__codelineno-9-60"></a>botex<span style="color: #666666">.</span>export_otree_data(
-</span><span id="__span-9-61"><a id="__codelineno-9-61" name="__codelineno-9-61" href="#__codelineno-9-61"></a>    <span style="color: #4070a0">&quot;two_thirds_otree_wide.csv&quot;</span>,
-</span><span id="__span-9-62"><a id="__codelineno-9-62" name="__codelineno-9-62" href="#__codelineno-9-62"></a>    admin_name <span style="color: #666666">=</span> OTREE_ADMIN_NAME,
-</span><span id="__span-9-63"><a id="__codelineno-9-63" name="__codelineno-9-63" href="#__codelineno-9-63"></a>    admin_password <span style="color: #666666">=</span> OTREE_ADMIN_PASSWORD
-</span><span id="__span-9-64"><a id="__codelineno-9-64" name="__codelineno-9-64" href="#__codelineno-9-64"></a>)
-</span><span id="__span-9-65"><a id="__codelineno-9-65" name="__codelineno-9-65" href="#__codelineno-9-65"></a>botex<span style="color: #666666">.</span>normalize_otree_data(
-</span><span id="__span-9-66"><a id="__codelineno-9-66" name="__codelineno-9-66" href="#__codelineno-9-66"></a>    <span style="color: #4070a0">&quot;two_thirds_otree_wide.csv&quot;</span>, 
-</span><span id="__span-9-67"><a id="__codelineno-9-67" name="__codelineno-9-67" href="#__codelineno-9-67"></a>    store_as_csv<span style="color: #666666">=</span><span style="color: #007020; font-weight: bold">True</span>,
-</span><span id="__span-9-68"><a id="__codelineno-9-68" name="__codelineno-9-68" href="#__codelineno-9-68"></a>    exp_prefix<span style="color: #666666">=</span><span style="color: #4070a0">&quot;two_thirds_otree&quot;</span>
-</span><span id="__span-9-69"><a id="__codelineno-9-69" name="__codelineno-9-69" href="#__codelineno-9-69"></a>)
-</span><span id="__span-9-70"><a id="__codelineno-9-70" name="__codelineno-9-70" href="#__codelineno-9-70"></a>
-</span><span id="__span-9-71"><a id="__codelineno-9-71" name="__codelineno-9-71" href="#__codelineno-9-71"></a><span style="color: #60a0b0; font-style: italic"># Export botex data</span>
-</span><span id="__span-9-72"><a id="__codelineno-9-72" name="__codelineno-9-72" href="#__codelineno-9-72"></a>botex<span style="color: #666666">.</span>export_participant_data(
-</span><span id="__span-9-73"><a id="__codelineno-9-73" name="__codelineno-9-73" href="#__codelineno-9-73"></a>    <span style="color: #4070a0">&quot;two_thirds_botex_participants.csv&quot;</span>,
-</span><span id="__span-9-74"><a id="__codelineno-9-74" name="__codelineno-9-74" href="#__codelineno-9-74"></a>    botex_db<span style="color: #666666">=</span>BOTEX_DB
-</span><span id="__span-9-75"><a id="__codelineno-9-75" name="__codelineno-9-75" href="#__codelineno-9-75"></a>)
-</span><span id="__span-9-76"><a id="__codelineno-9-76" name="__codelineno-9-76" href="#__codelineno-9-76"></a>botex<span style="color: #666666">.</span>export_response_data(
-</span><span id="__span-9-77"><a id="__codelineno-9-77" name="__codelineno-9-77" href="#__codelineno-9-77"></a>    <span style="color: #4070a0">&quot;two_thirds_botex_responses.csv&quot;</span>,
-</span><span id="__span-9-78"><a id="__codelineno-9-78" name="__codelineno-9-78" href="#__codelineno-9-78"></a>    botex_db<span style="color: #666666">=</span>BOTEX_DB,
-</span><span id="__span-9-79"><a id="__codelineno-9-79" name="__codelineno-9-79" href="#__codelineno-9-79"></a>    session_id<span style="color: #666666">=</span>session[<span style="color: #4070a0">&#39;session_id&#39;</span>]
-</span><span id="__span-9-80"><a id="__codelineno-9-80" name="__codelineno-9-80" href="#__codelineno-9-80"></a>)
-</span><span id="__span-9-81"><a id="__codelineno-9-81" name="__codelineno-9-81" href="#__codelineno-9-81"></a>
-</span><span id="__span-9-82"><a id="__codelineno-9-82" name="__codelineno-9-82" href="#__codelineno-9-82"></a><span style="color: #60a0b0; font-style: italic"># Stop the oTree server</span>
-</span><span id="__span-9-83"><a id="__codelineno-9-83" name="__codelineno-9-83" href="#__codelineno-9-83"></a>botex<span style="color: #666666">.</span>stop_otree_server(otree_process)
+</span><span id="__span-9-51"><a id="__codelineno-9-51" name="__codelineno-9-51" href="#__codelineno-9-51"></a>    botex_db<span style="color: #666666">=</span>BOTEX_DB,
+</span><span id="__span-9-52"><a id="__codelineno-9-52" name="__codelineno-9-52" href="#__codelineno-9-52"></a>    model<span style="color: #666666">=</span>LLM_MODEL,
+</span><span id="__span-9-53"><a id="__codelineno-9-53" name="__codelineno-9-53" href="#__codelineno-9-53"></a>    api_key<span style="color: #666666">=</span>LLM_API_KEY,
+</span><span id="__span-9-54"><a id="__codelineno-9-54" name="__codelineno-9-54" href="#__codelineno-9-54"></a>    throttle<span style="color: #666666">=</span><span style="color: #007020; font-weight: bold">True</span>
+</span><span id="__span-9-55"><a id="__codelineno-9-55" name="__codelineno-9-55" href="#__codelineno-9-55"></a>)
+</span><span id="__span-9-56"><a id="__codelineno-9-56" name="__codelineno-9-56" href="#__codelineno-9-56"></a>
+</span><span id="__span-9-57"><a id="__codelineno-9-57" name="__codelineno-9-57" href="#__codelineno-9-57"></a><span style="color: #60a0b0; font-style: italic"># Export oTree data - you only need to set admin name and password if you</span>
+</span><span id="__span-9-58"><a id="__codelineno-9-58" name="__codelineno-9-58" href="#__codelineno-9-58"></a><span style="color: #60a0b0; font-style: italic"># have set a higher authentication level (&#39;DEMO&#39; or &#39;STUDY&#39;) in oTree</span>
+</span><span id="__span-9-59"><a id="__codelineno-9-59" name="__codelineno-9-59" href="#__codelineno-9-59"></a>botex<span style="color: #666666">.</span>export_otree_data(
+</span><span id="__span-9-60"><a id="__codelineno-9-60" name="__codelineno-9-60" href="#__codelineno-9-60"></a>    <span style="color: #4070a0">&quot;two_thirds_otree_wide.csv&quot;</span>,
+</span><span id="__span-9-61"><a id="__codelineno-9-61" name="__codelineno-9-61" href="#__codelineno-9-61"></a>    admin_name <span style="color: #666666">=</span> OTREE_ADMIN_NAME,
+</span><span id="__span-9-62"><a id="__codelineno-9-62" name="__codelineno-9-62" href="#__codelineno-9-62"></a>    admin_password <span style="color: #666666">=</span> OTREE_ADMIN_PASSWORD
+</span><span id="__span-9-63"><a id="__codelineno-9-63" name="__codelineno-9-63" href="#__codelineno-9-63"></a>)
+</span><span id="__span-9-64"><a id="__codelineno-9-64" name="__codelineno-9-64" href="#__codelineno-9-64"></a>botex<span style="color: #666666">.</span>normalize_otree_data(
+</span><span id="__span-9-65"><a id="__codelineno-9-65" name="__codelineno-9-65" href="#__codelineno-9-65"></a>    <span style="color: #4070a0">&quot;two_thirds_otree_wide.csv&quot;</span>, 
+</span><span id="__span-9-66"><a id="__codelineno-9-66" name="__codelineno-9-66" href="#__codelineno-9-66"></a>    store_as_csv<span style="color: #666666">=</span><span style="color: #007020; font-weight: bold">True</span>,
+</span><span id="__span-9-67"><a id="__codelineno-9-67" name="__codelineno-9-67" href="#__codelineno-9-67"></a>    exp_prefix<span style="color: #666666">=</span><span style="color: #4070a0">&quot;two_thirds_otree&quot;</span>
+</span><span id="__span-9-68"><a id="__codelineno-9-68" name="__codelineno-9-68" href="#__codelineno-9-68"></a>)
+</span><span id="__span-9-69"><a id="__codelineno-9-69" name="__codelineno-9-69" href="#__codelineno-9-69"></a>
+</span><span id="__span-9-70"><a id="__codelineno-9-70" name="__codelineno-9-70" href="#__codelineno-9-70"></a><span style="color: #60a0b0; font-style: italic"># Export botex data</span>
+</span><span id="__span-9-71"><a id="__codelineno-9-71" name="__codelineno-9-71" href="#__codelineno-9-71"></a>botex<span style="color: #666666">.</span>export_participant_data(
+</span><span id="__span-9-72"><a id="__codelineno-9-72" name="__codelineno-9-72" href="#__codelineno-9-72"></a>    <span style="color: #4070a0">&quot;two_thirds_botex_participants.csv&quot;</span>,
+</span><span id="__span-9-73"><a id="__codelineno-9-73" name="__codelineno-9-73" href="#__codelineno-9-73"></a>    botex_db<span style="color: #666666">=</span>BOTEX_DB
+</span><span id="__span-9-74"><a id="__codelineno-9-74" name="__codelineno-9-74" href="#__codelineno-9-74"></a>)
+</span><span id="__span-9-75"><a id="__codelineno-9-75" name="__codelineno-9-75" href="#__codelineno-9-75"></a>botex<span style="color: #666666">.</span>export_response_data(
+</span><span id="__span-9-76"><a id="__codelineno-9-76" name="__codelineno-9-76" href="#__codelineno-9-76"></a>    <span style="color: #4070a0">&quot;two_thirds_botex_responses.csv&quot;</span>,
+</span><span id="__span-9-77"><a id="__codelineno-9-77" name="__codelineno-9-77" href="#__codelineno-9-77"></a>    botex_db<span style="color: #666666">=</span>BOTEX_DB,
+</span><span id="__span-9-78"><a id="__codelineno-9-78" name="__codelineno-9-78" href="#__codelineno-9-78"></a>    session_id<span style="color: #666666">=</span>session[<span style="color: #4070a0">&#39;session_id&#39;</span>]
+</span><span id="__span-9-79"><a id="__codelineno-9-79" name="__codelineno-9-79" href="#__codelineno-9-79"></a>)
+</span><span id="__span-9-80"><a id="__codelineno-9-80" name="__codelineno-9-80" href="#__codelineno-9-80"></a>
+</span><span id="__span-9-81"><a id="__codelineno-9-81" name="__codelineno-9-81" href="#__codelineno-9-81"></a><span style="color: #60a0b0; font-style: italic"># Stop the oTree server</span>
+</span><span id="__span-9-82"><a id="__codelineno-9-82" name="__codelineno-9-82" href="#__codelineno-9-82"></a>botex<span style="color: #666666">.</span>stop_otree_server(otree_process)
 </span></code></pre></div>
 <p>To silence botex, we now set the logging level to <code>WARNING</code>. Also, we set <code>throttle</code> to <code>True</code> to avoid that botex nags us about the rate limit rejects. We also refactor the code to use variables for the paths and URLs. This makes it easier to adjust the code to your setup.</p>
 <p>The code now starts an oTree server, initializes a session, runs the bots on the session, and exports the data. The data are exported in CSV format. The botex data are exported in two files: one containing the participant data and one containing the responses. The oTree data are exported in wide format and then normalized. The normalized data are stored in a set of CSV files with the prefix <code>two_thirds_otree</code>. You should see all files in your project directory after the code has been run.</p>
