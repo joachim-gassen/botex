@@ -2,7 +2,7 @@
 
 ## Overview
 
-Welcome to botex, a new Python package that leverages the power of **large language models (LLMs) as participants in oTree experiments**.
+Welcome to botex, a new Python package that leverages the power of **large language models (LLMs) as participants in [oTree](https://www.otree.org) experiments**.
 
 botex takes a novel approach to integrating LLMs into behavioral experiments. Rather than relying on predefined prompts,[^1] **botex bots dynamically interact with their experimental environment by scraping their respective oTree participant pages**. This approach allows them to infer the experimental flow solely from the webpage's textual content. By aligning bot behavior directly with the experimental interface, botex eliminates potential discrepancies between human and bot designs. This not only opens up **exciting opportunities to explore LLM behavior** but also positions LLMs as a **powerful tool for developing and pre-testing experiments** intended for human participants.
 
