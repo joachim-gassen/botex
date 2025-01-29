@@ -150,7 +150,6 @@ session = botex.init_otree_session(
 # Run the bots on the session
 botex.run_bots_on_session(
     session_id=session['session_id'],
-    otree_server_url="http://localhost:8000",
     botex_db = 'botex.sqlite3',
     model="gemini/gemini-1.5-flash",
     api_key="***"
@@ -262,7 +261,6 @@ print(
 )
 botex.run_bots_on_session(
     session_id=session['session_id'],
-    otree_server_url=OTREE_URL,
     botex_db=BOTEX_DB,
     model=LLM_MODEL,
     api_key=LLM_API_KEY,
